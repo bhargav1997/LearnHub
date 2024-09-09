@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+   react-app:
+      build:
+         context: ../ # Root project directory
+         dockerfile: docker/app/Dockerfile
+      ports:
+         - "3000:3000"
+      volumes:
+         - ../:/app # Mount the project root to /app in the container
+         - /app/node_modules # Prevent overwriting node_modules inside the container
+      stdin_open: true
+      tty: true
