@@ -1,0 +1,131 @@
+.privacyContainer {
+  padding: 20px;
+  background-color: #f8f9fa;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.privacyTitle {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.settingSection {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.settingSection h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.settingSection h2 svg {
+  margin-right: 10px;
+  color: #7c4dff;
+}
+
+.settingSection p {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.selectInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+}
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #7c4dff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.toggleLabel {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.privacyInfo {
+  background-color: #e6e6ff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+}
+
+.privacyInfo h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.privacyInfo h2 svg {
+  margin-right: 10px;
+  color: #7c4dff;
+}
+
+.privacyInfo p {
+  color: #666;
+}
+
+.privacyInfo a {
+  color: #7c4dff;
+  text-decoration: none;
+}
+
+.privacyInfo a:hover {
+  text-decoration: underline;
+}

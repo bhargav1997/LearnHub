@@ -1,0 +1,324 @@
+.userProfile {
+   display: flex;
+   gap: 30px;
+   padding: 20px;
+   background-color: #f5f5f5;
+}
+
+.profileSection {
+   flex: 1;
+   background-color: #ffffff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profileHeader {
+   display: flex;
+   align-items: center;
+   margin-bottom: 20px;
+}
+
+.avatar {
+   width: 120px;
+   height: 120px;
+   border-radius: 50%;
+   margin-right: 20px;
+}
+.profileInfo {
+   flex-grow: 1;
+}
+
+.name {
+   font-size: 24px;
+   color: #333;
+   margin-bottom: 5px;
+}
+
+.title {
+   font-size: 16px;
+   color: #666;
+   margin-bottom: 5px;
+}
+
+.location {
+   font-size: 14px;
+   color: #888;
+}
+
+.bio {
+   margin-bottom: 20px;
+   font-size: 14px;
+   color: #555;
+   line-height: 1.6;
+}
+
+.stats {
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 20px;
+   padding: 15px 0;
+   border-top: 1px solid #eee;
+   border-bottom: 1px solid #eee;
+}
+
+.stat {
+   text-align: center;
+}
+
+.statNumber {
+   display: block;
+   font-size: 18px;
+   font-weight: bold;
+   color: #333;
+}
+
+.statLabel {
+   font-size: 12px;
+   color: #888;
+}
+
+.detailItem {
+   display: flex;
+   align-items: flex-start;
+   gap: 10px;
+}
+
+.details {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.detailItem svg {
+   margin-top: 4px;
+}
+
+.detailItem h4 {
+   font-size: 16px;
+   color: #333;
+   margin-bottom: 5px;
+}
+
+.detailItem p {
+   font-size: 14px;
+   color: #666;
+   margin: 0;
+}
+
+.detailItem a {
+   color: #7c4dff;
+   text-decoration: none;
+}
+
+.friendSection {
+   flex: 2;
+   background-color: #ffffff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.searchBar {
+   position: relative;
+   margin: 20px 0;
+}
+
+.searchIcon {
+   position: absolute;
+   left: 15px;
+   top: 50%;
+   transform: translateY(-50%);
+   color: #888;
+}
+
+.searchInput {
+   width: 100%;
+   padding: 10px 10px 10px 40px;
+   border: 1px solid #ddd;
+   border-radius: 25px;
+   font-size: 16px;
+   transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.searchInput:focus {
+   outline: none;
+   border-color: #7c4dff;
+   box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+}
+
+.noResults {
+   text-align: center;
+   color: #888;
+   font-style: italic;
+   margin-top: 20px;
+}
+
+.friendList {
+   list-style-type: none;
+   padding: 0;
+}
+
+.friendItem {
+   display: flex;
+   align-items: center;
+   padding: 15px;
+   border-bottom: 1px solid #eee;
+}
+
+.friendItem:last-child {
+   border-bottom: none;
+}
+
+.friendAvatar {
+   width: 60px;
+   height: 60px;
+   border-radius: 50%;
+   margin-right: 15px;
+}
+
+.friendInfo {
+   flex-grow: 1;
+}
+
+.friendInfo h4 {
+   font-size: 18px;
+   color: #333;
+   margin-bottom: 5px;
+}
+
+.interests {
+   font-size: 14px;
+   color: #666;
+   margin-bottom: 5px;
+}
+
+.interestIcon {
+   margin-right: 5px;
+   color: #7c4dff;
+}
+
+.mutualFriends {
+   font-size: 12px;
+   color: #888;
+}
+
+.addFriendBtn {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+   padding: 8px 16px;
+   border-radius: 20px;
+   font-size: 14px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.addFriendBtn:hover {
+   background-color: #6a3de8;
+}
+
+@media (max-width: 768px) {
+   .userProfile {
+      flex-direction: column;
+   }
+
+   .stats {
+      flex-wrap: wrap;
+   }
+
+   .stat {
+      flex-basis: 50%;
+      margin-bottom: 10px;
+   }
+}
+
+.editButton {
+   background: none;
+   border: none;
+   color: #7c4dff;
+   cursor: pointer;
+   font-size: 18px;
+   padding: 5px;
+   transition: color 0.3s;
+}
+
+.editButton:hover {
+   color: #6a3de8;
+}
+
+.editModal {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+}
+
+.editModalContent {
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 8px;
+   width: 90%;
+   max-width: 500px;
+   max-height: 80vh;
+   overflow-y: auto;
+}
+
+.editModalContent h2 {
+   margin-bottom: 20px;
+   color: #333;
+}
+
+.editModalContent input,
+.editModalContent textarea {
+   width: 100%;
+   padding: 10px;
+   margin-bottom: 15px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   font-size: 14px;
+}
+
+.editModalContent textarea {
+   height: 100px;
+   resize: vertical;
+}
+
+.editModalButtons {
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+   margin-top: 20px;
+}
+
+.editModalButtons button {
+   padding: 10px 20px;
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 14px;
+   transition: background-color 0.3s;
+}
+
+.editModalButtons button:first-child {
+   background-color: #f0f0f0;
+   color: #333;
+}
+
+.editModalButtons button:last-child {
+   background-color: #7c4dff;
+   color: #fff;
+}
+
+.editModalButtons button:hover {
+   opacity: 0.9;
+}

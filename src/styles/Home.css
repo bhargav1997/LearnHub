@@ -1,0 +1,329 @@
+.home-container {
+   display: flex;
+   height: 100%;
+}
+
+.home-main-content {
+   flex: 1;
+   margin-right: 20px;
+   overflow-y: auto;
+}
+
+.home-sidebar-content {
+   width: 300px;
+   overflow-y: auto;
+}
+
+/* Styles for CreatePost, PostList, UserProfile, and PopularTags components */
+/* ... (keep the existing styles for these components) ... */
+.main-content {
+   flex: 1;
+   margin-right: 20px;
+}
+
+.sidebar-content {
+   width: 300px;
+}
+
+.create-post {
+   display: flex;
+   gap: 20px;
+   align-items: center;
+   justify-content: center;
+   background-color: #7c4dff;
+   padding: 20px;
+   border-radius: 10px;
+   margin-bottom: 20px;
+}
+
+.create-post-input {
+   display: flex;
+   align-items: center;
+   background-color: white;
+   border-radius: 20px;
+   padding: 10px;
+   width: 85%;
+}
+
+.create-post-input input {
+   flex: 1;
+   border: none;
+   outline: none;
+   margin-left: 10px;
+}
+
+.create-post-btn {
+   background-color: white;
+   color: #7c4dff;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 20px;
+   cursor: pointer;
+}
+
+.post {
+   background-color: white;
+   border-radius: 10px;
+   padding: 20px;
+   margin-bottom: 20px;
+   display: flex;
+}
+
+.post-btc-info {
+   margin-right: 20px;
+}
+
+.post-content {
+   flex: 1;
+}
+
+.post-tags .tag {
+   background-color: #f0f0f0;
+   padding: 5px 10px;
+   border-radius: 15px;
+   margin-right: 5px;
+}
+
+.post-author {
+   display: flex;
+   align-items: center;
+   margin: 10px 0;
+}
+
+.author-avatar {
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+   margin-right: 10px;
+}
+
+.post-stats {
+   display: flex;
+   justify-content: space-between;
+}
+
+.user-profile {
+   background-color: white;
+   border-radius: 10px;
+   padding: 20px;
+   margin-bottom: 20px;
+}
+
+.profile-image {
+   width: 100px;
+   height: 100px;
+   border-radius: 50%;
+   margin-bottom: 10px;
+}
+
+.hours-spent {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.popular-tags {
+   background-color: white;
+   border-radius: 10px;
+   padding: 20px;
+}
+
+.tag-item {
+   display: flex;
+   align-items: center;
+   margin-bottom: 10px;
+}
+
+.tag-icon {
+   margin-right: 5px;
+   font-weight: bold;
+}
+
+.tag-posts {
+   margin-left: auto;
+}
+
+.tag-trending,
+.tag-location {
+   font-size: 0.8em;
+   color: #7c4dff;
+   margin-left: 5px;
+}
+
+.post-card {
+   background-color: #ffffff;
+   border-radius: 8px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   margin-bottom: 20px;
+   overflow: hidden;
+   transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+   transform: translateY(-5px);
+}
+
+.post-header {
+   background-color: #f8f9fa;
+   padding: 15px;
+   border-bottom: 1px solid #e9ecef;
+}
+
+.btc-info {
+   display: flex;
+   align-items: center;
+   margin-bottom: 10px;
+}
+
+.btc-logo {
+   color: #f7931a;
+   font-size: 1.2em;
+   margin-right: 8px;
+}
+
+.btc-price {
+   font-weight: bold;
+   margin-right: 8px;
+}
+
+.btc-change {
+   font-size: 0.9em;
+}
+
+.btc-change.positive {
+   color: #28a745;
+}
+
+.btc-change.negative {
+   color: #dc3545;
+}
+
+.post-title h3 {
+   margin: 0;
+   font-size: 1.2em;
+   color: #343a40;
+}
+
+.post-body {
+   padding: 15px;
+}
+
+.post-tags {
+   margin-bottom: 10px;
+}
+
+.tag {
+   display: inline-block;
+   background-color: #e9ecef;
+   color: #495057;
+   padding: 4px 8px;
+   border-radius: 4px;
+   font-size: 0.8em;
+   margin-right: 5px;
+   margin-bottom: 5px;
+}
+
+.post-author {
+   display: flex;
+   align-items: center;
+}
+
+.author-avatar {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   margin-right: 10px;
+}
+
+.author-info {
+   display: flex;
+   flex-direction: column;
+}
+
+.author-name {
+   font-weight: bold;
+   color: #495057;
+}
+
+.post-time {
+   font-size: 0.8em;
+   color: #6c757d;
+}
+
+.post-footer {
+   display: flex;
+   justify-content: space-around;
+   padding: 10px 15px;
+   background-color: #f8f9fa;
+   border-top: 1px solid #e9ecef;
+}
+
+.post-stat {
+   display: flex;
+   align-items: center;
+   color: #6c757d;
+   font-size: 0.9em;
+}
+
+.post-stat svg {
+   margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+   .post-card {
+      margin-bottom: 15px;
+   }
+
+   .post-header {
+      padding: 10px;
+   }
+
+   .post-title h3 {
+      font-size: 1.1em;
+   }
+
+   .post-body {
+      padding: 10px;
+   }
+
+   .post-footer {
+      padding: 8px 10px;
+   }
+
+   .post-stat {
+      font-size: 0.8em;
+   }
+}
+
+@media (max-width: 480px) {
+   .btc-info {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .btc-price,
+   .btc-change {
+      margin-top: 5px;
+   }
+
+   .post-footer {
+      flex-wrap: wrap;
+   }
+
+   .post-stat {
+      flex-basis: 50%;
+      margin-bottom: 5px;
+   }
+}
+
+.post-list {
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+@media (max-width: 768px) {
+   .post-list {
+      padding: 10px;
+   }
+}

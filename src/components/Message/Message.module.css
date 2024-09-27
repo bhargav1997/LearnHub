@@ -1,0 +1,263 @@
+.messageContainer {
+   display: flex;
+   height: calc(100vh - 60px); /* Adjust based on your layout */
+   background-color: #f0f2f5;
+}
+
+.sidebar {
+   width: 350px;
+   background-color: #fff;
+   border-right: 1px solid #e0e0e0;
+   display: flex;
+   flex-direction: column;
+}
+
+.searchBarWrapper {
+   padding: 10px;
+   background-color: #f6f6f6;
+   border-bottom: 1px solid #e0e0e0;
+}
+
+.searchBar {
+   display: flex;
+   align-items: center;
+   background-color: #fff;
+   border-radius: 20px;
+   padding: 8px 12px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.searchIcon {
+   color: #54656f;
+   font-size: 16px;
+   margin-right: 10px;
+}
+
+.searchBar input {
+   border: none;
+   background-color: transparent;
+   width: 100%;
+   font-size: 15px;
+   outline: none;
+   color: #333;
+}
+
+.searchBar input::placeholder {
+   color: #999;
+}
+
+.chatList {
+   overflow-y: auto;
+   flex-grow: 1;
+}
+
+.chatItem {
+   display: flex;
+   align-items: center;
+   padding: 15px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.chatItem:hover,
+.chatItem.active {
+   background-color: #f0f2f5;
+}
+
+.avatar {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   background-color: #7c4dff;
+   color: white;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 20px;
+   margin-right: 15px;
+}
+
+.chatInfo {
+   flex-grow: 1;
+}
+
+.chatInfo h4 {
+   margin: 0;
+   font-size: 16px;
+}
+
+.chatInfo p {
+   margin: 5px 0 0;
+   font-size: 14px;
+   color: #667781;
+}
+
+.chatMeta {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+}
+
+.chatMeta span {
+   font-size: 12px;
+   color: #667781;
+}
+
+.unreadBadge {
+   background-color: #25d366;
+   color: white;
+   border-radius: 50%;
+   width: 20px;
+   height: 20px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 12px;
+   margin-top: 5px;
+}
+
+.chatArea {
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+}
+
+.chatHeader {
+   background-color: #f0f2f5;
+   padding: 10px 15px;
+   display: flex;
+   align-items: center;
+   border-bottom: 1px solid #e0e0e0;
+}
+
+.chatHeader h3 {
+   margin: 0 0 0 15px;
+   font-size: 18px;
+}
+
+.moreOptions {
+   margin-left: auto;
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 18px;
+   color: #54656f;
+}
+
+.messageList {
+   flex-grow: 1;
+   overflow-y: auto;
+   padding: 20px;
+   display: flex;
+   flex-direction: column;
+}
+
+.message {
+   max-width: 60%;
+   padding: 10px 15px;
+   border-radius: 8px;
+   margin-bottom: 10px;
+   position: relative;
+}
+
+.message p {
+   margin: 0;
+   font-size: 15px;
+}
+
+.messageTime {
+   font-size: 11px;
+   color: #667781;
+   position: absolute;
+   bottom: -18px;
+   right: 5px;
+}
+
+.sent {
+   align-self: flex-end;
+   background-color: #dcf8c6;
+}
+
+.received {
+   align-self: flex-start;
+   background-color: #fff;
+}
+
+.messageInputWrapper {
+   display: flex;
+   align-items: center;
+   padding: 10px;
+   background-color: #f0f2f5;
+}
+
+.attachButton {
+   background: none;
+   border: none;
+   font-size: 20px;
+   color: #54656f;
+   cursor: pointer;
+   margin-right: 10px;
+   transition: color 0.3s;
+}
+
+.attachButton:hover {
+   color: #128c7e;
+}
+
+.messageInput {
+   display: flex;
+   align-items: center;
+   background-color: #fff;
+   border-radius: 20px;
+   padding: 10px 15px;
+   flex-grow: 1;
+}
+
+.messageInput input {
+   border: none;
+   flex-grow: 1;
+   font-size: 15px;
+   padding: 8px;
+   outline: none;
+}
+
+.emojiButton {
+   background: none;
+   border: none;
+   font-size: 20px;
+   color: #54656f;
+   cursor: pointer;
+   margin-right: 10px;
+   transition: color 0.3s;
+}
+
+.emojiButton:hover {
+   color: #128c7e;
+}
+
+.sendButton {
+   background-color: #128c7e;
+   color: white;
+   border: none;
+   width: 35px;
+   height: 35px;
+   border-radius: 50%;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: background-color 0.3s;
+}
+
+.sendButton:hover {
+   background-color: #075e54;
+}
+
+.noChatSelected {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 100%;
+   font-size: 18px;
+   color: #54656f;
+}

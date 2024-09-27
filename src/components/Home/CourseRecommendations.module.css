@@ -1,0 +1,120 @@
+.recommendationsContainer {
+   background-color: #ffffff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   margin-bottom: 20px;
+}
+
+.recommendationsTitle {
+   color: #333;
+   font-size: 24px;
+   margin-bottom: 20px;
+}
+
+.contentList {
+   list-style-type: none;
+   padding: 0;
+}
+
+.contentItem {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   padding: 15px;
+   border-bottom: 1px solid #eee;
+}
+
+.contentItem:last-child {
+   border-bottom: none;
+}
+
+.contentInfo {
+   flex: 1;
+}
+
+.contentInfo h3 {
+   font-size: 18px;
+   color: #333;
+   margin-bottom: 5px;
+}
+
+.contentType {
+   font-size: 14px;
+   color: #7c4dff;
+   font-weight: bold;
+   margin-bottom: 5px;
+}
+
+.contentLevel,
+.contentRating,
+.contentDuration,
+.contentAuthor,
+.contentPages,
+.addedBy {
+   font-size: 14px;
+   color: #666;
+   display: flex;
+   align-items: center;
+   margin-top: 5px;
+}
+
+.icon {
+   color: #7c4dff;
+   margin-right: 5px;
+   width: 16px;
+}
+
+.addedBy {
+   font-style: italic;
+   margin-top: 10px;
+}
+
+.contentActions {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+}
+
+.linkButton,
+.addButton {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+   padding: 8px 15px;
+   border-radius: 4px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   font-size: 14px;
+   margin-bottom: 10px;
+}
+
+.linkButton:hover,
+.addButton:hover {
+   background-color: #6a3de8;
+}
+
+.linkButton svg {
+   margin-right: 5px;
+}
+
+@media (max-width: 768px) {
+   .contentItem {
+      flex-direction: column;
+   }
+
+   .contentActions {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 15px;
+   }
+
+   .linkButton,
+   .addButton {
+      margin-bottom: 0;
+   }
+}

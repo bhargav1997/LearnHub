@@ -1,0 +1,199 @@
+.header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1rem 2rem;
+   background-color: #ffffff;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   position: sticky;
+   top: 0;
+   z-index: 1000;
+}
+
+.leftSection {
+   display: flex;
+   align-items: center;
+   flex-grow: 1;
+}
+
+.greeting {
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: #333;
+   margin-right: 2rem;
+}
+
+.searchBar {
+   position: relative;
+   width: 400px;
+}
+
+.searchIcon {
+   position: absolute;
+   left: 15px;
+   top: 50%;
+   transform: translateY(-50%);
+   color: #888;
+}
+
+.searchInput {
+   width: 100%;
+   padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+   border: 1px solid #e0e0e0;
+   border-radius: 25px;
+   font-size: 0.9rem;
+   transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+   outline: none;
+   border-color: #7c4dff;
+   box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+}
+
+.rightSection {
+   display: flex;
+   align-items: center;
+   gap: 20px;
+}
+
+.addButton {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+   padding: 0.5rem 1rem;
+   border-radius: 20px;
+   font-size: 0.9rem;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+   margin-right: 1.5rem;
+}
+
+.addButton:hover {
+   background-color: #6a3de8;
+}
+
+.iconButton {
+   background: none;
+   border: none;
+   font-size: 1.2rem;
+   color: #555;
+   /* margin-right: 1.5rem; */
+   cursor: pointer;
+   position: relative;
+   transition: color 0.3s ease;
+}
+
+.iconButton:hover {
+   color: #7c4dff;
+}
+
+.badge {
+   position: absolute;
+   top: -5px;
+   right: -5px;
+   background-color: #ff4757;
+   color: white;
+   font-size: 0.7rem;
+   padding: 2px 5px;
+   border-radius: 10px;
+}
+
+.userInfo {
+   cursor: pointer;
+   position: relative;
+}
+
+.userAvatar {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   overflow: hidden;
+}
+
+.userAvatar img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+}
+
+.userMenu {
+   position: absolute;
+   top: 100%;
+   right: 0;
+   background-color: white;
+   border-radius: 4px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   padding: 0.5rem 0;
+   min-width: 150px;
+}
+
+.userMenu a {
+   display: block;
+   padding: 0.5rem 1rem;
+   color: #333;
+   text-decoration: none;
+   transition: background-color 0.3s ease;
+}
+
+.userMenu a:hover {
+   background-color: #f5f5f5;
+}
+
+.userMenu svg {
+   margin-right: 0.5rem;
+   color: #7c4dff;
+}
+
+@media (max-width: 1024px) {
+   .searchBar {
+      width: 300px;
+   }
+}
+
+@media (max-width: 768px) {
+   .header {
+      flex-wrap: wrap;
+      padding: 1rem;
+   }
+
+   .leftSection {
+      width: 100%;
+      margin-bottom: 1rem;
+   }
+
+   .greeting {
+      margin-right: 1rem;
+   }
+
+   .searchBar {
+      width: 100%;
+   }
+
+   .rightSection {
+      width: 100%;
+      justify-content: space-between;
+   }
+
+   .addButton {
+      margin-right: 1rem;
+   }
+
+   .iconButton {
+      margin-right: 1rem;
+   }
+}
+
+@media (max-width: 480px) {
+   .greeting {
+      display: none;
+   }
+
+   .addButton {
+      padding: 0.5rem;
+   }
+
+   .addButton span {
+      display: none;
+   }
+}

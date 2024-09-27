@@ -1,0 +1,134 @@
+.settingsContainer {
+   padding: 30px;
+   /* max-width: 1200px; */
+   margin: 0 auto;
+   background-color: #f8f9fa;
+}
+
+.settingsTitle {
+   font-size: 28px;
+   margin-bottom: 30px;
+   color: #333;
+   text-align: center;
+}
+
+.settingsGrid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+   gap: 20px;
+   margin-bottom: 30px;
+}
+
+.settingSection {
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.settingSection h2 {
+   font-size: 20px;
+   color: #333;
+   margin-bottom: 20px;
+   display: flex;
+   align-items: center;
+}
+
+.settingSection h2 svg {
+   margin-right: 10px;
+   color: #7c4dff;
+}
+
+.formGroup {
+   margin-bottom: 20px;
+}
+
+.formGroup label {
+   display: block;
+   margin-bottom: 5px;
+   font-weight: bold;
+   color: #555;
+}
+
+.formGroup select {
+   width: 100%;
+   padding: 10px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   font-size: 14px;
+   background-color: #fff;
+}
+
+.settingOption {
+   margin-bottom: 15px;
+}
+
+.settingOption label {
+   display: flex;
+   align-items: center;
+   cursor: pointer;
+   font-size: 16px;
+   color: #333;
+}
+
+.settingOption input[type="checkbox"] {
+   margin-right: 10px;
+   width: 18px;
+   height: 18px;
+}
+
+.saveButtonContainer {
+   text-align: center;
+   margin-top: 30px;
+}
+
+.saveButton {
+   background-color: #7c4dff;
+   color: #fff;
+   border: none;
+   padding: 12px 24px;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 16px;
+   transition: background-color 0.3s;
+}
+
+.saveButton:hover {
+   background-color: #6a3de8;
+}
+
+.dangerZone {
+   margin-top: 30px;
+   border: 1px solid #ff4d4f;
+   background-color: #fff1f0;
+}
+
+.dangerZone h2 {
+   color: #ff4d4f;
+}
+
+.dangerZone p {
+   margin-bottom: 15px;
+   color: #666;
+}
+
+.dangerButton {
+   background-color: #ff4d4f;
+   color: #fff;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 4px;
+   cursor: pointer;
+   font-size: 16px;
+   transition: background-color 0.3s;
+}
+
+.dangerButton:hover {
+   background-color: #ff7875;
+}
+
+@media (max-width: 768px) {
+   .settingsGrid {
+      grid-template-columns: 1fr;
+   }
+}

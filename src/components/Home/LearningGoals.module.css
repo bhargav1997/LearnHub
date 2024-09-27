@@ -1,0 +1,189 @@
+.goalsContainer {
+   background-color: #ffffff;
+   border-radius: 10px;
+   padding: 20px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   margin-bottom: 20px;
+}
+
+.goalsTitle {
+   color: #333;
+   font-size: 20px;
+   margin-bottom: 16px;
+   font-weight: 600;
+}
+
+.addGoal {
+   display: flex;
+   margin-bottom: 16px;
+}
+
+.goalInput {
+   flex-grow: 1;
+   padding: 8px 12px;
+   border: 1px solid #e0e0e0;
+   border-radius: 4px;
+   font-size: 14px;
+   transition: border-color 0.3s;
+}
+
+.goalInput:focus {
+   outline: none;
+   border-color: #7c4dff;
+}
+
+.addButton {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+   padding: 8px;
+   border-radius: 4px;
+   margin-left: 8px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+   font-size: 12px;
+   font-weight: 500;
+}
+
+.addButton:hover {
+   background-color: #6a3de8;
+}
+
+.goalList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.goalItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  padding: 8px;
+  transition: background-color 0.3s;
+}
+
+.goalItem:hover {
+  background-color: #f0f0f0;
+}
+
+.goalContent {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 28px;
+  margin-right: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+}
+
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 2px solid #7c4dff;
+  border-radius: 3px;
+  transition: all 0.3s;
+}
+
+.checkboxContainer:hover .checkbox ~ .checkmark {
+  background-color: #f0e6ff;
+}
+
+.checkboxContainer .checkbox:checked ~ .checkmark {
+  background-color: #7c4dff;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkboxContainer .checkbox:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkboxContainer .checkmark:after {
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.goalText {
+   font-size: 14px;
+   color: #333;
+   transition: color 0.3s;
+}
+
+.completed {
+   text-decoration: line-through;
+   color: #999;
+}
+
+.deleteButton {
+   background-color: transparent;
+   color: #ff4d4d;
+   border: none;
+   cursor: pointer;
+   font-size: 14px;
+   padding: 4px 6px;
+   border-radius: 4px;
+   transition: background-color 0.3s;
+   margin-left: 8px;
+}
+
+.deleteButton:hover {
+   background-color: #ffe6e6;
+}
+
+@media (max-width: 768px) {
+   .addGoal {
+      flex-direction: column;
+   }
+
+   .addButton {
+      margin-left: 0;
+      margin-top: 8px;
+      width: 100%;
+   }
+
+   .goalItem {
+      flex-direction: column;
+      align-items: flex-start;
+   }
+
+   .goalContent {
+      margin-bottom: 6px;
+   }
+
+   .deleteButton {
+      align-self: flex-end;
+   }
+}

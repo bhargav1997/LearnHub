@@ -1,0 +1,145 @@
+.overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+}
+
+.popup {
+   background-color: white;
+   border-radius: 10px;
+   padding: 24px;
+   width: 90%;
+   max-width: 600px;
+   max-height: 90vh;
+   overflow-y: auto;
+   position: relative;
+}
+
+.closeButton {
+   position: absolute;
+   top: 16px;
+   right: 16px;
+   background: none;
+   border: none;
+   font-size: 20px;
+   cursor: pointer;
+   color: #666;
+}
+
+.popup h2 {
+   margin-top: 0;
+   margin-bottom: 24px;
+   font-size: 24px;
+   color: #333;
+}
+
+.formGroup {
+   margin-bottom: 20px;
+}
+
+.formGroup label {
+   display: block;
+   margin-bottom: 8px;
+   font-weight: 600;
+   color: #333;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup select,
+.formGroup textarea {
+   width: 100%;
+   padding: 10px;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   font-size: 16px;
+}
+
+.formGroup select {
+   appearance: none;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+   background-repeat: no-repeat;
+   background-position: right 10px center;
+   padding-right: 30px;
+}
+
+.formGroup small {
+   display: block;
+   margin-top: 4px;
+   color: #666;
+   font-size: 12px;
+}
+
+.formRow {
+   display: flex;
+   gap: 16px;
+}
+
+.formRow .formGroup {
+   flex: 1;
+}
+
+.checkboxGroup {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+
+.checkboxGroup label {
+   display: flex;
+   align-items: center;
+   font-weight: normal;
+}
+
+.checkboxGroup input[type="checkbox"] {
+   margin-right: 8px;
+}
+
+textarea {
+   min-height: 100px;
+   resize: vertical;
+}
+
+.formActions {
+   display: flex;
+   justify-content: flex-end;
+   gap: 16px;
+   margin-top: 24px;
+}
+
+.cancelButton,
+.startButton {
+   padding: 10px 20px;
+   border-radius: 4px;
+   font-size: 16px;
+   font-weight: 600;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.cancelButton {
+   background-color: #f0f0f0;
+   color: #333;
+   border: none;
+}
+
+.cancelButton:hover {
+   background-color: #e0e0e0;
+}
+
+.startButton {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+}
+
+.startButton:hover {
+   background-color: #6a3de8;
+}

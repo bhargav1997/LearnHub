@@ -1,0 +1,174 @@
+.homeContainer {
+   display: flex;
+   gap: 20px;
+   padding: 20px;
+}
+
+.mainContent {
+   flex: 1;
+}
+
+.sidebar {
+   width: 300px;
+}
+
+@media (max-width: 768px) {
+   .homeContainer {
+      flex-direction: column;
+   }
+
+   .sidebar {
+      width: 100%;
+   }
+}
+
+.container {
+   display: flex;
+   gap: 20px;
+   padding: 20px;
+}
+
+.mainContent {
+   flex: 1;
+}
+
+.sidebar {
+   width: 300px;
+}
+
+@media (max-width: 768px) {
+   .container {
+      flex-direction: column;
+   }
+
+   .sidebar {
+      width: 100%;
+   }
+}
+
+.userProfile {
+   background-color: #ffffff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   margin-bottom: 20px;
+}
+
+.title {
+   font-size: 1.2rem;
+   margin-bottom: 15px;
+   color: #333;
+}
+
+.profileInfo {
+   text-align: center;
+   margin-bottom: 20px;
+}
+
+.avatar {
+   width: 80px;
+   height: 80px;
+   border-radius: 50%;
+   margin-bottom: 10px;
+}
+
+.name {
+   font-size: 1.1rem;
+   margin-bottom: 5px;
+}
+
+.bio {
+   font-size: 0.9rem;
+   color: #666;
+}
+
+.hoursSpent {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 15px;
+}
+
+.timeSelect {
+   padding: 5px;
+   border-radius: 4px;
+   border: 1px solid #ddd;
+}
+
+.weeklyChart {
+   height: 150px;
+   margin-top: 15px;
+}
+
+.barChart {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-end;
+   height: 100%;
+}
+
+.bar {
+   width: 12%;
+   background-color: #7c4dff;
+   border-radius: 4px 4px 0 0;
+}
+
+.popularTags {
+   background-color: #ffffff;
+   border-radius: 8px;
+   padding: 20px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+   font-size: 1.2rem;
+   margin-bottom: 15px;
+   color: #333;
+}
+
+.tagList {
+   list-style-type: none;
+   padding: 0;
+}
+
+.tagItem {
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   padding: 10px 0;
+   border-bottom: 1px solid #eee;
+}
+
+.tagItem:last-child {
+   border-bottom: none;
+}
+
+.tagName {
+   font-weight: bold;
+   margin-right: 10px;
+}
+
+.tagPosts {
+   font-size: 0.9rem;
+   color: #666;
+   margin-right: 10px;
+}
+
+.trending,
+.location {
+   font-size: 0.8rem;
+   padding: 2px 6px;
+   border-radius: 10px;
+   margin-top: 5px;
+}
+
+.trending {
+   background-color: #ff4757;
+   color: white;
+   margin-right: 5px;
+}
+
+.location {
+   /* background-color: #2ed573; */
+   color: rgb(170, 165, 165);
+}
