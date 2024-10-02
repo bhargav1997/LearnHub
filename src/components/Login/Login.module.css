@@ -30,12 +30,66 @@
    flex-direction: column;
 }
 
-.loginForm input {
-   margin-bottom: 15px;
-   padding: 10px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
-   font-size: 16px;
+.passwordInputWrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.passwordInputWrapper input {
+  width: 100%;
+  padding: 10px 35px 10px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.showPasswordButton {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #007bff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showPasswordButton:hover,
+.showPasswordButton:focus {
+  color: #0056b3;
+  outline: none;
+}
+
+.loginForm input[type="email"],
+.loginForm input[type="password"] {
+  width: 100%;
+  padding: 10px 30px 10px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.loginForm button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.loginForm button[type="submit"]:hover {
+  background-color: #0056b3;
 }
 
 .rememberMe {
@@ -44,9 +98,8 @@
    margin-bottom: 15px;
 }
 
-.rememberMe input[type="checkbox"] {
+.rememberMe input {
    margin-right: 10px;
-   margin-bottom: 0;
 }
 
 .rememberMe label {

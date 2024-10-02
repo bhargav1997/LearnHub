@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
    faUserPlus,
+   faUserMinus,
    faSearch,
    faCode,
    faGraduationCap,
@@ -10,6 +11,7 @@ import {
    faMapMarkerAlt,
    faLink,
    faPen,
+   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
 
@@ -41,24 +43,31 @@ function UserProfile() {
 
    const [user, setUser] = useState(mockUser);
    const dispatch = useDispatch();
-   const [searchQuery, setSearchQuery] = useState("");
+   // const [searchQuery, setSearchQuery] = useState("");
+   const [suggestedFriends, setSuggestedFriends] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
+
    const [isEditing, setIsEditing] = useState(false);
    const [editedUser, setEditedUser] = useState(user);
 
    // Mock data for suggested friends
-   const allFriends = [
-      { id: 1, name: "Alice Johnson", interests: ["React", "Node.js"], mutualFriends: 5 },
-      { id: 2, name: "Bob Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3 },
-      { id: 3, name: "Carol White", interests: ["JavaScript", "Vue.js"], mutualFriends: 7 },
-      { id: 4, name: "David Brown", interests: ["Java", "Spring Boot"], mutualFriends: 2 },
-      { id: 5, name: "Eva Green", interests: ["Angular", "TypeScript"], mutualFriends: 4 },
-   ];
+   // const allFriends = [
+   //    { id: 1, name: "Alice Johnson", interests: ["React", "Node.js"], mutualFriends: 5 },
+   //    { id: 2, name: "Bob Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3 },
+   //    { id: 3, name: "Carol White", interests: ["JavaScript", "Vue.js"], mutualFriends: 7 },
+   //    { id: 4, name: "David Brown", interests: ["Java", "Spring Boot"], mutualFriends: 2 },
+   //    { id: 5, name: "Eva Green", interests: ["Angular", "TypeScript"], mutualFriends: 4 },
+   // ];
 
-   const filteredFriends = allFriends.filter(
-      (friend) =>
-         friend.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         friend.interests.some((interest) => interest.toLowerCase().includes(searchQuery.toLowerCase())),
-   );
+   useEffect(() => {
+      // Fetch user data and suggested friends
+      fetchUserData();
+      fetchSuggestedFriends();
+   }, []);
+
+   const fetchUserData = async () => {
+      // Implement fetching user data
+   };
 
    const handleEditClick = () => {
       setIsEditing(true);
@@ -79,6 +88,69 @@ function UserProfile() {
    if (!user) {
       return <div>Please log in to view your profile.</div>;
    }
+
+   const fetchSuggestedFriends = async () => {
+      // Implement fetching suggested friends
+      // For now, we'll use mock data
+      const mockFriends = [
+         { id: 1, name: "John Doe", interests: ["JavaScript", "React"], mutualFriends: 5, isFollowing: false },
+         { id: 2, name: "Jane Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3, isFollowing: true },
+         // Add more mock friends as needed
+      ];
+      setSuggestedFriends(mockFriends);
+   };
+
+   const handleFollow = async (friendId) => {
+      try {
+         const token = localStorage.getItem("token");
+         const response = await fetch(`http://localhost:5073/api/users/follow/${friendId}`, {
+            method: "POST",
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         });
+
+         if (response.ok) {
+            // Update the local state to reflect the change
+            setSuggestedFriends((prevFriends) =>
+               prevFriends.map((friend) => (friend.id === friendId ? { ...friend, isFollowing: true } : friend)),
+            );
+         } else {
+            console.error("Failed to follow user");
+         }
+      } catch (error) {
+         console.error("Error following user:", error);
+      }
+   };
+
+   const handleUnfollow = async (friendId) => {
+      try {
+         const token = localStorage.getItem("token");
+         const response = await fetch(`http://localhost:5073/api/users/unfollow/${friendId}`, {
+            method: "POST",
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         });
+
+         if (response.ok) {
+            // Update the local state to reflect the change
+            setSuggestedFriends((prevFriends) =>
+               prevFriends.map((friend) => (friend.id === friendId ? { ...friend, isFollowing: false } : friend)),
+            );
+         } else {
+            console.error("Failed to unfollow user");
+         }
+      } catch (error) {
+         console.error("Error unfollowing user:", error);
+      }
+   };
+
+   const filteredFriends = suggestedFriends.filter(
+      (friend) =>
+         friend.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         friend.interests.some((interest) => interest.toLowerCase().includes(searchTerm.toLowerCase())),
+   );
 
    return (
       <div className={styles.userProfile}>
@@ -156,7 +228,7 @@ function UserProfile() {
             </div>
          </div>
 
-         <div className={styles.friendSection}>
+         {/* <div className={styles.friendSection}>
             <h3>Find Friends</h3>
             <div className={styles.searchBar}>
                <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
@@ -197,11 +269,58 @@ function UserProfile() {
                   ))}
                </ul>
             )}
+         </div> */}
+
+         <div className={styles.suggestedFriendsSection}>
+            <h3>Suggested Connections</h3>
+            <div className={styles.searchBar}>
+               <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+               <input type='text' placeholder='Search connections...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
+            {filteredFriends.length === 0 ? (
+               <p className={styles.noResults}>No connections found matching your search.</p>
+            ) : (
+               <ul className={styles.friendList}>
+                  {filteredFriends.map((friend) => (
+                     <li key={friend.id} className={styles.friendItem}>
+                        <img
+                           src={`https://api.dicebear.com/6.x/initials/svg?seed=${friend.name}`}
+                           alt={friend.name}
+                           className={styles.friendAvatar}
+                        />
+                        <div className={styles.friendInfo}>
+                           <h4>{friend.name}</h4>
+                           <p className={styles.interests}>
+                              <FontAwesomeIcon icon={faCode} className={styles.interestIcon} />
+                              {friend.interests.join(", ")}
+                           </p>
+                        </div>
+                        {friend.isFollowing ? (
+                           <button className={styles.unfollowBtn} onClick={() => handleUnfollow(friend.id)}>
+                              <FontAwesomeIcon icon={faUserMinus} />
+                              Unfollow
+                           </button>
+                        ) : (
+                           <button className={styles.followBtn} onClick={() => handleFollow(friend.id)}>
+                              <FontAwesomeIcon icon={faUserPlus} />
+                              Follow
+                           </button>
+                        )}
+                     </li>
+                  ))}
+               </ul>
+            )}
          </div>
+
          {isEditing && (
             <div className={styles.editModal}>
                <div className={styles.editModalContent}>
-                  <h2>Edit Profile</h2>
+                  <div className={styles.editModalHeader}>
+                     <h2>Edit Profile</h2>
+                     <button className={styles.closeButton} onClick={() => setIsEditing(false)}>
+                        <FontAwesomeIcon icon={faTimes} />
+                     </button>
+                  </div>
                   <input type='text' name='username' value={editedUser.username} onChange={handleInputChange} placeholder='Username' />
                   <input type='text' name='title' value={editedUser.title} onChange={handleInputChange} placeholder='Title' />
                   <input type='text' name='location' value={editedUser.location} onChange={handleInputChange} placeholder='Location' />

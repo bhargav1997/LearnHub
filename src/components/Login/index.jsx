@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/user/userSlice";
-
 import styles from "./Login.module.css";
 import LoadingSpinner from "../LoadingSpinner";
 
 function Login() {
-   const [isLoading, setIsLoading] = useState(true);
+   const [isLoading, setIsLoading] = useState(false);
    const [formData, setFormData] = useState({
       email: "",
       password: "",
@@ -17,12 +16,23 @@ function Login() {
    const dispatch = useDispatch();
 
    useEffect(() => {
-      const rememberedUser = JSON.parse(localStorage.getItem("rememberedUser"));
-      if (rememberedUser) {
-         dispatch(setUser({ email: rememberedUser.email, username: rememberedUser.username }));
-         navigate("/");
+      const token = localStorage.getItem("token");
+      if (token) {
+         // Verify token and get user info
+         fetch("http://localhost:5073/api/users/profile", {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         })
+            .then((res) => res.json())
+            .then((data) => {
+               if (data.id) {
+                  dispatch(setUser(data));
+                  navigate("/");
+               }
+            })
+            .catch((err) => console.error(err));
       }
-      setIsLoading(false);
    }, [dispatch, navigate]);
 
    const handleChange = (e) => {
@@ -30,24 +40,38 @@ function Login() {
       setFormData({ ...formData, [e.target.name]: value });
    };
 
-   const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
       e.preventDefault();
+      setIsLoading(true);
 
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find((u) => u.email === formData.email && u.password === formData.password);
+      try {
+         const response = await fetch("http://localhost:5073/api/users/login", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+               email: formData.email,
+               password: formData.password,
+            }),
+         });
 
-      if (user) {
-         dispatch(setUser({ email: user.email, username: user.username }));
+         const data = await response.json();
 
-         if (formData.rememberMe) {
-            localStorage.setItem("rememberedUser", JSON.stringify(user));
+         if (response.ok) {
+            dispatch(setUser(data.user));
+            if (formData.rememberMe) {
+               localStorage.setItem("token", data.token);
+            }
+            navigate("/");
          } else {
-            localStorage.removeItem("rememberedUser");
+            alert(data.message || "Login failed");
          }
-
-         navigate("/");
-      } else {
-         alert("Invalid email or password");
+      } catch (error) {
+         console.error("Login error:", error);
+         alert("An error occurred during login");
+      } finally {
+         setIsLoading(false);
       }
    };
 
@@ -60,8 +84,24 @@ function Login() {
          <div className={styles.loginForm}>
             <h2>Login to Your Account</h2>
             <form onSubmit={handleSubmit}>
-               <input type='email' name='email' placeholder='Email' value={formData.email} onChange={handleChange} required />
-               <input type='password' name='password' placeholder='Password' value={formData.password} onChange={handleChange} required />
+               <input
+                  type='email'
+                  name='email'
+                  placeholder='Email'
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  autoComplete='on'
+               />
+               <input
+                  type='password'
+                  name='password'
+                  placeholder='Password'
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  autoComplete='on'
+               />
                <div className={styles.rememberMe}>
                   <input type='checkbox' name='rememberMe' id='rememberMe' checked={formData.rememberMe} onChange={handleChange} />
                   <label htmlFor='rememberMe'>Remember Me</label>

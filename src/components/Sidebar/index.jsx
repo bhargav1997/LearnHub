@@ -10,6 +10,7 @@ import {
    faShieldAlt,
    faChartBar,
    faSignOutAlt,
+   faMap,
 } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/Sidebar.css";
 import { useDispatch } from "react-redux";
@@ -27,6 +28,7 @@ function Sidebar() {
    const navItems = [
       { path: "/", icon: faHome, label: "Home" },
       { path: "/dashboard", icon: faTachometerAlt, label: "Dashboard" },
+      { path: "/learning-journey", icon: faMap, label: "Learning Journey" },
       { path: "/leaderboard", icon: faTrophy, label: "Leaderboard" },
       { path: "/message", icon: faEnvelope, label: "Message" },
       { path: "/calendar", icon: faCalendar, label: "Calendar" },

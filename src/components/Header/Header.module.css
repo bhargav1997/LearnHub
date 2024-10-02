@@ -17,7 +17,7 @@
 }
 
 .greeting {
-   font-size: 1.2rem;
+   font-size: 1.5rem;
    font-weight: 600;
    color: #333;
    margin-right: 2rem;
@@ -55,6 +55,7 @@
    display: flex;
    align-items: center;
    gap: 20px;
+   position: relative;
 }
 
 .addButton {
@@ -145,6 +146,106 @@
    color: #7c4dff;
 }
 
+.notificationsOverlay {
+   position: absolute;
+   top: 100%;
+   right: 0;
+   width: 350px;
+   background-color: white;
+   border-radius: 8px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+   padding: 1rem;
+   max-height: 400px;
+   overflow-y: auto;
+   z-index: 1000;
+}
+
+.notificationsOverlay h3 {
+   margin-top: 0;
+   margin-bottom: 1rem;
+   color: #333;
+   font-size: 1.2rem;
+}
+
+.notificationsList {
+   list-style-type: none;
+   padding: 0;
+   margin: 0;
+}
+
+.notificationItem {
+   display: flex;
+   align-items: flex-start;
+   padding: 0.75rem 0;
+   border-bottom: 1px solid #e0e0e0;
+   transition: background-color 0.3s ease;
+}
+
+.notificationItem:last-child {
+   border-bottom: none;
+}
+
+.notificationItem.read {
+   background-color: #f9f9f9;
+}
+
+.notificationIcon {
+   color: #7c4dff;
+   font-size: 1.2rem;
+   margin-right: 1rem;
+   margin-top: 0.2rem;
+}
+
+.notificationContent {
+   flex: 1;
+}
+
+.notificationContent p {
+   margin: 0 0 0.25rem 0;
+   font-size: 0.9rem;
+   color: #333;
+}
+
+.notificationTime {
+   font-size: 0.8rem;
+   color: #888;
+}
+
+.notificationActions {
+   display: flex;
+   align-items: center;
+}
+
+.readButton,
+.removeButton {
+   background: none;
+   border: none;
+   cursor: pointer;
+   padding: 5px;
+   margin-left: 5px;
+   font-size: 0.9rem;
+   transition: color 0.3s ease;
+}
+
+.readButton {
+   color: #4caf50;
+}
+
+.removeButton {
+   color: #f44336;
+}
+
+.readButton:hover,
+.removeButton:hover {
+   opacity: 0.7;
+}
+
+.noNotifications {
+   text-align: center;
+   color: #888;
+   font-style: italic;
+}
+
 @media (max-width: 1024px) {
    .searchBar {
       width: 300px;
@@ -181,6 +282,14 @@
 
    .iconButton {
       margin-right: 1rem;
+   }
+
+   .notificationsOverlay {
+      width: 100%;
+      right: 0;
+      left: 0;
+      top: 100%;
+      position: fixed;
    }
 }
 

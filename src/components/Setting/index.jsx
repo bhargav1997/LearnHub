@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faLock, faGlobe, faChartBar, faCog, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Setting.module.css";
