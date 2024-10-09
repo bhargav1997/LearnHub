@@ -1,7 +1,5 @@
 .settingsContainer {
    padding: 30px;
-   /* max-width: 1200px; */
-   margin: 0 auto;
    background-color: #f8f9fa;
 }
 
@@ -37,6 +35,11 @@
 .settingSection h2 svg {
    margin-right: 10px;
    color: #7c4dff;
+}
+
+.dangerZone h2 svg {
+   margin-right: 10px;
+   color: #ff4d4f;
 }
 
 .formGroup {

@@ -28,8 +28,14 @@ const learningJourneySlice = createSlice({
       clearJourneys: (state) => {
          state.journeys = [];
       },
+      deleteJourney: (state, action) => {
+         state.journeys = state.journeys.filter(journey => journey.id !== action.payload);
+         if (state.selectedJourney && state.selectedJourney.id === action.payload) {
+            state.selectedJourney = null;
+         }
+      },
    },
 });
 
-export const { setJourneys, addJourney, updateJourney, setSelectedJourney, clearJourneys } = learningJourneySlice.actions;
+export const { setJourneys, addJourney, updateJourney, setSelectedJourney, clearJourneys, deleteJourney } = learningJourneySlice.actions;
 export default learningJourneySlice.reducer;

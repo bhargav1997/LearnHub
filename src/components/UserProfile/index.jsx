@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import axios from "axios";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
    faUserPlus,
@@ -12,92 +13,167 @@ import {
    faLink,
    faPen,
    faTimes,
+   faLightbulb,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
+// import { setUser, fetchConnections } from "../../redux/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../../redux/user/userSlice";
 
 function UserProfile() {
-   // Mock currentUser data
-   const mockUser = {
-      username: "John Doe",
-      title: "Senior Software Developer",
-      location: "San Francisco, CA",
-      bio: "Passionate about creating innovative solutions and mentoring junior developers. Always excited to learn new technologies and contribute to open-source projects.",
-      learningHours: 1234,
-      coursesCompleted: 56,
-      connections: 789,
-      work: {
-         title: "Senior Software Developer",
-         company: "TechCorp Inc.",
-         startDate: "Jan 2018",
-         endDate: "Present",
-         description: "Leading a team of developers in creating cutting-edge web applications using React and Node.js.",
-      },
-      education: {
-         degree: "M.S. in Computer Science",
-         school: "Stanford University",
-         graduationYear: "2016",
-      },
-      skills: ["React", "Node.js", "Python", "AWS", "Docker", "Machine Learning"],
-      website: "www.johndoe.com",
-   };
-
-   const [user, setUser] = useState(mockUser);
-   const dispatch = useDispatch();
-   // const [searchQuery, setSearchQuery] = useState("");
-   const [suggestedFriends, setSuggestedFriends] = useState([]);
-   const [searchTerm, setSearchTerm] = useState("");
-
    const [isEditing, setIsEditing] = useState(false);
-   const [editedUser, setEditedUser] = useState(user);
+   const [editedUser, setEditedUser] = useState(null);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [showConnectionsModal, setShowConnectionsModal] = useState(false);
+   const [activeTab, setActiveTab] = useState("followers");
+   const [suggestedConnections, setSuggestedConnections] = useState([]);
+   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+   const [suggestionsError, setSuggestionsError] = useState(null);
 
-   // Mock data for suggested friends
-   // const allFriends = [
-   //    { id: 1, name: "Alice Johnson", interests: ["React", "Node.js"], mutualFriends: 5 },
-   //    { id: 2, name: "Bob Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3 },
-   //    { id: 3, name: "Carol White", interests: ["JavaScript", "Vue.js"], mutualFriends: 7 },
-   //    { id: 4, name: "David Brown", interests: ["Java", "Spring Boot"], mutualFriends: 2 },
-   //    { id: 5, name: "Eva Green", interests: ["Angular", "TypeScript"], mutualFriends: 4 },
-   // ];
+   const dispatch = useDispatch();
+   const { user } = useSelector((state) => state.user);
+
+   console.log("user==>", user);
 
    useEffect(() => {
-      // Fetch user data and suggested friends
-      fetchUserData();
-      fetchSuggestedFriends();
+      if (user) {
+         setEditedUser(user);
+      }
+   }, [user]);
+
+   useEffect(() => {
+      fetchSuggestedConnections();
    }, []);
 
-   const fetchUserData = async () => {
-      // Implement fetching user data
+   const fetchSuggestedConnections = async () => {
+      setIsLoadingSuggestions(true);
+      setSuggestionsError(null);
+      try {
+         const token = localStorage.getItem("token");
+         if (!token) {
+            throw new Error("No authentication token found");
+         }
+
+         const response = await axios.post(
+            "http://localhost:5073/api/users/suggest-connections",
+            {
+               user: { ...user },
+               limit: 10,
+               considerSkills: true,
+               considerLearningGoals: false,
+            },
+            {
+               headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+               },
+            },
+         );
+
+         setSuggestedConnections(response.data);
+      } catch (error) {
+         console.error("Error fetching suggested connections:", error);
+         setSuggestionsError("Failed to load suggested connections. Please try again later.");
+      } finally {
+         setIsLoadingSuggestions(false);
+      }
    };
+
+   const filteredConnections = suggestedConnections.filter(
+      (connection) =>
+         connection.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         connection.title.toLowerCase().includes(searchTerm.toLowerCase()),
+   );
+
+   // useEffect(() => {
+   //    dispatch(fetchConnections()).catch((error) => {
+   //       console.error("Error fetching connections:", error);
+   //    });
+   // }, [dispatch]);
+
+   // const fetchSuggestedFriends = async () => {
+   //    // Implement fetching suggested friends
+   //    // For now, we'll use mock data
+   //    const mockFriends = [
+   //       { id: 1, name: "John Doe", interests: ["JavaScript", "React"], mutualFriends: 5, isFollowing: false },
+   //       { id: 2, name: "Jane Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3, isFollowing: true },
+   //       // Add more mock friends as needed
+   //    ];
+   //    setSuggestedFriends(mockFriends);
+   // };
 
    const handleEditClick = () => {
       setIsEditing(true);
    };
 
-   const handleSaveClick = () => {
-      // Here you would typically dispatch an action to update the user in your Redux store
-      // and send the updated data to your backend
-      dispatch({ type: "UPDATE_USER", payload: editedUser });
-      setIsEditing(false);
+   const handleSaveClick = async () => {
+      try {
+         const token = localStorage.getItem("token");
+         if (!token) {
+            throw new Error("No authentication token found");
+         }
+
+         const updatedUserData = {
+            username: editedUser.username,
+            email: editedUser.email,
+            profilePicture: editedUser.profilePicture,
+            title: editedUser.title,
+            location: editedUser.location,
+            bio: editedUser.bio,
+            learningGoals: editedUser.learningGoals,
+            skills: editedUser.skills,
+            work: editedUser.work,
+            education: editedUser.education,
+            website: editedUser.website,
+         };
+
+         const response = await axios.put("http://localhost:5073/api/users/profile", updatedUserData, {
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            },
+         });
+
+         if (response.status === 200) {
+            dispatch(setUser(response.data));
+            setIsEditing(false);
+         } else {
+            throw new Error("Failed to update profile");
+         }
+      } catch (error) {
+         console.error("Error updating profile:", error);
+         // Handle error (e.g., show error message to user)
+      }
    };
 
    const handleInputChange = (e) => {
       const { name, value } = e.target;
-      setEditedUser({ ...editedUser, [name]: value });
+      setEditedUser((prevUser) => ({
+         ...prevUser,
+         [name]: value,
+      }));
    };
 
-   if (!user) {
-      return <div>Please log in to view your profile.</div>;
-   }
+   const handleNestedInputChange = (e, nestedField) => {
+      const { name, value } = e.target;
+      setEditedUser((prevUser) => ({
+         ...prevUser,
+         [nestedField]: {
+            ...prevUser[nestedField],
+            [name]: value,
+         },
+      }));
+   };
 
-   const fetchSuggestedFriends = async () => {
-      // Implement fetching suggested friends
-      // For now, we'll use mock data
-      const mockFriends = [
-         { id: 1, name: "John Doe", interests: ["JavaScript", "React"], mutualFriends: 5, isFollowing: false },
-         { id: 2, name: "Jane Smith", interests: ["Python", "Machine Learning"], mutualFriends: 3, isFollowing: true },
-         // Add more mock friends as needed
-      ];
-      setSuggestedFriends(mockFriends);
+   const handleArrayInputChange = (e, field) => {
+      const { value } = e.target;
+      setEditedUser((prevUser) => ({
+         ...prevUser,
+         [field]: value
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+      }));
    };
 
    const handleFollow = async (friendId) => {
@@ -111,9 +187,15 @@ function UserProfile() {
          });
 
          if (response.ok) {
-            // Update the local state to reflect the change
-            setSuggestedFriends((prevFriends) =>
-               prevFriends.map((friend) => (friend.id === friendId ? { ...friend, isFollowing: true } : friend)),
+            const updatedUser = await response.json();
+            console.log("Updated user data:", updatedUser);
+
+            if (updatedUser && updatedUser.user) {
+               dispatch(setUser(updatedUser.user));
+            }
+            // Update local state
+            setSuggestedConnections((prevConnections) =>
+               prevConnections.map((connection) => (connection._id === friendId ? { ...connection, isFollowing: true } : connection)),
             );
          } else {
             console.error("Failed to follow user");
@@ -134,9 +216,16 @@ function UserProfile() {
          });
 
          if (response.ok) {
-            // Update the local state to reflect the change
-            setSuggestedFriends((prevFriends) =>
-               prevFriends.map((friend) => (friend.id === friendId ? { ...friend, isFollowing: false } : friend)),
+            const updatedUser = await response.json();
+
+            if (updatedUser && updatedUser.user) {
+               dispatch(setUser(updatedUser.user));
+            }
+
+            // Update local state
+            // Update local state
+            setSuggestedConnections((prevConnections) =>
+               prevConnections.map((connection) => (connection._id === friendId ? { ...connection, isFollowing: false } : connection)),
             );
          } else {
             console.error("Failed to unfollow user");
@@ -145,21 +234,86 @@ function UserProfile() {
          console.error("Error unfollowing user:", error);
       }
    };
+   const handleConnectionsClick = (tab) => {
+      setActiveTab(tab);
+      setShowConnectionsModal(true);
+   };
 
-   const filteredFriends = suggestedFriends.filter(
-      (friend) =>
-         friend.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-         friend.interests.some((interest) => interest.toLowerCase().includes(searchTerm.toLowerCase())),
-   );
+   const ConnectionsModal = () => {
+      let connections = [];
+      if (user && user?.followers && user?.following) {
+         connections = activeTab === "followers" ? user.followers : user.following;
+      }
+      return (
+         <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+               <div className={styles.modalHeader}>
+                  <h2>{activeTab === "followers" ? "Followers" : "Following"}</h2>
+                  <button className={styles.closeButton} onClick={() => setShowConnectionsModal(false)}>
+                     <FontAwesomeIcon icon={faTimes} />
+                  </button>
+               </div>
+               <div className={styles.tabButtons}>
+                  <button
+                     className={`${styles.tabButton} ${activeTab === "followers" ? styles.activeTab : ""}`}
+                     onClick={() => setActiveTab("followers")}>
+                     Followers
+                  </button>
+                  <button
+                     className={`${styles.tabButton} ${activeTab === "following" ? styles.activeTab : ""}`}
+                     onClick={() => setActiveTab("following")}>
+                     Following
+                  </button>
+               </div>
+               <ul className={styles.connectionsList}>
+                  {connections.length > 0 ? (
+                     connections.map((connection) => (
+                        <li key={connection.id} className={styles.connectionItem}>
+                           <img
+                              src={connection.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${connection.username}`}
+                              alt={connection.username}
+                              className={styles.connectionAvatar}
+                           />
+                           <div className={styles.connectionInfo}>
+                              <h4>{connection.username}</h4>
+                              <p>{connection.title}</p>
+                           </div>
+                           {activeTab === "followers" ? (
+                              <button className={styles.followBtn} onClick={() => handleFollow(connection.id)}>
+                                 <FontAwesomeIcon icon={faUserPlus} /> Follow
+                              </button>
+                           ) : (
+                              <button className={styles.unfollowBtn} onClick={() => handleUnfollow(connection.id)}>
+                                 <FontAwesomeIcon icon={faUserMinus} /> Unfollow
+                              </button>
+                           )}
+                        </li>
+                     ))
+                  ) : (
+                     <li className={styles.noConnectionsMessage}>
+                        {activeTab === "followers"
+                           ? "No followers found. Start engaging with the community to gain followers!"
+                           : "You're not following anyone yet. Explore and connect with other users!"}
+                     </li>
+                  )}
+               </ul>
+            </div>
+         </div>
+      );
+   };
 
    return (
       <div className={styles.userProfile}>
          <div className={styles.profileSection}>
             <div className={styles.profileHeader}>
-               <img src={`https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`} alt={user.username} className={styles.avatar} />
+               <img
+                  src={user.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`}
+                  alt={user.username}
+                  className={styles.avatar}
+               />
                <div className={styles.profileInfo}>
                   <h2 className={styles.name}>{user.username}</h2>
-                  <p className={styles.title}>{user.title}</p>
+                  <p className={styles.title}>{user.title ? user.title : user.role}</p>
                   <p className={styles.location}>
                      <FontAwesomeIcon icon={faMapMarkerAlt} /> {user.location}
                   </p>
@@ -172,17 +326,13 @@ function UserProfile() {
                <p>{user.bio}</p>
             </div>
             <div className={styles.stats}>
-               <div className={styles.stat}>
-                  <span className={styles.statNumber}>{user.learningHours}</span>
-                  <span className={styles.statLabel}>Learning Hours</span>
+               <div className={styles.stat} onClick={() => handleConnectionsClick("followers")}>
+                  <span className={styles.statNumber}>{user.followers?.length || 0}</span>
+                  <span className={styles.statLabel}>Followers</span>
                </div>
-               <div className={styles.stat}>
-                  <span className={styles.statNumber}>{user.coursesCompleted}</span>
-                  <span className={styles.statLabel}>Courses Completed</span>
-               </div>
-               <div className={styles.stat}>
-                  <span className={styles.statNumber}>{user.connections}</span>
-                  <span className={styles.statLabel}>Connections</span>
+               <div className={styles.stat} onClick={() => handleConnectionsClick("following")}>
+                  <span className={styles.statNumber}>{user.following?.length || 0}</span>
+                  <span className={styles.statLabel}>Following</span>
                </div>
             </div>
             <div className={styles.details}>
@@ -191,21 +341,21 @@ function UserProfile() {
                   <div>
                      <h4>Work</h4>
                      <p>
-                        {user.work.title} at {user.work.company}
+                        {user.work?.title} at {user.work?.company}
                      </p>
                      <p>
-                        {user.work.startDate} - {user.work.endDate}
+                        {user.work?.startDate} - {user.work?.endDate}
                      </p>
-                     <p>{user.work.description}</p>
+                     <p>{user.work?.description}</p>
                   </div>
                </div>
                <div className={styles.detailItem}>
                   <FontAwesomeIcon icon={faGraduationCap} className={styles.detailIcon} />
                   <div>
                      <h4>Education</h4>
-                     <p>{user.education.degree}</p>
+                     <p>{user.education?.degree}</p>
                      <p>
-                        {user.education.school}, {user.education.graduationYear}
+                        {user.education?.school}, {user.education?.graduationYear}
                      </p>
                   </div>
                </div>
@@ -213,7 +363,7 @@ function UserProfile() {
                   <FontAwesomeIcon icon={faCode} className={styles.detailIcon} />
                   <div>
                      <h4>Skills</h4>
-                     <p>{user.skills.join(", ")}</p>
+                     <p>{user.skills?.join(", ")}</p>
                   </div>
                </div>
                <div className={styles.detailItem}>
@@ -228,91 +378,54 @@ function UserProfile() {
             </div>
          </div>
 
-         {/* <div className={styles.friendSection}>
-            <h3>Find Friends</h3>
-            <div className={styles.searchBar}>
-               <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-               <input
-                  type='text'
-                  placeholder='Search friends by name or interest...'
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={styles.searchInput}
-               />
-            </div>
-
-            <h3>Suggested Friends</h3>
-            {filteredFriends.length === 0 ? (
-               <p className={styles.noResults}>No friends found matching your search.</p>
-            ) : (
-               <ul className={styles.friendList}>
-                  {filteredFriends.map((friend) => (
-                     <li key={friend.id} className={styles.friendItem}>
-                        <img
-                           src={`https://api.dicebear.com/6.x/initials/svg?seed=${friend.name}`}
-                           alt={friend.name}
-                           className={styles.friendAvatar}
-                        />
-                        <div className={styles.friendInfo}>
-                           <h4>{friend.name}</h4>
-                           <p className={styles.interests}>
-                              <FontAwesomeIcon icon={faCode} className={styles.interestIcon} />
-                              {friend.interests.join(", ")}
-                           </p>
-                           <p className={styles.mutualFriends}>{friend.mutualFriends} mutual friends</p>
-                        </div>
-                        <button className={styles.addFriendBtn}>
-                           <FontAwesomeIcon icon={faUserPlus} />
-                           Add Friend
-                        </button>
-                     </li>
-                  ))}
-               </ul>
-            )}
-         </div> */}
-
          <div className={styles.suggestedFriendsSection}>
             <h3>Suggested Connections</h3>
             <div className={styles.searchBar}>
                <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
                <input type='text' placeholder='Search connections...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
-            {filteredFriends.length === 0 ? (
+            {isLoadingSuggestions ? (
+               <p className={styles.loadingText}>Loading suggested connections...</p>
+            ) : suggestionsError ? (
+               <p className={styles.errorMessage}>{suggestionsError}</p>
+            ) : filteredConnections.length === 0 ? (
                <p className={styles.noResults}>No connections found matching your search.</p>
             ) : (
                <ul className={styles.friendList}>
-                  {filteredFriends.map((friend) => (
-                     <li key={friend.id} className={styles.friendItem}>
+                  {filteredConnections.map((connection) => (
+                     <li key={connection._id} className={styles.friendItem}>
                         <img
-                           src={`https://api.dicebear.com/6.x/initials/svg?seed=${friend.name}`}
-                           alt={friend.name}
+                           src={connection.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${connection.username}`}
+                           alt={connection.username}
                            className={styles.friendAvatar}
                         />
                         <div className={styles.friendInfo}>
-                           <h4>{friend.name}</h4>
-                           <p className={styles.interests}>
-                              <FontAwesomeIcon icon={faCode} className={styles.interestIcon} />
-                              {friend.interests.join(", ")}
+                           <h4>{connection.username}</h4>
+                           <p className={styles.title}>{connection.title}</p>
+                           <p className={styles.commonInterests}>
+                              <FontAwesomeIcon icon={faLightbulb} className={styles.interestIcon} />
+                              {connection.commonInterests} common interests
                            </p>
+                           <ul className={styles.reasons}>
+                              {connection.reasons.map((reason, index) => (
+                                 <li key={index}>
+                                    <FontAwesomeIcon icon={faCode} className={styles.reasonIcon} />
+                                    {reason}
+                                 </li>
+                              ))}
+                           </ul>
                         </div>
-                        {friend.isFollowing ? (
-                           <button className={styles.unfollowBtn} onClick={() => handleUnfollow(friend.id)}>
-                              <FontAwesomeIcon icon={faUserMinus} />
-                              Unfollow
-                           </button>
-                        ) : (
-                           <button className={styles.followBtn} onClick={() => handleFollow(friend.id)}>
-                              <FontAwesomeIcon icon={faUserPlus} />
-                              Follow
-                           </button>
-                        )}
+                        <button className={styles.followBtn} onClick={() => handleFollow(connection._id)}>
+                           <FontAwesomeIcon icon={faUserPlus} />
+                           Follow
+                        </button>
                      </li>
                   ))}
                </ul>
             )}
          </div>
 
-         {isEditing && (
+         {isEditing && editedUser && (
             <div className={styles.editModal}>
                <div className={styles.editModalContent}>
                   <div className={styles.editModalHeader}>
@@ -322,66 +435,101 @@ function UserProfile() {
                      </button>
                   </div>
                   <input type='text' name='username' value={editedUser.username} onChange={handleInputChange} placeholder='Username' />
-                  <input type='text' name='title' value={editedUser.title} onChange={handleInputChange} placeholder='Title' />
+                  <input type='email' name='email' value={editedUser.email} onChange={handleInputChange} placeholder='Email' />
+                  <input
+                     type='text'
+                     name='profilePicture'
+                     value={editedUser.profilePicture}
+                     onChange={handleInputChange}
+                     placeholder='Profile Picture URL'
+                  />
+                  <input
+                     type='text'
+                     name='title'
+                     value={editedUser.title || ""}
+                     onChange={handleInputChange}
+                     placeholder='Your Role (eg. React Developer)'
+                  />
                   <input type='text' name='location' value={editedUser.location} onChange={handleInputChange} placeholder='Location' />
                   <textarea name='bio' value={editedUser.bio} onChange={handleInputChange} placeholder='Bio' />
                   <input
                      type='text'
-                     name='work.title'
-                     value={editedUser.work.title}
-                     onChange={handleInputChange}
-                     placeholder='Work Title'
-                  />
-                  <input
-                     type='text'
-                     name='work.company'
-                     value={editedUser.work.company}
-                     onChange={handleInputChange}
-                     placeholder='Company'
-                  />
-                  <input
-                     type='text'
-                     name='work.startDate'
-                     value={editedUser.work.startDate}
-                     onChange={handleInputChange}
-                     placeholder='Start Date'
-                  />
-                  <input
-                     type='text'
-                     name='work.endDate'
-                     value={editedUser.work.endDate}
-                     onChange={handleInputChange}
-                     placeholder='End Date'
-                  />
-                  <input
-                     type='text'
-                     name='education.degree'
-                     value={editedUser.education.degree}
-                     onChange={handleInputChange}
-                     placeholder='Degree'
-                  />
-                  <input
-                     type='text'
-                     name='education.school'
-                     value={editedUser.education.school}
-                     onChange={handleInputChange}
-                     placeholder='School'
-                  />
-                  <input
-                     type='text'
-                     name='education.graduationYear'
-                     value={editedUser.education.graduationYear}
-                     onChange={handleInputChange}
-                     placeholder='Graduation Year'
+                     name='learningGoals'
+                     value={editedUser.learningGoals?.join(", ") || ""}
+                     onChange={(e) => handleArrayInputChange(e, "learningGoals")}
+                     placeholder='Learning Goals (comma-separated)'
                   />
                   <input
                      type='text'
                      name='skills'
-                     value={editedUser.skills.join(", ")}
-                     onChange={(e) => setEditedUser({ ...editedUser, skills: e.target.value.split(", ") })}
+                     value={editedUser.skills?.join(", ") || ""}
+                     onChange={(e) => handleArrayInputChange(e, "skills")}
                      placeholder='Skills (comma-separated)'
                   />
-                  <input type='text' name='website' value={editedUser.website} onChange={handleInputChange} placeholder='Website' />
+                  <h4>Work</h4>
+                  <input
+                     type='text'
+                     name='title'
+                     value={editedUser.work?.title || ""}
+                     onChange={(e) => handleNestedInputChange(e, "work")}
+                     placeholder='Work Title'
+                  />
+                  <input
+                     type='text'
+                     name='company'
+                     value={editedUser.work?.company || ""}
+                     onChange={(e) => handleNestedInputChange(e, "work")}
+                     placeholder='Company'
+                  />
+                  <input
+                     type='text'
+                     name='startDate'
+                     value={editedUser.work?.startDate || ""}
+                     onChange={(e) => handleNestedInputChange(e, "work")}
+                     placeholder='Start Date'
+                  />
+                  <input
+                     type='text'
+                     name='endDate'
+                     value={editedUser.work?.endDate || ""}
+                     onChange={(e) => handleNestedInputChange(e, "work")}
+                     placeholder='End Date'
+                  />
+                  <textarea
+                     name='description'
+                     value={editedUser.work?.description || ""}
+                     onChange={(e) => handleNestedInputChange(e, "work")}
+                     placeholder='Work Description'
+                  />
+                  <h4>Education</h4>
+                  <input
+                     type='text'
+                     name='degree'
+                     value={editedUser.education?.degree || ""}
+                     onChange={(e) => handleNestedInputChange(e, "education")}
+                     placeholder='Degree'
+                  />
+                  <input
+                     type='text'
+                     name='school'
+                     value={editedUser.education?.school || ""}
+                     onChange={(e) => handleNestedInputChange(e, "education")}
+                     placeholder='School'
+                  />
+                  <input
+                     type='text'
+                     name='graduationYear'
+                     value={editedUser.education?.graduationYear || ""}
+                     onChange={(e) => handleNestedInputChange(e, "education")}
+                     placeholder='Graduation Year'
+                  />
+                  <input
+                     type='text'
+                     name='website'
+                     value={editedUser.website || ""}
+                     onChange={handleInputChange}
+                     placeholder='Your Website Link (eg. www.xyz.com)'
+                  />
                   <div className={styles.editModalButtons}>
                      <button onClick={() => setIsEditing(false)}>Cancel</button>
                      <button onClick={handleSaveClick}>Save</button>
@@ -389,6 +537,8 @@ function UserProfile() {
                </div>
             </div>
          )}
+
+         {showConnectionsModal && <ConnectionsModal />}
       </div>
    );
 }

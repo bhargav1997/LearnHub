@@ -2,19 +2,21 @@ import { useSelector } from "react-redux";
 import styles from "./Home.module.css";
 
 function Profile() {
-   const user = useSelector((state) => state.user.currentUser);
+   const { user } = useSelector((state) => state.user);
 
-   if (!user) {
-      return <div>Please log in to view your profile.</div>;
-   }
+   console.log(user);
 
    return (
       <div className={styles.userProfile}>
          <h2 className={styles.title}>Your Profile</h2>
          <div className={styles.profileInfo}>
-            <img src='https://api.dicebear.com/6.x/initials/svg?seed=NM' alt='Nityam Mishra' className={styles.avatar} />
+            <img
+               src={user.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${user.username}`}
+               alt={user.username}
+               className={styles.avatar}
+            />
             <h3 className={styles.name}>{user.username}</h3>
-            <p className={styles.bio}>Continue Your Journey And Achieve Your Target</p>
+            <p className={styles.bio}>{user.bio}</p>
          </div>
          <div className={styles.hoursSpent}>
             <h4>30 Hours Spent</h4>

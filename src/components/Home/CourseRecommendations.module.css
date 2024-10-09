@@ -1,15 +1,23 @@
 .recommendationsContainer {
    background-color: #ffffff;
-   border-radius: 8px;
-   padding: 20px;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-   margin-bottom: 20px;
+   border-radius: 16px;
+   padding: 32px;
+   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+   margin-bottom: 40px;
 }
 
 .recommendationsTitle {
-   color: #333;
+   color: #333333;
    font-size: 24px;
-   margin-bottom: 20px;
+   margin-bottom: 30px;
+   display: flex;
+   align-items: center;
+}
+
+.aiIcon {
+   color: #7c4dff;
+   margin-right: 16px;
+   font-size: 24px;
 }
 
 .contentList {
@@ -18,103 +26,131 @@
 }
 
 .contentItem {
-   display: flex;
-   justify-content: space-between;
-   align-items: flex-start;
-   padding: 15px;
-   border-bottom: 1px solid #eee;
+   background-color: #f8f9fa;
+   border-radius: 12px;
+   padding: 28px;
+   margin-bottom: 24px;
+   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.contentItem:last-child {
-   border-bottom: none;
+.contentItem:hover {
+   box-shadow: 0 8px 24px rgba(124, 77, 255, 0.15);
+   transform: translateY(-4px);
 }
 
-.contentInfo {
-   flex: 1;
-}
-
-.contentInfo h3 {
-   font-size: 18px;
-   color: #333;
-   margin-bottom: 5px;
+.contentTitle {
+   font-size: 24px;
+   color: #333333;
+   margin-bottom: 16px;
+   font-weight: 600;
 }
 
 .contentType {
-   font-size: 14px;
+   font-size: 16px;
    color: #7c4dff;
-   font-weight: bold;
-   margin-bottom: 5px;
-}
-
-.contentLevel,
-.contentRating,
-.contentDuration,
-.contentAuthor,
-.contentPages,
-.addedBy {
-   font-size: 14px;
-   color: #666;
+   font-weight: 600;
+   margin-bottom: 16px;
+   text-transform: uppercase;
    display: flex;
    align-items: center;
-   margin-top: 5px;
+}
+
+.contentDetails {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+   gap: 16px;
+   margin-bottom: 20px;
+}
+
+.contentRating, .contentDuration, .contentLink, .contentAddedBy {
+   font-size: 16px;
+   color: #666666;
+   display: flex;
+   align-items: center;
 }
 
 .icon {
    color: #7c4dff;
-   margin-right: 5px;
-   width: 16px;
+   margin-right: 12px;
+   width: 20px;
+   height: 20px;
 }
 
-.addedBy {
-   font-style: italic;
-   margin-top: 10px;
-}
-
-.contentActions {
-   display: flex;
-   flex-direction: column;
-   align-items: flex-end;
-}
-
-.linkButton,
-.addButton {
-   background-color: #7c4dff;
-   color: white;
-   border: none;
-   padding: 8px 15px;
-   border-radius: 4px;
-   cursor: pointer;
-   transition: background-color 0.3s;
+.contentLink a {
+   color: #7c4dff;
    text-decoration: none;
-   display: inline-flex;
-   align-items: center;
-   font-size: 14px;
-   margin-bottom: 10px;
+   font-weight: 500;
 }
 
-.linkButton:hover,
-.addButton:hover {
-   background-color: #6a3de8;
+.contentLink a:hover {
+   text-decoration: underline;
 }
 
-.linkButton svg {
-   margin-right: 5px;
+.aiReason {
+   background-color: rgba(124, 77, 255, 0.1);
+   border-radius: 8px;
+   padding: 16px;
+   margin-top: 20px;
+   font-size: 16px;
+   color: #333333;
+   display: flex;
+   align-items: flex-start;
+}
+
+.aiReason .icon {
+   margin-top: 2px;
+}
+
+.errorMessage {
+   color: #dc3545;
+   font-size: 16px;
+   text-align: center;
+   padding: 20px;
+   background-color: #f8d7da;
+   border-radius: 6px;
+   margin-top: 20px;
+}
+
+.loadingText {
+   text-align: center;
+   font-size: 18px;
+   color: #666666;
+}
+
+.errorText {
+   color: #856404;
+   background-color: #fff3cd;
+   border: 1px solid #ffeeba;
+   border-radius: 4px;
+   padding: 12px;
+   margin-bottom: 20px;
+   text-align: center;
+   animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+   0%, 100% { opacity: 0; }
+   10%, 90% { opacity: 1; }
 }
 
 @media (max-width: 768px) {
+   .recommendationsContainer {
+      padding: 16px;
+   }
+
    .contentItem {
-      flex-direction: column;
+      padding: 12px;
    }
 
    .contentActions {
-      flex-direction: row;
-      justify-content: space-between;
-      width: 100%;
-      margin-top: 15px;
+      flex-direction: column;
    }
 
    .linkButton,
    .addButton {
-      margin-bottom: 0;
+      width: 100%;
+      margin-bottom: 8px;
+      margin-right: 0;
+      justify-content: center;
    }
 }

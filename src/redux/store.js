@@ -9,6 +9,7 @@ const store = configureStore({
       user: userReducer,
       learningJourney: learningJourneyReducer,
    },
+   // `thunk` is included by default, no need to add it manually.
 });
 
 export default store;

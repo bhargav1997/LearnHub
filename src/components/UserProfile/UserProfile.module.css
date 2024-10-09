@@ -35,7 +35,7 @@
 
 .searchBar input {
    width: 100%;
-   padding: 8px 30px 8px 35px; /* Increased left padding to make room for the icon */
+   padding: 8px 30px 8px 35px;
    border: 1px solid #ddd;
    border-radius: 4px;
    font-size: 14px;
@@ -43,7 +43,7 @@
 
 .searchIcon {
    position: absolute;
-   left: 10px; /* Changed from right to left */
+   left: 10px;
    top: 50%;
    transform: translateY(-50%);
    color: #888;
@@ -58,19 +58,17 @@
 .friendItem {
    display: flex;
    align-items: center;
-   padding: 10px 0;
-   border-bottom: 1px solid #eee;
-}
-
-.friendItem:last-child {
-   border-bottom: none;
+   margin-bottom: 1rem;
+   padding: 1rem;
+   background-color: #f8f9fa;
+   border-radius: 8px;
 }
 
 .friendAvatar {
-   width: 40px;
-   height: 40px;
+   width: 50px;
+   height: 50px;
    border-radius: 50%;
-   margin-right: 10px;
+   margin-right: 1rem;
 }
 
 .friendInfo {
@@ -83,19 +81,37 @@
    margin: 0 0 5px 0;
 }
 
-.interests {
-   font-size: 12px;
-   color: #666;
-   margin: 0;
+.title, .interests, .commonInterests {
+   font-size: 0.9rem;
+   margin: 0.2rem 0;
 }
 
-.interestIcon {
-   margin-right: 5px;
+.title {
+   color: #666;
+}
+
+.interests, .commonInterests {
+   color: #007bff;
+}
+
+.reasons {
+   list-style-type: none;
+   padding: 0;
+   margin: 0.5rem 0;
+}
+
+.reasons li {
+   font-size: 0.8rem;
+   color: #28a745;
+   margin: 0.2rem 0;
+}
+
+.interestIcon, .reasonIcon {
+   margin-right: 0.5rem;
    color: #7c4dff;
 }
 
-.followBtn,
-.unfollowBtn {
+.followBtn, .unfollowBtn {
    padding: 5px 10px;
    border: none;
    border-radius: 4px;
@@ -122,11 +138,15 @@
    opacity: 0.8;
 }
 
-.noResults {
+.noResults, .loadingText, .errorMessage {
    color: #888;
    font-size: 14px;
    text-align: center;
    margin-top: 20px;
+}
+
+.errorMessage {
+   color: #dc3545;
 }
 
 @media (max-width: 768px) {
@@ -287,7 +307,7 @@
 
 .friendItem {
    display: flex;
-   align-items: center;
+   align-items: flex-start;
    padding: 15px;
    border-bottom: 1px solid #eee;
 }
@@ -495,4 +515,201 @@
 .followBtn:hover,
 .unfollowBtn:hover {
    opacity: 0.8;
+}
+
+.modalOverlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+}
+
+.modalContent {
+   background-color: #fff;
+   border-radius: 8px;
+   padding: 20px;
+   width: 90%;
+   max-width: 500px;
+   max-height: 80vh;
+   overflow-y: auto;
+}
+
+.modalHeader {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 10px;
+}
+
+.modalHeader h2 {
+   margin: 0;
+   color: #333;
+}
+
+.tabButtons {
+   display: flex;
+   justify-content: center;
+   margin-bottom: 20px;
+}
+
+.tabButton {
+   background: none;
+   border: none;
+   padding: 10px 20px;
+   font-size: 16px;
+   color: #888;
+   cursor: pointer;
+   transition: color 0.3s, border-bottom 0.3s;
+}
+
+.tabButton.activeTab {
+   color: #7c4dff;
+   border-bottom: 2px solid #7c4dff;
+}
+
+.connectionsList {
+   list-style-type: none;
+   padding: 0;
+}
+
+.noConnectionsMessage {
+   font-size: 14px;
+   text-align: center;
+   color: #888;
+}
+
+.connectionItem {
+   display: flex;
+   align-items: center;
+   padding: 10px 0;
+   border-bottom: 1px solid #eee;
+}
+
+.connectionItem:last-child {
+   border-bottom: none;
+}
+
+.connectionAvatar {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   margin-right: 15px;
+}
+
+.connectionInfo {
+   flex-grow: 1;
+}
+
+.connectionInfo h4 {
+   margin: 0 0 5px 0;
+   color: #333;
+}
+
+.connectionInfo p {
+   margin: 0;
+   color: #888;
+   font-size: 14px;
+}
+
+.stat {
+   cursor: pointer;
+   transition: opacity 0.3s;
+}
+
+.stat:hover {
+   opacity: 0.8;
+}
+
+.suggestedConnectionsSection {
+   margin-top: 2rem;
+}
+
+.connectionList {
+   list-style-type: none;
+   padding: 0;
+}
+
+.connectionItem {
+   display: flex;
+   align-items: center;
+   margin-bottom: 1rem;
+   padding: 1rem;
+   background-color: #f8f9fa;
+   border-radius: 8px;
+}
+
+.connectionAvatar {
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   margin-right: 1rem;
+}
+
+.connectionInfo {
+   flex-grow: 1;
+}
+
+.connectionInfo h4 {
+   margin: 0;
+   font-size: 1.1rem;
+}
+
+.connectionInfo p {
+   margin: 0;
+   font-size: 0.9rem;
+   color: #6c757d;
+}
+
+.followBtn {
+   background-color: #007bff;
+   color: white;
+   border: none;
+   padding: 0.5rem 1rem;
+   border-radius: 4px;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.followBtn:hover {
+   background-color: #0056b3;
+}
+
+.errorMessage {
+   color: #dc3545;
+   font-size: 0.9rem;
+}
+
+.title {
+   font-size: 0.9rem;
+   color: #666;
+   margin: 0.2rem 0;
+}
+
+.commonInterests {
+   font-size: 0.8rem;
+   color: #007bff;
+   margin: 0.2rem 0;
+}
+
+.reasons {
+   list-style-type: none;
+   padding: 0;
+   margin: 0.5rem 0;
+}
+
+.reasons li {
+   font-size: 0.8rem;
+   color: #28a745;
+   margin: 0.2rem 0;
+}
+
+.interestIcon,
+.reasonIcon {
+   margin-right: 0.5rem;
 }

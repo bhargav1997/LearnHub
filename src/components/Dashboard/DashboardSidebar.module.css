@@ -1,0 +1,161 @@
+:root {
+   --primary-color: #7c4dff;
+   --secondary-color: #5e35b1;
+   --background-color: #f5f7fa;
+   --text-color: #333333;
+   --text-light: #666666;
+   --border-color: #e0e0e0;
+   --card-background: #ffffff;
+   --hover-color: #ede7f6;
+   --streak-color: #ff6d00;
+}
+
+.sideContent {
+   background-color: var(--card-background);
+   border-radius: 12px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   overflow: hidden;
+}
+
+.userProfile {
+   padding: 25px;
+}
+
+.profileHeader {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+}
+
+.profileHeader h3 {
+   font-size: 1.4rem;
+   color: var(--text-color);
+   font-weight: 600;
+}
+
+.profileHeader button {
+   background: none;
+   border: none;
+   color: var(--primary-color);
+   font-size: 1.2rem;
+   cursor: pointer;
+   transition: transform 0.3s ease;
+}
+
+.profileHeader button:hover {
+   transform: translateY(2px);
+}
+
+.profileContent {
+   text-align: center;
+}
+
+.avatar {
+   width: 100px;
+   height: 100px;
+   border-radius: 50%;
+   border: 3px solid var(--primary-color);
+   margin-bottom: 15px;
+}
+
+.profileContent h4 {
+   font-size: 1.2rem;
+   color: var(--text-color);
+   margin-bottom: 8px;
+}
+
+.profileContent p {
+   font-size: 0.95rem;
+   color: var(--text-light);
+   margin-bottom: 20px;
+}
+
+.hoursSpent {
+   background-color: var(--hover-color);
+   border-radius: 8px;
+   padding: 15px;
+   margin-bottom: 20px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.hoursSpent h5 {
+   font-size: 1rem;
+   color: var(--text-color);
+   margin: 0;
+}
+
+.hoursSpent select {
+   padding: 5px 10px;
+   border-radius: 4px;
+   border: 1px solid var(--border-color);
+   background-color: var(--card-background);
+   color: var(--text-color);
+   font-size: 0.9rem;
+}
+
+.weeklyChart {
+   height: 150px;
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-end;
+   margin-bottom: 20px;
+}
+
+.chartBar {
+   width: 12%;
+   background-color: var(--primary-color);
+   border-radius: 4px 4px 0 0;
+   transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.chartBar:hover {
+   background-color: var(--secondary-color);
+}
+
+.streaks {
+   background-color: var(--hover-color);
+   border-radius: 8px;
+   padding: 15px;
+}
+
+.streakItem {
+   display: flex;
+   align-items: center;
+   margin-bottom: 15px;
+}
+
+.streakItem:last-child {
+   margin-bottom: 0;
+}
+
+.streakIcon {
+   width: 40px;
+   height: 40px;
+   border-radius: 50%;
+   background-color: var(--streak-color);
+   color: white;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 1.2rem;
+   margin-right: 15px;
+}
+
+.streakInfo {
+   flex: 1;
+}
+
+.streakInfo strong {
+   display: block;
+   font-size: 1rem;
+   color: var(--text-color);
+   margin-bottom: 4px;
+}
+
+.streakInfo span {
+   font-size: 0.9rem;
+   color: var(--text-light);
+}

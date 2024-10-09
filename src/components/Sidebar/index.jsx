@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
    faHome,
@@ -19,10 +19,13 @@ import { deleteUser } from "../../redux/user/userHandle";
 function Sidebar() {
    const location = useLocation();
    const dispatch = useDispatch();
+   const navigate = useNavigate();
 
    const handleLogout = () => {
-      dispatch(deleteUser(null));
-      localStorage.removeItem("currentUser");
+      dispatch(deleteUser());
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/login");
    };
 
    const navItems = [

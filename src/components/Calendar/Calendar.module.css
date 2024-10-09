@@ -1,131 +1,219 @@
 .calendarContainer {
-   padding: 20px;
-   background-color: #f8f9fa;
-   border-radius: 10px;
-   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+  /* background-color: #f8f9fa; */
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendarHeader h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.addEventButton {
+  background-color: #7c4dff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.addEventButton:hover {
+  background-color: #6a3de8;
+}
+
+.calendarContent {
+  flex-grow: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .calendar {
-   font-family: Arial, sans-serif;
+  height: 100%;
 }
 
-/* Override react-big-calendar styles */
-:global(.rbc-header) {
-   background-color: #7c4dff;
-   color: white;
-   padding: 10px;
+.customToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #7c4dff;
+  color: white;
 }
 
-:global(.rbc-event) {
-   background-color: #7c4dff;
-   border: none;
+.toolbarButton {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 10px;
+  transition: background-color 0.3s;
 }
 
-:global(.rbc-today) {
-   background-color: #e6e6ff;
+.toolbarButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.rbc-btn-group button) {
-   color: #7c4dff;
+.toolbarLabel {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .modalOverlay {
-   position: fixed;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background-color: rgba(0, 0, 0, 0.5);
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal {
-   background-color: white;
-   padding: 30px;
-   border-radius: 10px;
-   width: 400px;
-   max-width: 90%;
-   position: relative;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .closeButton {
-   position: absolute;
-   top: 10px;
-   right: 10px;
-   background: none;
-   border: none;
-   font-size: 20px;
-   cursor: pointer;
-   color: #666;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
 }
 
 .modal h2 {
-   margin-top: 0;
-   margin-bottom: 20px;
-   color: #7c4dff;
-   font-size: 24px;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #7c4dff;
+  font-size: 24px;
 }
 
 .formGroup {
-   margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .formGroup label {
-   display: block;
-   margin-bottom: 5px;
-   font-weight: bold;
-   color: #333;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
 }
 
 .formGroup input,
 .formGroup textarea {
-   width: 100%;
-   padding: 10px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
-   font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .formGroup textarea {
-   height: 100px;
-   resize: vertical;
+  height: 100px;
+  resize: vertical;
 }
 
 .formActions {
-   display: flex;
-   justify-content: flex-end;
-   gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .submitButton,
 .cancelButton {
-   padding: 10px 20px;
-   border: none;
-   border-radius: 4px;
-   cursor: pointer;
-   font-size: 14px;
-   font-weight: bold;
-   transition: background-color 0.3s;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .submitButton {
-   background-color: #7c4dff;
-   color: white;
+  background-color: #7c4dff;
+  color: white;
 }
 
 .submitButton:hover {
-   background-color: #6a3de8;
+  background-color: #6a3de8;
 }
 
 .cancelButton {
-   background-color: #f0f0f0;
-   color: #333;
+  background-color: #f0f0f0;
+  color: #333;
 }
 
 .cancelButton:hover {
-   background-color: #e0e0e0;
+  background-color: #e0e0e0;
+}
+
+/* Override react-big-calendar styles */
+:global(.rbc-header) {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 10px;
+  font-weight: bold;
+}
+
+:global(.rbc-event) {
+  background-color: #7c4dff;
+  border: none;
+}
+
+:global(.rbc-today) {
+  background-color: #e6e6ff;
+}
+
+:global(.rbc-btn-group button) {
+  color: #7c4dff;
+}
+
+:global(.rbc-off-range-bg) {
+  background-color: #f8f9fa;
+}
+
+:global(.rbc-date-cell) {
+  padding: 5px;
+  font-size: 14px;
+}
+
+:global(.rbc-month-view) {
+  border: none;
+}
+
+:global(.rbc-month-row + .rbc-month-row) {
+  border-top: 1px solid #e0e0e0;
+}
+
+:global(.rbc-day-bg + .rbc-day-bg) {
+  border-left: 1px solid #e0e0e0;
 }

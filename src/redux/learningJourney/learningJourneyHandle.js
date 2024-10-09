@@ -1,4 +1,4 @@
-import { setJourneys, addJourney, updateJourney, setSelectedJourney, clearJourneys } from "./learningJourneySlice";
+import { setJourneys, addJourney, updateJourney, setSelectedJourney, clearJourneys, deleteJourney } from "./learningJourneySlice";
 
 export const getJourneysToUser = (journeys) => async (dispatch) => {
    dispatch(setJourneys(journeys));
@@ -18,4 +18,8 @@ export const updateJourneyToUser = (journey) => async (dispatch) => {
 
 export const setSelectedJourneyToUser = (journey) => async (dispatch) => {
    dispatch(setSelectedJourney(journey));
+};
+
+export const deleteJourneyFromUser = (journeyId) => (dispatch) => {
+   dispatch(deleteJourney(journeyId));
 };

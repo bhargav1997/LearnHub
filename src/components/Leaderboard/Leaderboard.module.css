@@ -1,6 +1,6 @@
 .leaderboardContainer {
    padding: 20px;
-   background-color: #f8f9fa;
+   /* background-color: #f8f9fa; */
    height: 100%;
    overflow-y: auto;
 }

@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/user/userSlice";
+import { setUser, setLoading } from "../../redux/user/userSlice";
 import styles from "./Login.module.css";
-import LoadingSpinner from "../LoadingSpinner";
+// import { fetchConnections } from "../../redux/user/userHandle";
 
 function Login() {
-   const [isLoading, setIsLoading] = useState(false);
    const [formData, setFormData] = useState({
       email: "",
       password: "",
@@ -15,34 +14,9 @@ function Login() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
 
-   useEffect(() => {
-      const token = localStorage.getItem("token");
-      if (token) {
-         // Verify token and get user info
-         fetch("http://localhost:5073/api/users/profile", {
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         })
-            .then((res) => res.json())
-            .then((data) => {
-               if (data.id) {
-                  dispatch(setUser(data));
-                  navigate("/");
-               }
-            })
-            .catch((err) => console.error(err));
-      }
-   }, [dispatch, navigate]);
-
-   const handleChange = (e) => {
-      const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
-      setFormData({ ...formData, [e.target.name]: value });
-   };
-
    const handleSubmit = async (e) => {
       e.preventDefault();
-      setIsLoading(true);
+      dispatch(setLoading(true));
 
       try {
          const response = await fetch("http://localhost:5073/api/users/login", {
@@ -50,19 +24,15 @@ function Login() {
             headers: {
                "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-               email: formData.email,
-               password: formData.password,
-            }),
+            body: JSON.stringify(formData),
          });
 
          const data = await response.json();
 
          if (response.ok) {
+            localStorage.setItem("token", data.token);
             dispatch(setUser(data.user));
-            if (formData.rememberMe) {
-               localStorage.setItem("token", data.token);
-            }
+            // dispatch(fetchConnections());
             navigate("/");
          } else {
             alert(data.message || "Login failed");
@@ -71,13 +41,14 @@ function Login() {
          console.error("Login error:", error);
          alert("An error occurred during login");
       } finally {
-         setIsLoading(false);
+         dispatch(setLoading(false));
       }
    };
 
-   if (isLoading) {
-      return <LoadingSpinner />;
-   }
+   const handleChange = (e) => {
+      const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+      setFormData({ ...formData, [e.target.name]: value });
+   };
 
    return (
       <div className={styles.loginContainer}>
@@ -91,7 +62,7 @@ function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  autoComplete='on'
+                  autoComplete='email'
                />
                <input
                   type='password'
@@ -100,10 +71,16 @@ function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  autoComplete='on'
+                  autoComplete='current-password'
                />
                <div className={styles.rememberMe}>
-                  <input type='checkbox' name='rememberMe' id='rememberMe' checked={formData.rememberMe} onChange={handleChange} />
+                  <input 
+                     type='checkbox' 
+                     name='rememberMe' 
+                     id='rememberMe' 
+                     checked={formData.rememberMe} 
+                     onChange={handleChange} 
+                  />
                   <label htmlFor='rememberMe'>Remember Me</label>
                </div>
                <button type='submit'>Login</button>

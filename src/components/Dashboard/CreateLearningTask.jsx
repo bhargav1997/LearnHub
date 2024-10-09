@@ -4,7 +4,7 @@ import { faClock, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./CreateLearningTask.module.css";
 import PropTypes from "prop-types";
 
-function CreateLearningTask({ onClose }) {
+function CreateLearningTask({ onClose, handleSubmit }) {
    const [taskType, setTaskType] = useState("Course");
    const [taskTitle, setTaskTitle] = useState("");
    const [sourceLink, setSourceLink] = useState("");
@@ -18,6 +18,7 @@ function CreateLearningTask({ onClose }) {
       every3Hours: false,
    });
    const [personalGoals, setPersonalGoals] = useState("");
+   const [initialProgress, setInitialProgress] = useState(0);
 
    useEffect(() => {
       // Reset fields when task type changes
@@ -26,10 +27,10 @@ function CreateLearningTask({ onClose }) {
       setChapters("");
    }, [taskType]);
 
-   const handleSubmit = (e) => {
+   const handleSubmitData = (e) => {
       e.preventDefault();
       // Handle form submission logic here
-      console.log({
+      let newTask = {
          taskType,
          taskTitle,
          sourceLink,
@@ -39,8 +40,9 @@ function CreateLearningTask({ onClose }) {
          chapters,
          reminders,
          personalGoals,
-      });
-      onClose();
+         progress: initialProgress,
+      };
+      handleSubmit(newTask);
    };
 
    const renderContentSpecificFields = () => {
@@ -119,7 +121,7 @@ function CreateLearningTask({ onClose }) {
             <button className={styles.closeButton} onClick={onClose}>
                <FontAwesomeIcon icon={faTimes} />
             </button>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmitData}>
                <div className={styles.formGroup}>
                   <label htmlFor='taskType'>Type of the Content</label>
                   <select id='taskType' value={taskType} onChange={(e) => setTaskType(e.target.value)}>
@@ -161,6 +163,18 @@ function CreateLearningTask({ onClose }) {
                      onChange={(e) => setCompletionDays(e.target.value)}
                   />
                   <small>In Numbers (Time to complete in days)</small>
+               </div>
+               <div className={styles.formGroup}>
+                  <label htmlFor='initialProgress'>Initial Progress</label>
+                  <input
+                     type='number'
+                     id='initialProgress'
+                     min='0'
+                     max='100'
+                     placeholder='Enter initial progress (%)'
+                     value={initialProgress}
+                     onChange={(e) => setInitialProgress(Number(e.target.value))}
+                  />
                </div>
                <div className={styles.formGroup}>
                   <label>
@@ -217,6 +231,7 @@ function CreateLearningTask({ onClose }) {
 
 CreateLearningTask.propTypes = {
    onClose: PropTypes.func.isRequired,
+   handleSubmit: PropTypes.func.isRequired,
 };
 
 export default CreateLearningTask;

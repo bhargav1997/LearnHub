@@ -1,174 +1,204 @@
+:root {
+  --primary-color: #7c4dff;
+  --secondary-color: #5e35b1;
+  --background-color: #f5f7fa;
+  --text-color: #333333;
+  --text-light: #666666;
+  --border-color: #e0e0e0;
+  --card-background: #ffffff;
+  --hover-color: #ede7f6;
+}
+
 .homeContainer {
-   display: flex;
-   gap: 20px;
-   padding: 20px;
+  display: flex;
+  gap: 30px;
+  padding: 30px;
+  background-color: var(--background-color);
 }
 
 .mainContent {
-   flex: 1;
+  flex: 1;
 }
 
 .sidebar {
-   width: 300px;
+  width: 350px;
 }
 
-@media (max-width: 768px) {
-   .homeContainer {
-      flex-direction: column;
-   }
+@media (max-width: 1024px) {
+  .homeContainer {
+    flex-direction: column;
+  }
 
-   .sidebar {
-      width: 100%;
-   }
+  .sidebar {
+    width: 100%;
+  }
 }
 
 .container {
-   display: flex;
-   gap: 20px;
-   padding: 20px;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
 }
 
 .mainContent {
-   flex: 1;
+  flex: 1;
 }
 
 .sidebar {
-   width: 300px;
+  width: 300px;
 }
 
 @media (max-width: 768px) {
-   .container {
-      flex-direction: column;
-   }
+  .homeContainer {
+    padding: 20px;
+  }
 
-   .sidebar {
-      width: 100%;
-   }
+  .userProfile, .popularTags {
+    padding: 20px;
+  }
 }
 
 .userProfile {
-   background-color: #ffffff;
-   border-radius: 8px;
-   padding: 20px;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-   margin-bottom: 20px;
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
 .title {
-   font-size: 1.2rem;
-   margin-bottom: 15px;
-   color: #333;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .profileInfo {
-   text-align: center;
-   margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .avatar {
-   width: 80px;
-   height: 80px;
-   border-radius: 50%;
-   margin-bottom: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 3px solid var(--primary-color);
 }
 
 .name {
-   font-size: 1.1rem;
-   margin-bottom: 5px;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+  color: var(--text-color);
 }
 
 .bio {
-   font-size: 0.9rem;
-   color: #666;
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.5;
 }
 
 .hoursSpent {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: var(--hover-color);
+  padding: 15px;
+  border-radius: 8px;
 }
 
 .timeSelect {
-   padding: 5px;
-   border-radius: 4px;
-   border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-background);
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
 
 .weeklyChart {
-   height: 150px;
-   margin-top: 15px;
+  height: 180px;
+  margin-top: 20px;
 }
 
 .barChart {
-   display: flex;
-   justify-content: space-between;
-   align-items: flex-end;
-   height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 100%;
 }
 
 .bar {
-   width: 12%;
-   background-color: #7c4dff;
-   border-radius: 4px 4px 0 0;
+  width: 12%;
+  background-color: var(--primary-color);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.3s ease;
+}
+
+.bar:hover {
+  background-color: var(--secondary-color);
 }
 
 .popularTags {
-   background-color: #ffffff;
-   border-radius: 8px;
-   padding: 20px;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
 }
 
 .title {
-   font-size: 1.2rem;
-   margin-bottom: 15px;
-   color: #333;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .tagList {
-   list-style-type: none;
-   padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .tagItem {
-   display: flex;
-   flex-wrap: wrap;
-   align-items: center;
-   padding: 10px 0;
-   border-bottom: 1px solid #eee;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .tagItem:last-child {
-   border-bottom: none;
+  border-bottom: none;
 }
 
 .tagName {
-   font-weight: bold;
-   margin-right: 10px;
+  font-weight: 600;
+  margin-right: 12px;
+  color: var(--text-color);
 }
 
 .tagPosts {
-   font-size: 0.9rem;
-   color: #666;
-   margin-right: 10px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-right: 12px;
 }
 
 .trending,
 .location {
-   font-size: 0.8rem;
-   padding: 2px 6px;
-   border-radius: 10px;
-   margin-top: 5px;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-top: 6px;
 }
 
 .trending {
-   background-color: #ff4757;
-   color: white;
-   margin-right: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  margin-right: 8px;
 }
 
 .location {
-   /* background-color: #2ed573; */
-   color: rgb(170, 165, 165);
+  background-color: var(--hover-color);
+  color: var(--text-light);
 }

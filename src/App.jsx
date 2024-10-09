@@ -1,11 +1,19 @@
 import React, { useEffect, useState, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { ErrorBoundary } from "react-error-boundary";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser, setLoading } from "./redux/user/userSlice";
 import styles from "./styles/App.module.css";
 
-// Lazy load components
-const Sidebar = React.lazy(() => import("./components/Sidebar"));
+// Import components
+import Sidebar from "./components/Sidebar";
+import Onboarding from "./components/Onboarding";
+import SidebarSkeleton from "./components/Sidebar/SidebarSkeleton";
+import LoadingSpinner from "./components/LoadingSpinner";
+import PropTypes from "prop-types";
+// import { fetchConnections } from "./redux/user/userHandle";
+
+// Lazy load other components
 const Header = React.lazy(() => import("./components/Header"));
 const Home = React.lazy(() => import("./components/Home"));
 const Leaderboard = React.lazy(() => import("./components/Leaderboard"));
@@ -17,33 +25,66 @@ const Report = React.lazy(() => import("./components/Report/Report"));
 const Privacy = React.lazy(() => import("./components/Privacy"));
 const Register = React.lazy(() => import("./components/Register"));
 const Login = React.lazy(() => import("./components/Login"));
-const LoadingSpinner = React.lazy(() => import("./components/LoadingSpinner"));
 const UserProfile = React.lazy(() => import("./components/UserProfile"));
-const Onboarding = React.lazy(() => import("./components/Onboarding"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
+
+function ErrorFallback({ error }) {
+   return (
+      <div role='alert'>
+         <p>Something went wrong:</p>
+         <pre>{error.message}</pre>
+      </div>
+   );
+}
+
+ErrorFallback.propTypes = {
+   error: PropTypes.object.isRequired,
+};
 
 function App() {
    const [showOnboarding, setShowOnboarding] = useState(false);
-
    const dispatch = useDispatch();
-   const { isLoading } = useSelector((state) => state.user);
-   const isAuthenticated = true;
+   const { user, isLoading } = useSelector((state) => state.user);
+
+   console.log("user", user);
+
+   const isAuthenticated = !!user;
 
    useEffect(() => {
-      // Check if the user has completed onboarding
-      const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
-      if (!hasCompletedOnboarding) {
-         setShowOnboarding(true);
-      }
-   }, []);
-
-   useEffect(() => {
-      const rememberedUser = JSON.parse(localStorage.getItem("rememberedUser"));
-      if (rememberedUser) {
-         dispatch(setUser({ email: rememberedUser.email, username: rememberedUser.username }));
-      } else {
+      const checkAuthStatus = async () => {
+         dispatch(setLoading(true));
+         const token = localStorage.getItem("token");
+         if (token) {
+            try {
+               const response = await fetch("http://localhost:5073/api/users/profile", {
+                  headers: {
+                     Authorization: `Bearer ${token}`,
+                  },
+               });
+               if (response.ok) {
+                  const userData = await response.json();
+                  dispatch(setUser(userData));
+                  // Remove the startTransition here as it's not necessary for this operation
+                  const hasCompletedOnboarding = localStorage.getItem("hasCompletedOnboarding");
+                  if (!hasCompletedOnboarding) {
+                     setShowOnboarding(true);
+                  }
+               } else {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  dispatch(setUser(null));
+               }
+            } catch (error) {
+               console.error("Error verifying token:", error);
+               dispatch(setUser(null));
+            }
+         } else {
+            dispatch(setUser(null));
+         }
          dispatch(setLoading(false));
-      }
+      };
+
+      checkAuthStatus();
    }, [dispatch]);
 
    const handleOnboardingComplete = () => {
@@ -57,47 +98,57 @@ function App() {
 
    return (
       <Router>
-         <div className={styles.appContainer}>
-            {showOnboarding && (
-               <Suspense fallback={<LoadingSpinner />}>
-                  <Onboarding onComplete={handleOnboardingComplete} />
-               </Suspense>
-            )}
+         <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <div className={styles.appContainer}>
+               <div className={`${styles.appContent} ${showOnboarding ? styles.blurred : ""}`}>
+                  {isAuthenticated && (
+                     <aside className={styles.sidebar}>{isAuthenticated && isLoading ? <SidebarSkeleton /> : <Sidebar />}</aside>
+                  )}
+                  <div className={styles.mainArea}>
+                     <Suspense fallback={<LoadingSpinner />}>
+                        <Routes>
+                           <Route path='/register' element={isAuthenticated ? <Navigate to='/' /> : <Register />} />
+                           <Route path='/login' element={isAuthenticated ? <Navigate to='/' /> : <Login />} />
 
-            {isAuthenticated && (
-               <aside className={styles.sidebar}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                     <Sidebar />
-                  </Suspense>
-               </aside>
-            )}
-            <div className={styles.mainArea}>
-               <Suspense fallback={<LoadingSpinner />}>
-                  <Header />
-               </Suspense>
-               <main className={styles.content}>
-                  <Suspense fallback={<LoadingSpinner />}>
-                     <Routes>
-                        <Route path='/register' element={<Register />} />
-                        <Route path='/login' element={<Login />} />
+                           {isAuthenticated && (
+                              <Route element={<AuthenticatedLayout />}>
+                                 <Route path='/' element={<Home />} />
+                                 <Route path='/dashboard' element={<Dashboard />} />
+                                 <Route path='/leaderboard' element={<Leaderboard />} />
+                                 <Route path='/learning-journey' element={<LearningJourney />} />
+                                 <Route path='/message' element={<Message />} />
+                                 <Route path='/calendar' element={<Calendar />} />
+                                 <Route path='/privacy' element={<Privacy />} />
+                                 <Route path='/report' element={<Report />} />
+                                 <Route path='/user-profile' element={<UserProfile />} />
+                                 <Route path='/setting' element={<Setting />} />
+                              </Route>
+                           )}
 
-                        <Route path='/' element={isAuthenticated ? <Home /> : <Navigate to='/login' />} />
-                        <Route path='/dashboard' element={isAuthenticated ? <Dashboard /> : <Navigate to='/login' />} />
-                        <Route path='/leaderboard' element={isAuthenticated ? <Leaderboard /> : <Navigate to='/login' />} />
-                        <Route path='/learning-journey' element={isAuthenticated ? <LearningJourney /> : <Navigate to='/login' />} />
-                        {/* <Route path='/message' element={isAuthenticated ? <Message /> : <Navigate to='/login' />} /> */}
-                        <Route path='/message' element={isAuthenticated ? <Message /> : <Navigate to='/login' />} />
-                        <Route path='/calendar' element={isAuthenticated ? <Calendar /> : <Navigate to='/login' />} />
-                        <Route path='/privacy' element={isAuthenticated ? <Privacy /> : <Navigate to='/login' />} />
-                        <Route path='/report' element={isAuthenticated ? <Report /> : <Navigate to='/login' />} />
-                        <Route path='/user-profile' element={isAuthenticated ? <UserProfile /> : <Navigate to='/login' />} />
-                        <Route path='/setting' element={isAuthenticated ? <Setting /> : <Navigate to='/login' />} />
-                     </Routes>
-                  </Suspense>
-               </main>
+                           {!isLoading && !isAuthenticated && <Route path='*' element={<Navigate to='/login' />} />}
+                        </Routes>
+                     </Suspense>
+                  </div>
+               </div>
+               {showOnboarding && isAuthenticated && <Onboarding onComplete={handleOnboardingComplete} />}
             </div>
-         </div>
+         </ErrorBoundary>
       </Router>
+   );
+}
+
+function AuthenticatedLayout() {
+   return (
+      <>
+         <header className={styles.header}>
+            <Suspense fallback={<LoadingSpinner />}>
+               <Header />
+            </Suspense>
+         </header>
+         <main className={styles.content}>
+            <Outlet />
+         </main>
+      </>
    );
 }
 

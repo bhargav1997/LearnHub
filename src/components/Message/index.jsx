@@ -4,6 +4,8 @@ import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile } from "@fort
 import io from "socket.io-client";
 import styles from "./Message.module.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+// import { fetchConnections } from "../../redux/user/userHandle";
 
 function Message() {
    const [selectedChat, setSelectedChat] = useState(null);
@@ -12,6 +14,7 @@ function Message() {
    const [messages, setMessages] = useState([]);
    const [connections, setConnections] = useState([]);
    const navigate = useNavigate();
+   const dispatch = useDispatch();
 
    useEffect(() => {
       const token = localStorage.getItem("token");
@@ -20,7 +23,7 @@ function Message() {
          return;
       }
 
-      fetchConnections(token);
+      // dispatch(fetchConnections());
 
       const newSocket = io("http://localhost:5073", {
          auth: { token },
@@ -48,30 +51,6 @@ function Message() {
          newSocket.disconnect();
       };
    }, [navigate]);
-
-   const fetchConnections = async (token) => {
-      try {
-         const response = await fetch("http://localhost:5073/api/users/connections", {
-            method: "GET",
-            headers: {
-               Authorization: `Bearer ${token}`,
-            },
-         });
-
-         if (response.ok) {
-            const data = await response.json();
-            setConnections(data);
-         } else if (response.status === 401) {
-            console.error("Unauthorized: Invalid token");
-            localStorage.removeItem("token");
-            navigate("/login");
-         } else {
-            console.error("Failed to fetch connections");
-         }
-      } catch (error) {
-         console.error("Error fetching connections:", error);
-      }
-   };
 
    const handleChatSelect = (chatId) => {
       setSelectedChat(chatId);

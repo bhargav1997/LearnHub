@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addJourneyToUser, setSelectedJourneyToUser, updateJourneyToUser } from "../../redux/learningJourney/learningJourneyHandle";
+import {
+   addJourneyToUser,
+   setSelectedJourneyToUser,
+   updateJourneyToUser,
+   deleteJourneyFromUser,
+} from "../../redux/learningJourney/learningJourneyHandle";
 import styles from "./LearningJourney.module.css";
-import { FaBook, FaYoutube, FaGraduationCap, FaLink, FaPlus, FaTimes, FaCheck } from "react-icons/fa";
+import { FaBook, FaYoutube, FaGraduationCap, FaLink, FaPlus, FaTimes, FaCheck, FaTrash } from "react-icons/fa";
 
 const LearningJourney = () => {
    const dispatch = useDispatch();
@@ -104,11 +109,18 @@ const LearningJourney = () => {
       dispatch(updateJourneyToUser(updatedJourney));
    };
 
+   const handleDeleteJourney = (e, journeyId) => {
+      e.stopPropagation(); // Prevent the journey from being selected when deleting
+      if (window.confirm("Are you sure you want to delete this journey?")) {
+         dispatch(deleteJourneyFromUser(journeyId));
+      }
+   };
+
    return (
       <div className={styles.learningJourneyContainer}>
+         <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
          {!selectedJourney ? (
             <div className={styles.journeyList}>
-               <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
                <div className={styles.journeyGrid}>
                   {journeys.map((journey) => (
                      <div key={journey.id} className={styles.journeyItem} onClick={() => dispatch(setSelectedJourneyToUser(journey))}>
@@ -116,6 +128,9 @@ const LearningJourney = () => {
                         <p>
                            {journey.resources.length} resources • {journey.tasks.length} tasks
                         </p>
+                        <button className={styles.deleteButton} onClick={(e) => handleDeleteJourney(e, journey.id)}>
+                           <FaTrash />
+                        </button>
                      </div>
                   ))}
                   <div className={styles.newJourneyItem} onClick={() => setIsCreatingJourney(true)}>
@@ -157,7 +172,7 @@ const LearningJourney = () => {
                      <div className={styles.resourcesPanel}>
                         <h3 className={styles.sectionTitle}>Resources</h3>
                         <form onSubmit={addResource} className={styles.formContainer}>
-                           <input type='text' name='resource' placeholder='Add a resource link' className={styles.inputField} />
+                           <input type='text' name='resource' placeholder='Add a resource link' className={styles.inputField} required />
                            <button type='submit' className={styles.addButton}>
                               Add
                            </button>
@@ -187,7 +202,7 @@ const LearningJourney = () => {
                      <div className={styles.tasksPanel}>
                         <h3 className={styles.sectionTitle}>Tasks</h3>
                         <form onSubmit={addTask} className={styles.formContainer}>
-                           <input type='text' name='task' placeholder='Add a new task' className={styles.inputField} />
+                           <input type='text' name='task' placeholder='Add a new task' className={styles.inputField} required />
                            <button type='submit' className={styles.addButton}>
                               Add
                            </button>

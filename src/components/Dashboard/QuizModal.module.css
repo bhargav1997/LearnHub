@@ -1,0 +1,102 @@
+.quizOverlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+}
+
+.quizModal {
+   background-color: white;
+   border-radius: 10px;
+   padding: 24px;
+   width: 90%;
+   max-width: 600px;
+   position: relative;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quizModal h2 {
+   margin-top: 0;
+   margin-bottom: 20px;
+   font-size: 24px;
+   color: #333;
+}
+
+.closeButton {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   background: none;
+   border: none;
+   font-size: 20px;
+   cursor: pointer;
+   color: #666;
+}
+
+.question {
+   margin-bottom: 20px;
+}
+
+.question h3 {
+   font-size: 18px;
+   margin-bottom: 15px;
+   color: #444;
+}
+
+.options {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+}
+
+.options button {
+   padding: 10px 15px;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   background-color: #f8f9fa;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   text-align: left;
+}
+
+.options button:hover {
+   background-color: #e9ecef;
+}
+
+.options button:focus {
+   outline: none;
+   border-color: #7c4dff;
+   box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+}
+
+.quizProgress {
+   margin-bottom: 20px;
+   font-size: 14px;
+   color: #666;
+}
+
+.submitButton {
+   background-color: #7c4dff;
+   color: white;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-size: 16px;
+   transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+   background-color: #6a3de8;
+}
+
+.submitButton:disabled {
+   background-color: #d1c4e9;
+   cursor: not-allowed;
+}

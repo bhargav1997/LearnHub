@@ -92,17 +92,6 @@ function Report() {
             </div>
          </div>
 
-         <div className={styles.chartsContainer}>
-            <div className={styles.chartCard}>
-               <h3>Task Categories</h3>
-               <Pie data={pieChartData} />
-            </div>
-            <div className={styles.chartCard}>
-               <h3>Weekly Progress</h3>
-               <Line data={lineChartData} />
-            </div>
-         </div>
-
          <div className={styles.skillsSection}>
             <h3>Top Skills</h3>
             <div className={styles.skillTags}>
@@ -111,6 +100,17 @@ function Report() {
                      {skill}
                   </span>
                ))}
+            </div>
+         </div>
+
+         <div className={styles.chartsContainer}>
+            <div className={styles.chartCard}>
+               <h3>Task Categories</h3>
+               <Pie data={pieChartData} />
+            </div>
+            <div className={styles.chartCard}>
+               <h3>Weekly Progress</h3>
+               <Line data={lineChartData} />
             </div>
          </div>
       </div>
