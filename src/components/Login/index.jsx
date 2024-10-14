@@ -1,25 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser, setLoading } from "../../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading, setUser } from "../../redux/user/userSlice";
 import styles from "./Login.module.css";
-// import { fetchConnections } from "../../redux/user/userHandle";
+// import TwoFactorAuth from "../TwoFactorAuth/TwoFactorAuth";
+import { toast } from "react-toastify";
+import { CONFIG } from "../../config";
 
 function Login() {
+   const API_URL = CONFIG.API_URL;
    const [formData, setFormData] = useState({
       email: "",
       password: "",
       rememberMe: false,
    });
-   const navigate = useNavigate();
+   const user = useSelector((state) => state.user);
+
+   // const [showTwoFactor, setShowTwoFactor] = useState(false);
+
    const dispatch = useDispatch();
+   const navigate = useNavigate();
+
+   useEffect(() => {
+      if (user) {
+         navigate("/");
+      }
+   }, [user]);
 
    const handleSubmit = async (e) => {
       e.preventDefault();
       dispatch(setLoading(true));
 
       try {
-         const response = await fetch("http://localhost:5073/api/users/login", {
+         const response = await fetch(`${API_URL}/users/login`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -30,25 +43,54 @@ function Login() {
          const data = await response.json();
 
          if (response.ok) {
-            localStorage.setItem("token", data.token);
-            dispatch(setUser(data.user));
-            // dispatch(fetchConnections());
-            navigate("/");
+            if (data.requireTwoFactor) {
+               navigate("/two-factor-auth", { state: { email: formData.email } });
+            } else {
+               // Handle login without 2FA
+               handleSuccessfulLogin(data);
+            }
          } else {
-            alert(data.message || "Login failed");
+            toast.error(data.message || "Login failed");
          }
       } catch (error) {
          console.error("Login error:", error);
-         alert("An error occurred during login");
+         toast.error("An error occurred during login");
       } finally {
          dispatch(setLoading(false));
       }
    };
 
+   const handleSuccessfulLogin = (data) => {
+      try {
+         // Store token in localStorage
+         localStorage.setItem("token", data.token);
+
+         // Dispatch user data to Redux
+         dispatch(setUser(data.user));
+
+         // Show success message
+         toast.success("Login successful!");
+
+         // Use setTimeout to ensure state updates before navigation
+         // setTimeout(() => {
+         //    navigate("/");
+         // }, 0);
+      } catch (error) {
+         console.error("Error handling successful login:", error);
+         toast.error("An error occurred while processing your login");
+      }
+   };
+
    const handleChange = (e) => {
-      const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+      const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
       setFormData({ ...formData, [e.target.name]: value });
    };
+
+   // console.log("showTwoFactor", showTwoFactor);
+
+   // if (showTwoFactor) {
+   //    return <TwoFactorAuth email={formData.email} />;
+   // }
 
    return (
       <div className={styles.loginContainer}>
@@ -74,13 +116,7 @@ function Login() {
                   autoComplete='current-password'
                />
                <div className={styles.rememberMe}>
-                  <input 
-                     type='checkbox' 
-                     name='rememberMe' 
-                     id='rememberMe' 
-                     checked={formData.rememberMe} 
-                     onChange={handleChange} 
-                  />
+                  <input type='checkbox' name='rememberMe' id='rememberMe' checked={formData.rememberMe} onChange={handleChange} />
                   <label htmlFor='rememberMe'>Remember Me</label>
                </div>
                <button type='submit'>Login</button>

@@ -365,17 +365,19 @@ form {
    margin-top: 1.5rem;
    align-self: flex-start;
    padding: 0.5rem 1rem;
-   background-color: #7f61d7;
-   color: white;
-   border: none;
+   color: #7f61d7;
+   border: 1px solid #7f61d7;
+
    border-radius: 6px;
    cursor: pointer;
    font-size: 1rem;
    transition: background-color 0.3s;
+   background-color: transparent;
 }
 
 .backButton:hover {
-   background-color: #4d3d7d;
+   background-color: #7f61d7;
+   color: white;
 }
 
 .progressBarContainer {

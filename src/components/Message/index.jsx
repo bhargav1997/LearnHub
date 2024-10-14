@@ -4,17 +4,17 @@ import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile } from "@fort
 import io from "socket.io-client";
 import styles from "./Message.module.css";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 // import { fetchConnections } from "../../redux/user/userHandle";
+import { CONFIG } from "../../config";
 
 function Message() {
+   const API_URL = CONFIG.API_URL;
    const [selectedChat, setSelectedChat] = useState(null);
    const [messageInput, setMessageInput] = useState("");
    const [socket, setSocket] = useState(null);
    const [messages, setMessages] = useState([]);
    const [connections, setConnections] = useState([]);
    const navigate = useNavigate();
-   const dispatch = useDispatch();
 
    useEffect(() => {
       const token = localStorage.getItem("token");
@@ -25,7 +25,7 @@ function Message() {
 
       // dispatch(fetchConnections());
 
-      const newSocket = io("http://localhost:5073", {
+      const newSocket = io(`${API_URL}`, {
          auth: { token },
       });
 

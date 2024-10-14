@@ -19,8 +19,10 @@ import styles from "./UserProfile.module.css";
 // import { setUser, fetchConnections } from "../../redux/user/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../../redux/user/userSlice";
+import { CONFIG } from "../../config";
 
 function UserProfile() {
+   const API_URL = CONFIG.API_URL;
    const [isEditing, setIsEditing] = useState(false);
    const [editedUser, setEditedUser] = useState(null);
    const [searchTerm, setSearchTerm] = useState("");
@@ -32,8 +34,6 @@ function UserProfile() {
 
    const dispatch = useDispatch();
    const { user } = useSelector((state) => state.user);
-
-   console.log("user==>", user);
 
    useEffect(() => {
       if (user) {
@@ -55,7 +55,7 @@ function UserProfile() {
          }
 
          const response = await axios.post(
-            "http://localhost:5073/api/users/suggest-connections",
+            `${API_URL}/users/suggest-connections`,
             {
                user: { ...user },
                limit: 10,
@@ -127,7 +127,7 @@ function UserProfile() {
             website: editedUser.website,
          };
 
-         const response = await axios.put("http://localhost:5073/api/users/profile", updatedUserData, {
+         const response = await axios.put(`${API_URL}/users/profile`, updatedUserData, {
             headers: {
                "Content-Type": "application/json",
                Authorization: `Bearer ${token}`,
@@ -179,7 +179,7 @@ function UserProfile() {
    const handleFollow = async (friendId) => {
       try {
          const token = localStorage.getItem("token");
-         const response = await fetch(`http://localhost:5073/api/users/follow/${friendId}`, {
+         const response = await fetch(`${API_URL}/users/follow/${friendId}`, {
             method: "POST",
             headers: {
                Authorization: `Bearer ${token}`,
@@ -188,7 +188,6 @@ function UserProfile() {
 
          if (response.ok) {
             const updatedUser = await response.json();
-            console.log("Updated user data:", updatedUser);
 
             if (updatedUser && updatedUser.user) {
                dispatch(setUser(updatedUser.user));
@@ -208,7 +207,7 @@ function UserProfile() {
    const handleUnfollow = async (friendId) => {
       try {
          const token = localStorage.getItem("token");
-         const response = await fetch(`http://localhost:5073/api/users/unfollow/${friendId}`, {
+         const response = await fetch(`${API_URL}/users/unfollow/${friendId}`, {
             method: "POST",
             headers: {
                Authorization: `Bearer ${token}`,

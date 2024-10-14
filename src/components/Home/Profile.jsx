@@ -4,8 +4,6 @@ import styles from "./Home.module.css";
 function Profile() {
    const { user } = useSelector((state) => state.user);
 
-   console.log(user);
-
    return (
       <div className={styles.userProfile}>
          <h2 className={styles.title}>Your Profile</h2>

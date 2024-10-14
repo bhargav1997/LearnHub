@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../../redux/user/userSlice";
 import styles from "./Register.module.css";
 import LoadingSpinner from "../LoadingSpinner";
+// import TwoFactorAuth from "../TwoFactorAuth/TwoFactorAuth";
+import { CONFIG } from "../../config";
 
 function Register() {
+   const API_URL = CONFIG.API_URL;
    const [isLoading, setIsLoading] = useState(false);
    const [formData, setFormData] = useState({
       username: "",
@@ -11,7 +16,9 @@ function Register() {
       password: "",
       confirmPassword: "",
    });
+   // const [showTwoFactor, setShowTwoFactor] = useState(false);
    const navigate = useNavigate();
+   const dispatch = useDispatch();
 
    const handleChange = (e) => {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,9 +32,10 @@ function Register() {
       }
 
       setIsLoading(true);
+      dispatch(setLoading(true));
 
       try {
-         const response = await fetch("http://localhost:5073/api/users/register", {
+         const response = await fetch(`${API_URL}/users/register`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -42,9 +50,17 @@ function Register() {
          const data = await response.json();
 
          if (response.ok) {
-            console.log("Registration successful:", data);
-            alert("Registration successful! Please log in.");
-            navigate("/login");
+            if (data.requireTwoFactor) {
+               navigate("/two-factor-auth", {
+                  state: {
+                     email: formData.email,
+                     isRegistration: true,
+                  },
+               });
+            } else {
+               alert("Registration successful! Please log in.");
+               navigate("/login");
+            }
          } else {
             console.error("Registration failed:", data);
             alert(data.message || "Registration failed");
@@ -54,12 +70,17 @@ function Register() {
          alert("An error occurred during registration");
       } finally {
          setIsLoading(false);
+         dispatch(setLoading(false));
       }
    };
 
    if (isLoading) {
       return <LoadingSpinner />;
    }
+
+   // if (showTwoFactor) {
+   //    return <TwoFactorAuth email={formData.email} isRegistration={true} />;
+   // }
 
    return (
       <div className={styles.registerContainer}>
@@ -73,7 +94,7 @@ function Register() {
                   value={formData.username}
                   onChange={handleChange}
                   required
-                  autoComplete='on'
+                  autoComplete='username'
                />
                <input
                   type='email'
@@ -82,7 +103,7 @@ function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  autoComplete='on'
+                  autoComplete='email'
                />
                <input
                   type='password'
@@ -91,7 +112,7 @@ function Register() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  autoComplete='on'
+                  autoComplete='new-password'
                />
                <input
                   type='password'
@@ -100,6 +121,7 @@ function Register() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  autoComplete='new-password'
                />
                <button type='submit'>Register</button>
             </form>

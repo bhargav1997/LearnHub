@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./CreateLearningTask.module.css";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 function CreateLearningTask({ onClose, handleSubmit }) {
    const [taskType, setTaskType] = useState("Course");
@@ -19,7 +20,7 @@ function CreateLearningTask({ onClose, handleSubmit }) {
    });
    const [personalGoals, setPersonalGoals] = useState("");
    const [initialProgress, setInitialProgress] = useState(0);
-
+   const [isSubmitting, setIsSubmitting] = useState(false);
    useEffect(() => {
       // Reset fields when task type changes
       setEstimatedTime("");
@@ -27,7 +28,7 @@ function CreateLearningTask({ onClose, handleSubmit }) {
       setChapters("");
    }, [taskType]);
 
-   const handleSubmitData = (e) => {
+   const handleSubmitData = async (e) => {
       e.preventDefault();
       // Handle form submission logic here
       let newTask = {
@@ -42,7 +43,15 @@ function CreateLearningTask({ onClose, handleSubmit }) {
          personalGoals,
          progress: initialProgress,
       };
-      handleSubmit(newTask);
+      try {
+         await handleSubmit(newTask);
+         onClose();
+      } catch (error) {
+         toast.error("Failed to create task: Please try again later. ");
+         // Handle error (e.g., show error message to user)
+      } finally {
+         setIsSubmitting(false);
+      }
    };
 
    const renderContentSpecificFields = () => {
@@ -219,8 +228,15 @@ function CreateLearningTask({ onClose, handleSubmit }) {
                   <button type='button' className={styles.cancelButton} onClick={onClose}>
                      Cancel
                   </button>
-                  <button type='submit' className={styles.startButton}>
-                     Start
+                  <button type='submit' className={styles.startButton} disabled={isSubmitting}>
+                     {isSubmitting ? (
+                        <>
+                           <span className={styles.loader}></span>
+                           Submitting...
+                        </>
+                     ) : (
+                        "Start"
+                     )}
                   </button>
                </div>
             </form>

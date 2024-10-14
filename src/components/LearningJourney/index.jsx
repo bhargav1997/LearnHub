@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
    addJourneyToUser,
@@ -116,12 +116,35 @@ const LearningJourney = () => {
       }
    };
 
+   const renderStepContent = (step) => {
+      const content = step.split(":").slice(1).join(":");
+      const urlRegex = /https?:\/\/\S+/g;
+      const urls = content.match(urlRegex) || [];
+
+      if (urls.length === 0) {
+         return content;
+      }
+
+      return urls.map((url, i) => (
+         <React.Fragment key={i}>
+            {i > 0 && " "}
+            <a href={url} target='_blank' rel='noopener noreferrer'>
+               {url}
+            </a>
+         </React.Fragment>
+      ));
+   };
+
    return (
       <div className={styles.learningJourneyContainer}>
          <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
          {!selectedJourney ? (
             <div className={styles.journeyList}>
                <div className={styles.journeyGrid}>
+                  <div className={styles.newJourneyItem} onClick={() => setIsCreatingJourney(true)}>
+                     <FaPlus />
+                     <p>Create New Journey</p>
+                  </div>
                   {journeys.map((journey) => (
                      <div key={journey.id} className={styles.journeyItem} onClick={() => dispatch(setSelectedJourneyToUser(journey))}>
                         <h3 className={styles.sectionTitle}>{journey.name}</h3>
@@ -133,10 +156,6 @@ const LearningJourney = () => {
                         </button>
                      </div>
                   ))}
-                  <div className={styles.newJourneyItem} onClick={() => setIsCreatingJourney(true)}>
-                     <FaPlus />
-                     <p>Create New Journey</p>
-                  </div>
                </div>
                {isCreatingJourney && (
                   <div className={styles.modalOverlay}>
@@ -172,7 +191,7 @@ const LearningJourney = () => {
                      <div className={styles.resourcesPanel}>
                         <h3 className={styles.sectionTitle}>Resources</h3>
                         <form onSubmit={addResource} className={styles.formContainer}>
-                           <input type='text' name='resource' placeholder='Add a resource link' className={styles.inputField} required />
+                           <input type='url' name='resource' placeholder='Add a resource link' className={styles.inputField} required />
                            <button type='submit' className={styles.addButton}>
                               Add
                            </button>
@@ -236,7 +255,7 @@ const LearningJourney = () => {
                                  <div className={styles.stepNumber}>{index + 1}</div>
                                  <div className={styles.stepContent}>
                                     <h4>{step.split(":")[0]}</h4>
-                                    <p>{step.split(":")[1]}</p>
+                                    <p>{renderStepContent(step)}</p>
                                  </div>
                               </div>
                            ))}

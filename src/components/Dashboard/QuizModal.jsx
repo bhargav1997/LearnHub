@@ -1,20 +1,21 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-const HF_API_TOKEN = import.meta.env.VITE_HF_API_TOKEN; // Add this to your .env file
+import { CONFIG } from "../../config";
 
 function QuizModal({ quiz, onClose, onQuizComplete, showNotification }) {
    const [answers, setAnswers] = useState({});
    const [showResults, setShowResults] = useState(false);
+   const HF_API_TOKEN = CONFIG.API_TOKEN;
 
    // Add this function to your component
    const calculateScore = (userAnswers, questions) => {
-     let score = 0;
-     questions.forEach((question, index) => {
-       if (userAnswers[index] === question.correctAnswer) {
-         score += 1;
-       }
-     });
-     return score;
+      let score = 0;
+      questions.forEach((question, index) => {
+         if (userAnswers[index] === question.correctAnswer) {
+            score += 1;
+         }
+      });
+      return score;
    };
 
    const handleSubmit = () => {
@@ -29,27 +30,24 @@ function QuizModal({ quiz, onClose, onQuizComplete, showNotification }) {
 
    const parseCourseSuggestions = (text) => {
       // Split the text into sentences
-      const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0);
-      
+      const sentences = text.split(/[.!?]+/).filter((sentence) => sentence.trim().length > 0);
+
       // Take up to 3 sentences as suggestions
-      return sentences.slice(0, 3).map(sentence => sentence.trim());
+      return sentences.slice(0, 3).map((sentence) => sentence.trim());
    };
 
    const generateCourseSuggestions = async (taskName) => {
       try {
-         const response = await fetch(
-            "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill",
-            {
-               method: "POST",
-               headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${HF_API_TOKEN}`,
-               },
-               body: JSON.stringify({
-                  inputs: `Suggest 3 alternative courses or topics to study instead of ${taskName}:`,
-               }),
-            }
-         );
+         const response = await fetch("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${HF_API_TOKEN}`,
+            },
+            body: JSON.stringify({
+               inputs: `Suggest 3 alternative courses or topics to study instead of ${taskName}:`,
+            }),
+         });
 
          if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

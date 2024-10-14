@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser, setLoading } from "./redux/user/userSlice";
@@ -11,6 +11,7 @@ import Onboarding from "./components/Onboarding";
 import SidebarSkeleton from "./components/Sidebar/SidebarSkeleton";
 import LoadingSpinner from "./components/LoadingSpinner";
 import PropTypes from "prop-types";
+import TwoFactorAuth from "./components/TwoFactorAuth/TwoFactorAuth";
 // import { fetchConnections } from "./redux/user/userHandle";
 
 // Lazy load other components
@@ -27,6 +28,7 @@ const Register = React.lazy(() => import("./components/Register"));
 const Login = React.lazy(() => import("./components/Login"));
 const UserProfile = React.lazy(() => import("./components/UserProfile"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
+import { CONFIG } from "./config";
 
 function ErrorFallback({ error }) {
    return (
@@ -45,9 +47,7 @@ function App() {
    const [showOnboarding, setShowOnboarding] = useState(false);
    const dispatch = useDispatch();
    const { user, isLoading } = useSelector((state) => state.user);
-
-   console.log("user", user);
-
+   const API_URL = CONFIG.API_URL;
    const isAuthenticated = !!user;
 
    useEffect(() => {
@@ -56,7 +56,7 @@ function App() {
          const token = localStorage.getItem("token");
          if (token) {
             try {
-               const response = await fetch("http://localhost:5073/api/users/profile", {
+               const response = await fetch(`${API_URL}/users/profile`, {
                   headers: {
                      Authorization: `Bearer ${token}`,
                   },
@@ -109,6 +109,7 @@ function App() {
                         <Routes>
                            <Route path='/register' element={isAuthenticated ? <Navigate to='/' /> : <Register />} />
                            <Route path='/login' element={isAuthenticated ? <Navigate to='/' /> : <Login />} />
+                           <Route path='/two-factor-auth' element={isAuthenticated ? <Navigate to='/' /> : <TwoFactorAuth />} />
 
                            {isAuthenticated && (
                               <Route element={<AuthenticatedLayout />}>
@@ -122,10 +123,11 @@ function App() {
                                  <Route path='/report' element={<Report />} />
                                  <Route path='/user-profile' element={<UserProfile />} />
                                  <Route path='/setting' element={<Setting />} />
+                                 <Route path='/two-factor-auth' element={<TwoFactorAuth />} />
                               </Route>
                            )}
 
-                           {!isLoading && !isAuthenticated && <Route path='*' element={<Navigate to='/login' />} />}
+                           {!isLoading && !isAuthenticated && <Route path='*' element={<Login />} />}
                         </Routes>
                      </Suspense>
                   </div>

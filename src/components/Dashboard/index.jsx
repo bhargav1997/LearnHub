@@ -6,10 +6,10 @@ import {
    faGraduationCap,
    faNewspaper,
    faQuestion,
-   faVideo
+   faVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../styles/Dashboard.css";
@@ -18,12 +18,22 @@ import CreateLearningTask from "./CreateLearningTask";
 import EditProgressPopup from "./EditProgressPopup";
 import QuizModal from "./QuizModal";
 import Sidebar from "./Sidebar";
+import { useDispatch } from "react-redux";
+import { addLearningTask } from "../../redux/task/learningTaskSlice";
+// import { useSelector } from "react-redux";
+import axios from "axios";
+import { CONFIG } from "../../config";
 
 function Dashboard() {
    const [showCreateTask, setShowCreateTask] = useState(false);
    const [showEditPopup, setShowEditPopup] = useState(false);
    const [editingTask, setEditingTask] = useState(null);
-   const [learningTasks, setLearningTasks] = useState([
+   const [apiLearningTasks, setApiLearningTasks] = useState([]);
+   const [isLoading, setIsLoading] = useState(true);
+   // const { user } = useSelector((state) => state.user);
+   const API_URL = CONFIG.API_URL;
+
+   const [mockLearningTasks, setMockLearningTasks] = useState([
       {
          id: 1,
          name: "Advance Node JS",
@@ -186,6 +196,38 @@ function Dashboard() {
    const [showQuizModal, setShowQuizModal] = useState(false);
    const [currentQuiz, setCurrentQuiz] = useState(null);
 
+   const dispatch = useDispatch();
+
+   useEffect(() => {
+      fetchLearningTasks();
+   }, []);
+
+   const fetchLearningTasks = async () => {
+      setIsLoading(true);
+      try {
+         const token = localStorage.getItem("token");
+         const config = {
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            },
+         };
+         const response = await axios.get(`${API_URL}/tasks/learning-tasks`, config);
+
+         if (response.statusText !== "OK") {
+            throw new Error(`HTTP error! status: ${response.status}`);
+         }
+
+         const tasks = await response.data;
+         setApiLearningTasks(tasks);
+      } catch (error) {
+         toast.error("Failed to retrieve learning tasks, please try again later.");
+         throw error;
+      } finally {
+         setIsLoading(false);
+      }
+   };
+
    const showNotification = (message, type = "info") => {
       toast[type](message, {
          position: "top-right",
@@ -198,10 +240,11 @@ function Dashboard() {
       });
    };
 
-   const handleSubmit = (newTaskData) => {
+   const handleSubmit = async (newTaskData) => {
       const newTask = {
          id: Date.now(),
-         name: newTaskData.taskTitle,
+         taskType: newTaskData.taskType,
+         taskTitle: newTaskData.taskTitle,
          level: "Beginner", // You might want to add a field for this in CreateLearningTask
          progress: newTaskData.initialProgress || 0,
          status: newTaskData.initialProgress > 0 ? "In Progress" : "Not Started",
@@ -220,9 +263,16 @@ function Dashboard() {
          reminders: newTaskData.reminders,
          personalGoals: newTaskData.personalGoals,
       };
-      setLearningTasks((prevTasks) => [...prevTasks, newTask]);
-      setShowCreateTask(false);
-      showNotification(`New task "${newTask.name}" created successfully!`, "success");
+      try {
+         await dispatch(addLearningTask(newTask)).unwrap();
+         setMockLearningTasks((prevTasks) => [...prevTasks, newTask]);
+         setApiLearningTasks((prevTasks) => [...prevTasks, newTask]);
+
+         setShowCreateTask(false);
+         showNotification(`New task "${newTask.taskTitle}" created successfully!`, "success");
+      } catch (error) {
+         console.error("Failed to create task:", error);
+      }
    };
 
    const handleEditClick = (task) => {
@@ -245,32 +295,40 @@ function Dashboard() {
       }
    };
 
+   // const isMoreThanSixDaysOld = (dateString) => {
+   //    const date = new Date(dateString);
+   //    const now = new Date();
+   //    const diffTime = Math.abs(now - date);
+   //    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+   //    return diffDays > 6;
+   // };
+
    const handleUpdateProgress = (taskId, taskSpecificProgress, notes, codeSnippet, resourceLink, timeSpent) => {
       const currentDate = new Date();
-      setLearningTasks((prevTasks) =>
-         prevTasks.map((task) => {
-            if (task.id === taskId) {
-               const newProgress = calculateProgress(task, taskSpecificProgress);
-               const updatedTask = {
-                  ...task,
-                  progress: newProgress,
-                  status: newProgress === 100 ? "Completed" : "In Progress",
-                  lastUpdated: currentDate.toISOString(),
-                  progressHistory: [...task.progressHistory, { date: currentDate.toISOString(), progress: newProgress, notes }],
-                  timeSpent: task.timeSpent + timeSpent,
-                  codeSnippets: codeSnippet ? [...task.codeSnippets, codeSnippet] : task.codeSnippets,
-                  resourceLinks: resourceLink ? [...task.resourceLinks, resourceLink] : task.resourceLinks,
-               };
+      let updatedTasks = apiLearningTasks.map((task) => {
+         if (task.id === taskId) {
+            const newProgress = calculateProgress(task, taskSpecificProgress);
+            const updatedTask = {
+               ...task,
+               progress: newProgress,
+               status: newProgress === 100 ? "Completed" : task.status === "Paused" ? "In Progress" : task.status,
+               lastUpdated: currentDate.toISOString(),
+               progressHistory: [...task.progressHistory, { date: currentDate.toISOString(), progress: newProgress, notes }],
+               timeSpent: task.timeSpent + timeSpent,
+               codeSnippets: codeSnippet ? [...task.codeSnippets, codeSnippet] : task.codeSnippets,
+               resourceLinks: resourceLink ? [...task.resourceLinks, resourceLink] : task.resourceLinks,
+            };
 
-               if (newProgress >= 50 && task.progress < 50) {
-                  triggerQuiz(updatedTask);
-               }
-
-               return updatedTask;
+            if (newProgress >= 50 && task.progress < 50) {
+               triggerQuiz(updatedTask);
             }
-            return task;
-         }),
-      );
+
+            return updatedTask;
+         }
+         return task;
+      });
+      setApiLearningTasks(updatedTasks);
+      setMockLearningTasks(updatedTasks);
       setShowEditPopup(false);
    };
 
@@ -308,7 +366,7 @@ function Dashboard() {
       );
 
       if (passed) {
-         setLearningTasks((prevTasks) =>
+         setApiLearningTasks((prevTasks) =>
             prevTasks.map((t) =>
                t.id === taskId
                   ? { ...t, progress: Math.max(t.progress, 50) } // Ensure progress is at least 50%
@@ -335,6 +393,8 @@ function Dashboard() {
             return faQuestion;
       }
    };
+
+   const learningTasks = apiLearningTasks.length > 0 ? apiLearningTasks : mockLearningTasks;
 
    return (
       <div className='dashboard'>
@@ -378,50 +438,56 @@ function Dashboard() {
                   <h3>My Learning Journey</h3>
                   <a href='#'>View All</a>
                </div>
-               <div className='learning-journey-content'>
-                  {learningTasks.map((course) => (
-                     <div key={course.id} className='course-card'>
-                        <div className='course-card-header'>
-                           <div className={`course-icon ${course.type ? course.type.toLowerCase() : "unknown"}`}>
-                              <FontAwesomeIcon icon={getCourseIcon(course.type)} />
-                           </div>
-                           <div className='course-details'>
-                              <h4>{course.name}</h4>
-                              <span className='course-level'>{course.level}</span>
-                           </div>
-                           <button className='edit-progress-btn' onClick={() => handleEditClick(course)}>
-                              <FontAwesomeIcon icon={faEdit} />
-                           </button>
-                        </div>
-                        <div className='course-card-body'>
-                           <div className='progress-container'>
-                              <div className='progress-bar'>
-                                 <div className='progress' style={{ width: `${Math.round(course.progress)}%` }}></div>
+               <>
+                  {isLoading ? (
+                     <div>Loading...</div>
+                  ) : (
+                     <div className='learning-journey-content'>
+                        {learningTasks.map((course) => (
+                           <div key={course.id} className='course-card'>
+                              <div className='course-card-header'>
+                                 <div className={`course-icon ${course.type ? course.type.toLowerCase() : "unknown"}`}>
+                                    <FontAwesomeIcon icon={getCourseIcon(course.type)} />
+                                 </div>
+                                 <div className='course-details'>
+                                    <h4>{course.name}</h4>
+                                    <span className='course-level'>{course.level}</span>
+                                 </div>
+                                 <button className='edit-progress-btn' onClick={() => handleEditClick(course)}>
+                                    <FontAwesomeIcon icon={faEdit} />
+                                 </button>
                               </div>
-                              <span className='progress-text'>{Math.round(course.progress)}%</span>
+                              <div className='course-card-body'>
+                                 <div className='progress-container'>
+                                    <div className='progress-bar'>
+                                       <div className='progress' style={{ width: `${Math.round(course.progress)}%` }}></div>
+                                    </div>
+                                    <span className='progress-text'>{Math.round(course.progress)}%</span>
+                                 </div>
+                                 <div className='course-meta'>
+                                    {course.type === "Book" && (
+                                       <span className='course-pages'>
+                                          <FontAwesomeIcon icon={faBook} /> {course.pages} pages
+                                       </span>
+                                    )}
+                                    {course.type === "Video" && (
+                                       <span className='course-duration'>
+                                          <FontAwesomeIcon icon={faVideo} /> {course.estimatedTime}
+                                       </span>
+                                    )}
+                                    <span className='time-remain'>
+                                       <FontAwesomeIcon icon={faClock} /> {course.timeRemain}
+                                    </span>
+                                 </div>
+                              </div>
+                              <div className='course-card-footer'>
+                                 <span className={`status ${course.status.toLowerCase().replace(" ", "-")}`}>{course.status}</span>
+                              </div>
                            </div>
-                           <div className='course-meta'>
-                              {course.type === "Book" && (
-                                 <span className='course-pages'>
-                                    <FontAwesomeIcon icon={faBook} /> {course.pages} pages
-                                 </span>
-                              )}
-                              {course.type === "Video" && (
-                                 <span className='course-duration'>
-                                    <FontAwesomeIcon icon={faVideo} /> {course.estimatedTime}
-                                 </span>
-                              )}
-                              <span className='time-remain'>
-                                 <FontAwesomeIcon icon={faClock} /> {course.timeRemain}
-                              </span>
-                           </div>
-                        </div>
-                        <div className='course-card-footer'>
-                           <span className={`status ${course.status.toLowerCase().replace(" ", "-")}`}>{course.status}</span>
-                        </div>
+                        ))}
                      </div>
-                  ))}
-               </div>
+                  )}
+               </>
             </div>
          </div>
 

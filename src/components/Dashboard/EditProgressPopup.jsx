@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import "../../styles/Dashboard.css";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { CONFIG } from "../../config";
 
 const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
    const [notes, setNotes] = useState("");
@@ -10,7 +13,8 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
    const [resourceLinks, setResourceLinks] = useState([""]);
    const [timeSpent, setTimeSpent] = useState(0);
    const [taskSpecificProgress, setTaskSpecificProgress] = useState(0);
-
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const API_URL = CONFIG.API_URL;
    const getTaskSpecificLabel = () => {
       let taskType = task.type || "";
       switch (taskType.toLowerCase()) {
@@ -23,6 +27,11 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
          default:
             return "Units completed";
       }
+   };
+
+   const handleError = (error, customMessage) => {
+      console.error(customMessage, error);
+      toast.error(customMessage || "An unexpected error occurred. Please try again.");
    };
 
    const addResourceLink = () => {
@@ -40,9 +49,41 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
       setResourceLinks(newLinks);
    };
 
-   const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
       e.preventDefault();
-      onUpdateProgress(task.id, taskSpecificProgress, notes, codeSnippet, resourceLinks, timeSpent);
+      setIsSubmitting(true);
+
+      const progressData = {
+         taskSpecificProgress,
+         notes,
+         codeSnippet,
+         resourceLinks: resourceLinks.filter((link) => link.trim() !== ""),
+         timeSpent,
+      };
+
+      try {
+         const token = localStorage.getItem("token");
+         const response = await axios.put(`${API_URL}/tasks/learning-tasks/${task.id}/progress`, progressData, {
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            },
+         });
+
+         if (response.statusText !== "OK") {
+            throw new Error(`HTTP error! status: ${response.status}`);
+         }
+
+         const updatedTask = await response.data;
+         onUpdateProgress(updatedTask);
+         toast.success("Progress updated successfully!");
+         onClose();
+      } catch (error) {
+         console.error("Error updating progress:", error);
+         handleError(error, "Failed to update progress");
+      } finally {
+         setIsSubmitting(false);
+      }
    };
 
    return (
@@ -109,21 +150,13 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
                            placeholder='Share a helpful resource'
                         />
                         {index > 0 && (
-                           <button
-                              type='button'
-                              className='remove-link-button'
-                              onClick={() => removeResourceLink(index)}
-                           >
+                           <button type='button' className='remove-link-button' onClick={() => removeResourceLink(index)}>
                               <FontAwesomeIcon icon={faTimes} />
                            </button>
                         )}
                      </div>
                   ))}
-                  <button
-                     type='button'
-                     className='add-link-button'
-                     onClick={addResourceLink}
-                  >
+                  <button type='button' className='add-link-button' onClick={addResourceLink}>
                      <FontAwesomeIcon icon={faPlus} /> Add Resource Link
                   </button>
                </div>
@@ -131,8 +164,8 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
                   <button type='button' className='cancel-button' onClick={onClose}>
                      Cancel
                   </button>
-                  <button type='submit' className='update-button'>
-                     Update Progress
+                  <button type='submit' className='update-button' disabled={isSubmitting}>
+                     {isSubmitting ? "Updating..." : "Update Progress"}
                   </button>
                </div>
             </form>

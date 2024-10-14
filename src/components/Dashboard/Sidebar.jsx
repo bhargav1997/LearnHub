@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./DashboardSidebar.module.css";
-import { faChevronDown, faFire } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faChevronDown, faFire, faTrophy } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 function Sidebar() {
@@ -42,27 +42,38 @@ function Sidebar() {
                <div className={styles.streaks}>
                   <div className={styles.streakItem}>
                      <div className={styles.streakIcon}>
-                        <FontAwesomeIcon icon={faFire} /> 3
+                        <FontAwesomeIcon icon={faFire} />
                      </div>
                      <div className={styles.streakInfo}>
                         <strong>3 Week Streak</strong>
-                        <span>Congrats, You&apos;re on a roll, Keep Going</span>
-                     </div>
-                  </div>
-                  <div className={styles.streakItem}>
-                     <div className={styles.streakIcon}>1</div>
-                     <div className={styles.streakInfo}>
-                        <strong>Learning Machine</strong>
-                        <span>Read total 48 Hours</span>
+                        <span>{"You're on fire! Keep it up!"}</span>
+                        <div className={styles.streakProgress}>
+                           <div className={styles.streakProgressBar} style={{ width: "75%" }}></div>
+                        </div>
                      </div>
                   </div>
                   <div className={styles.streakItem}>
                      <div className={styles.streakIcon}>
-                        <FontAwesomeIcon icon={faFire} /> 2
+                        <FontAwesomeIcon icon={faBook} />
                      </div>
                      <div className={styles.streakInfo}>
-                        <strong>2 Week Streak</strong>
-                        <span>Congrats, You&apos;re on a roll, Keep Going</span>
+                        <strong>Learning Machine</strong>
+                        <span>48 Hours Total Study Time</span>
+                        <div className={styles.streakProgress}>
+                           <div className={styles.streakProgressBar} style={{ width: "60%" }}></div>
+                        </div>
+                     </div>
+                  </div>
+                  <div className={styles.streakItem}>
+                     <div className={styles.streakIcon}>
+                        <FontAwesomeIcon icon={faTrophy} />
+                     </div>
+                     <div className={styles.streakInfo}>
+                        <strong>Top Performer</strong>
+                        <span>{"You're in the top 10% this week!"}</span>
+                        <div className={styles.streakProgress}>
+                           <div className={styles.streakProgressBar} style={{ width: "90%" }}></div>
+                        </div>
                      </div>
                   </div>
                </div>

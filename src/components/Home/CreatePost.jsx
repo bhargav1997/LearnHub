@@ -54,13 +54,12 @@ function CreatePost() {
    };
 
    const handleSubmitPost = () => {
-      const postData = {
-         title: postTitle,
-         content: postContent,
-         tags: postTags,
-         image: postImage,
-      };
-      console.log("Submitting post:", JSON.stringify(postData, null, 2));
+      // const postData = {
+      //    title: postTitle,
+      //    content: postContent,
+      //    tags: postTags,
+      //    image: postImage,
+      // };
       handleCloseModal();
    };
 

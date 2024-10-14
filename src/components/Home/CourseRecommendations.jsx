@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faBookOpen, faClock, faLink, faBolt, faRobot } from "@fortawesome/free-solid-svg-icons";
 import styles from "./CourseRecommendations.module.css";
 import { useSelector } from "react-redux";
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const HF_API_TOKEN = import.meta.env.VITE_HF_API_TOKEN;
+import { CONFIG } from "../../config";
 
 // Mock data for testing
 // const mockRecommendations = [
@@ -49,6 +49,8 @@ const MAX_RETRIES = 1;
 const RETRY_DELAY = 10000; // 10 seconds
 
 function CourseRecommendations() {
+   const HF_API_TOKEN = CONFIG.API_TOKEN;
+
    const [recommendedContent, setRecommendedContent] = useState([]);
    const [userPreferences, setUserPreferences] = useState(null);
    const [isLoading, setIsLoading] = useState(true);
@@ -76,8 +78,6 @@ function CourseRecommendations() {
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [userPreferences]);
-
-   console.log(userPreferences);
 
    useEffect(() => {
       if (error) {
@@ -107,8 +107,6 @@ function CourseRecommendations() {
             },
             body: JSON.stringify({ inputs: prompt }),
          });
-
-         console.log("response", response);
 
          if (!response.ok) {
             const errorData = await response.json();
@@ -236,14 +234,14 @@ function CourseRecommendations() {
       <ul className={styles.contentList}>
          {[1, 2, 3].map((item) => (
             <li key={item} className={styles.contentItem}>
-               <Skeleton height={30} width="80%" style={{ marginBottom: '16px' }} />
-               <Skeleton height={20} width="40%" style={{ marginBottom: '16px' }} />
+               <Skeleton height={30} width='80%' style={{ marginBottom: "16px" }} />
+               <Skeleton height={20} width='40%' style={{ marginBottom: "16px" }} />
                <div className={styles.contentDetails}>
-                  <Skeleton height={20} width="30%" />
-                  <Skeleton height={20} width="30%" />
-                  <Skeleton height={20} width="30%" />
+                  <Skeleton height={20} width='30%' />
+                  <Skeleton height={20} width='30%' />
+                  <Skeleton height={20} width='30%' />
                </div>
-               <Skeleton height={60} style={{ marginTop: '20px' }} />
+               <Skeleton height={60} style={{ marginTop: "20px" }} />
             </li>
          ))}
       </ul>
@@ -255,9 +253,7 @@ function CourseRecommendations() {
             <FontAwesomeIcon icon={faRobot} className={styles.aiIcon} />
             AI-Powered Recommendations
          </h2>
-         {showError && (
-            <p className={styles.errorText}>{error}</p>
-         )}
+         {showError && <p className={styles.errorText}>{error}</p>}
          {isLoading ? (
             <p className={styles.loadingText}>Analyzing trends and generating recommendations...</p>
          ) : apiLoading ? (
