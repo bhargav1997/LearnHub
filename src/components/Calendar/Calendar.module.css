@@ -79,8 +79,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -88,11 +88,68 @@
   z-index: 1000;
 }
 
+.confirmModal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmModal h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.confirmModal p {
+  margin-bottom: 24px;
+  font-size: 16px;
+  color: #666;
+}
+
+.confirmModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.deleteButton,
+.cancelButton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.deleteButton {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #e60000;
+}
+
+.cancelButton {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.cancelButton:hover {
+  background-color: #e0e0e0;
+}
+
 .modal {
   background-color: white;
   padding: 30px;
   border-radius: 10px;
-  width: 400px;
+  width: 450px;
   max-width: 90%;
   position: relative;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -141,6 +198,19 @@
   resize: vertical;
 }
 
+.formGroup select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+}
+
+.formGroup label svg {
+  margin-right: 5px;
+}
+
 .formActions {
   display: flex;
   justify-content: flex-end;
@@ -148,7 +218,8 @@
 }
 
 .submitButton,
-.cancelButton {
+.cancelButton,
+.deleteButton {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -161,6 +232,12 @@
 .submitButton {
   background-color: #7c4dff;
   color: white;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .submitButton:hover {
@@ -174,6 +251,15 @@
 
 .cancelButton:hover {
   background-color: #e0e0e0;
+}
+
+.deleteButton {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #e60000;
 }
 
 /* Override react-big-calendar styles */
@@ -216,4 +302,71 @@
 
 :global(.rbc-day-bg + .rbc-day-bg) {
   border-left: 1px solid #e0e0e0;
+}
+
+/* Override react-big-calendar styles for smaller events */
+:global(.rbc-event) {
+  padding: 0 !important;
+  font-size: 12px !important;
+  background-color: #7c4dff !important;
+  border: none !important;
+}
+
+:global(.rbc-event-content) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customEvent {
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventIcon {
+  margin-right: 4px;
+  font-size: 10px;
+}
+
+.eventTitle {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventTooltip {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+}
+
+.eventTooltip h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.eventTooltip p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.eventTooltip a {
+  color: #7c4dff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.eventTooltip a:hover {
+  text-decoration: underline;
 }
