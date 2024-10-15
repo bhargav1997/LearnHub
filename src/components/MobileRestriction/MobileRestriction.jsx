@@ -4,14 +4,13 @@ const MobileRestriction = () => {
    return (
       <div className={styles.mobileRestriction}>
          <h2>Experience the Full Potential</h2>
-         <p>
-            Our application is optimized for larger screens to provide you with the best learning experience.
-         </p>
+         <p>Our application is optimized for larger screens to provide you with the best learning experience.</p>
          <ul className={styles.benefitsList}>
-            <li>Immersive interactive lessons</li>
-            <li>Comprehensive coding exercises</li>
-            <li>Real-time collaboration features</li>
-            <li>Advanced code visualization tools</li>
+            <li>Track progress across learning materials</li>
+            <li>Set and achieve educational goals</li>
+            <li>Connect with like-minded learners</li>
+            <li>Access curated learning resources</li>
+            <li>Get personalized recommendations</li>
          </ul>
          <p className={styles.callToAction}>
             Join us on a tablet, laptop, or desktop to unlock these features and accelerate your learning journey!
