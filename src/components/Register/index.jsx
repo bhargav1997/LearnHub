@@ -7,7 +7,7 @@ import LoadingSpinner from "../LoadingSpinner";
 // import TwoFactorAuth from "../TwoFactorAuth/TwoFactorAuth";
 import { CONFIG } from "../../config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faEnvelope, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faGraduationCap } from "@fortawesome/free-solid-svg-icons";
 
 function Register() {
    const API_URL = CONFIG.API_URL;
@@ -88,78 +88,83 @@ function Register() {
    return (
       <div className={styles.registerContainer}>
          <div className={styles.registerForm}>
-            <div className={styles.iconContainer}>
-               <FontAwesomeIcon icon={faUser} className={styles.userIcon} />
+            <div className={styles.formContent}>
+               <div className={styles.iconContainer}>
+                  <FontAwesomeIcon icon={faGraduationCap} className={styles.userIcon} />
+               </div>
+               <h2>Join LearnHub Today</h2>
+               <form onSubmit={handleSubmit}>
+                  <div className={styles.inputGroup}>
+                     <FontAwesomeIcon icon={faUser} className={styles.inputIcon} />
+                     <input
+                        type='text'
+                        name='username'
+                        placeholder='Username'
+                        value={formData.username}
+                        onChange={handleChange}
+                        required
+                        autoComplete='username'
+                     />
+                  </div>
+                  <div className={styles.inputGroup}>
+                     <FontAwesomeIcon icon={faEnvelope} className={styles.inputIcon} />
+                     <input
+                        type='email'
+                        name='email'
+                        placeholder='Email'
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        autoComplete='email'
+                     />
+                  </div>
+                  <div className={styles.inputGroup}>
+                     <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
+                     <input
+                        type={showPassword ? "text" : "password"}
+                        name='password'
+                        placeholder='Password'
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        autoComplete='new-password'
+                     />
+                     <button type='button' className={styles.showPasswordButton} onClick={() => setShowPassword(!showPassword)}>
+                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                     </button>
+                  </div>
+                  <div className={styles.inputGroup}>
+                     <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
+                     <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name='confirmPassword'
+                        placeholder='Confirm Password'
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                        autoComplete='new-password'
+                     />
+                     <button type='button' className={styles.showPasswordButton} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                        <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+                     </button>
+                  </div>
+                  <button type='submit'>Register</button>
+               </form>
+               <p>
+                  Already have an account? <Link to='/login'>Login here</Link>
+               </p>
             </div>
-            <h2>Create an Account</h2>
-            <form onSubmit={handleSubmit}>
-               <div className={styles.inputGroup}>
-                  <FontAwesomeIcon icon={faUser} className={styles.inputIcon} />
-                  <input
-                     type="text"
-                     name="username"
-                     placeholder="Username"
-                     value={formData.username}
-                     onChange={handleChange}
-                     required
-                     autoComplete="username"
-                  />
-               </div>
-               <div className={styles.inputGroup}>
-                  <FontAwesomeIcon icon={faEnvelope} className={styles.inputIcon} />
-                  <input
-                     type="email"
-                     name="email"
-                     placeholder="Email"
-                     value={formData.email}
-                     onChange={handleChange}
-                     required
-                     autoComplete="email"
-                  />
-               </div>
-               <div className={styles.inputGroup}>
-                  <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
-                  <input
-                     type={showPassword ? "text" : "password"}
-                     name="password"
-                     placeholder="Password"
-                     value={formData.password}
-                     onChange={handleChange}
-                     required
-                     autoComplete="new-password"
-                  />
-                  <button
-                     type="button"
-                     className={styles.showPasswordButton}
-                     onClick={() => setShowPassword(!showPassword)}
-                  >
-                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                  </button>
-               </div>
-               <div className={styles.inputGroup}>
-                  <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
-                  <input
-                     type={showConfirmPassword ? "text" : "password"}
-                     name="confirmPassword"
-                     placeholder="Confirm Password"
-                     value={formData.confirmPassword}
-                     onChange={handleChange}
-                     required
-                     autoComplete="new-password"
-                  />
-                  <button
-                     type="button"
-                     className={styles.showPasswordButton}
-                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-                  </button>
-               </div>
-               <button type="submit">Register</button>
-            </form>
-            <p>
-               Already have an account? <Link to='/login'>Login here</Link>
-            </p>
+            <div className={styles.appDescription}>
+               <h3>Why Join LearnHub?</h3>
+               <ul>
+                  <li>Track progress across learning materials</li>
+                  <li>Set and achieve educational goals</li>
+                  <li>Connect with like-minded learners</li>
+                  <li>Access curated learning resources</li>
+                  <li>Get personalized recommendations</li>
+               </ul>
+               <p>Start your journey towards continuous learning and personal growth!</p>
+            </div>
          </div>
       </div>
    );
