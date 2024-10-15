@@ -1,18 +1,31 @@
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser, setLoading } from "../../redux/user/userSlice";
 import styles from "./TwoFactorAuth.module.css";
 import { toast } from "react-toastify";
 import { CONFIG } from "../../config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faEnvelope, faSpinner, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 function TwoFactorAuth() {
    const API_URL = CONFIG.API_URL;
-   const [code, setCode] = useState("");
+   const [code, setCode] = useState(["", "", "", "", "", ""]);
+   const [error, setError] = useState("");
+   const [cooldown, setCooldown] = useState(0);
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const location = useLocation();
    const { email, isRegistration } = location.state || {};
+
+   useEffect(() => {
+      let timer;
+      if (cooldown > 0) {
+         timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      }
+      return () => clearTimeout(timer);
+   }, [cooldown]);
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -51,10 +64,32 @@ function TwoFactorAuth() {
       }
    };
 
-   const handleChange = (e) => {
-      const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-      setCode(value);
-   };
+   const handleChange = useCallback((index, value) => {
+      setCode((prevCode) => {
+         const newCode = [...prevCode];
+         newCode[index] = value;
+         return newCode;
+      });
+      setError(""); // Clear any existing error when user starts typing
+
+      // Move focus to the next input
+      if (value && index < 5) {
+         document.getElementById(`code-${index + 1}`).focus();
+      }
+   }, []);
+
+   const requestNewCode = useCallback(async () => {
+      if (cooldown > 0) return;
+
+      try {
+         await axios.post(`${API_URL}/users/request-new-2fa-code`, { email });
+         toast.success("New code sent. Please check your email.");
+         setCooldown(60);
+      } catch (error) {
+         console.error("Error requesting new code:", error);
+         toast.error(error.response?.data?.message || "Failed to send new code. Please try again.");
+      }
+   }, [API_URL, cooldown, email]);
 
    const maskedEmail = email ? email.replace(/(.{2})(.*)(?=@)/, (_, start, rest) => start + "*".repeat(rest.length)) : "your email";
 
@@ -65,22 +100,48 @@ function TwoFactorAuth() {
    return (
       <div className={styles.twoFactorContainer}>
          <div className={styles.twoFactorForm}>
+            <div className={styles.iconContainer}>
+               <FontAwesomeIcon icon={faLock} className={styles.lockIcon} />
+            </div>
             <h2>Two-Factor Authentication</h2>
-            <p>Enter the 6-digit code sent to {maskedEmail}</p>
+            <p>
+               <FontAwesomeIcon icon={faEnvelope} className={styles.emailIcon} />
+               Enter the 6-digit code sent to {maskedEmail}
+            </p>
+            {error && (
+               <div className={styles.errorMessage}>
+                  <FontAwesomeIcon icon={faExclamationCircle} className={styles.errorIcon} />
+                  {error}
+               </div>
+            )}
             <form onSubmit={handleSubmit}>
-               <input
-                  type='text'
-                  value={code}
-                  onChange={handleChange}
-                  placeholder='Enter 6-digit code'
-                  required
-                  maxLength={6}
-                  pattern='\d{6}'
-               />
-               <button type='submit' disabled={code.length !== 6}>
+               <div className={styles.codeInputs}>
+                  {code.map((digit, index) => (
+                     <input
+                        key={index}
+                        id={`code-${index}`}
+                        type='text'
+                        maxLength='1'
+                        value={digit}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        required
+                     />
+                  ))}
+               </div>
+               <button type='submit' disabled={code.some((digit) => !digit)}>
                   Verify
                </button>
             </form>
+            <button className={styles.requestNewCode} onClick={requestNewCode} disabled={cooldown > 0}>
+               {cooldown > 0 ? (
+                  <>
+                     <FontAwesomeIcon icon={faSpinner} spin />
+                     Resend in {cooldown}s
+                  </>
+               ) : (
+                  "Request New Code"
+               )}
+            </button>
          </div>
       </div>
    );

@@ -13,47 +13,75 @@
 .twoFactorForm {
    background-color: #fff;
    padding: 40px;
-   border-radius: 8px;
-   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+   border-radius: 12px;
+   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
    width: 100%;
    max-width: 400px;
+   text-align: center;
+}
+
+.iconContainer {
+   background-color: #7c4dff;
+   width: 80px;
+   height: 80px;
+   border-radius: 50%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin: 0 auto 20px;
+}
+
+.lockIcon {
+   font-size: 40px;
+   color: white;
 }
 
 .twoFactorForm h2 {
-   text-align: center;
    color: #333;
    margin-bottom: 20px;
+   font-size: 24px;
 }
 
 .twoFactorForm p {
-   text-align: center;
-   margin-bottom: 20px;
+   margin-bottom: 30px;
    color: #666;
-}
-
-.twoFactorForm form {
-   display: flex;
-   flex-direction: column;
-}
-
-.twoFactorForm input {
-   width: 100%;
-   padding: 10px;
-   margin-bottom: 15px;
-   border: 1px solid #ddd;
-   border-radius: 4px;
    font-size: 16px;
+}
+
+.emailIcon {
+   margin-right: 10px;
+   color: #7c4dff;
+}
+
+.codeInputs {
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 20px;
+}
+
+.codeInputs input {
+   width: 40px;
+   height: 50px;
    text-align: center;
-   letter-spacing: 0.5em;
+   font-size: 24px;
+   border: 2px solid #ddd;
+   border-radius: 8px;
+   margin: 0 4px;
+   transition: border-color 0.3s ease;
+}
+
+.codeInputs input:focus {
+   border-color: #7c4dff;
+   outline: none;
 }
 
 .twoFactorForm button {
    width: 100%;
-   padding: 10px;
+   padding: 12px;
    background-color: #7c4dff;
    color: white;
    border: none;
-   border-radius: 4px;
+   border-radius: 8px;
    font-size: 16px;
    cursor: pointer;
    transition: background-color 0.3s ease;
@@ -66,4 +94,37 @@
 .twoFactorForm button:disabled {
    background-color: #ccc;
    cursor: not-allowed;
+}
+
+.errorMessage {
+   color: #ff4444;
+   margin-bottom: 15px;
+   font-size: 14px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #ffe6e6;
+   padding: 10px;
+   border-radius: 8px;
+}
+
+.errorIcon {
+   margin-right: 8px;
+   font-size: 16px;
+}
+
+.requestNewCode {
+   margin-top: 20px;
+   background-color: transparent !important;
+   color: #7c4dff !important;
+   border: 2px solid #7c4dff !important;
+}
+
+.requestNewCode:hover:not(:disabled) {
+   background-color: rgba(124, 77, 255, 0.1) !important;
+}
+
+.requestNewCode:disabled {
+   color: #999 !important;
+   border-color: #999 !important;
 }
