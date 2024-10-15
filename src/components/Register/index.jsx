@@ -6,6 +6,8 @@ import styles from "./Register.module.css";
 import LoadingSpinner from "../LoadingSpinner";
 // import TwoFactorAuth from "../TwoFactorAuth/TwoFactorAuth";
 import { CONFIG } from "../../config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faEnvelope, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function Register() {
    const API_URL = CONFIG.API_URL;
@@ -16,7 +18,8 @@ function Register() {
       password: "",
       confirmPassword: "",
    });
-   // const [showTwoFactor, setShowTwoFactor] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
+   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
    const navigate = useNavigate();
    const dispatch = useDispatch();
 
@@ -85,45 +88,74 @@ function Register() {
    return (
       <div className={styles.registerContainer}>
          <div className={styles.registerForm}>
+            <div className={styles.iconContainer}>
+               <FontAwesomeIcon icon={faUser} className={styles.userIcon} />
+            </div>
             <h2>Create an Account</h2>
             <form onSubmit={handleSubmit}>
-               <input
-                  type='text'
-                  name='username'
-                  placeholder='Username'
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  autoComplete='username'
-               />
-               <input
-                  type='email'
-                  name='email'
-                  placeholder='Email'
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  autoComplete='email'
-               />
-               <input
-                  type='password'
-                  name='password'
-                  placeholder='Password'
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  autoComplete='new-password'
-               />
-               <input
-                  type='password'
-                  name='confirmPassword'
-                  placeholder='Confirm Password'
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  autoComplete='new-password'
-               />
-               <button type='submit'>Register</button>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faUser} className={styles.inputIcon} />
+                  <input
+                     type="text"
+                     name="username"
+                     placeholder="Username"
+                     value={formData.username}
+                     onChange={handleChange}
+                     required
+                     autoComplete="username"
+                  />
+               </div>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faEnvelope} className={styles.inputIcon} />
+                  <input
+                     type="email"
+                     name="email"
+                     placeholder="Email"
+                     value={formData.email}
+                     onChange={handleChange}
+                     required
+                     autoComplete="email"
+                  />
+               </div>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
+                  <input
+                     type={showPassword ? "text" : "password"}
+                     name="password"
+                     placeholder="Password"
+                     value={formData.password}
+                     onChange={handleChange}
+                     required
+                     autoComplete="new-password"
+                  />
+                  <button
+                     type="button"
+                     className={styles.showPasswordButton}
+                     onClick={() => setShowPassword(!showPassword)}
+                  >
+                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                  </button>
+               </div>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
+                  <input
+                     type={showConfirmPassword ? "text" : "password"}
+                     name="confirmPassword"
+                     placeholder="Confirm Password"
+                     value={formData.confirmPassword}
+                     onChange={handleChange}
+                     required
+                     autoComplete="new-password"
+                  />
+                  <button
+                     type="button"
+                     className={styles.showPasswordButton}
+                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                     <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+                  </button>
+               </div>
+               <button type="submit">Register</button>
             </form>
             <p>
                Already have an account? <Link to='/login'>Login here</Link>

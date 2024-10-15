@@ -6,6 +6,8 @@ import styles from "./Login.module.css";
 // import TwoFactorAuth from "../TwoFactorAuth/TwoFactorAuth";
 import { toast } from "react-toastify";
 import { CONFIG } from "../../config";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faEnvelope, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 function Login() {
    const API_URL = CONFIG.API_URL;
@@ -14,6 +16,7 @@ function Login() {
       password: "",
       rememberMe: false,
    });
+   const [showPassword, setShowPassword] = useState(false);
    const user = useSelector((state) => state.user);
 
    // const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -25,7 +28,7 @@ function Login() {
       if (user) {
          navigate("/");
       }
-   }, [user]);
+   }, [user, navigate]);
 
    const handleSubmit = async (e) => {
       e.preventDefault();
@@ -46,7 +49,6 @@ function Login() {
             if (data.requireTwoFactor) {
                navigate("/two-factor-auth", { state: { email: formData.email } });
             } else {
-               // Handle login without 2FA
                handleSuccessfulLogin(data);
             }
          } else {
@@ -61,21 +63,10 @@ function Login() {
    };
 
    const handleSuccessfulLogin = (data) => {
-      console.log("data", data);
       try {
-         // Store token in localStorage
          localStorage.setItem("token", data.token);
-
-         // Dispatch user data to Redux
          dispatch(setUser(data.user));
-
-         // Show success message
          toast.success("Login successful!");
-
-         // Use setTimeout to ensure state updates before navigation
-         // setTimeout(() => {
-         //    navigate("/");
-         // }, 0);
       } catch (error) {
          console.error("Error handling successful login:", error);
          toast.error("An error occurred while processing your login");
@@ -96,31 +87,53 @@ function Login() {
    return (
       <div className={styles.loginContainer}>
          <div className={styles.loginForm}>
+            <div className={styles.iconContainer}>
+               <FontAwesomeIcon icon={faUser} className={styles.userIcon} />
+            </div>
             <h2>Login to Your Account</h2>
             <form onSubmit={handleSubmit}>
-               <input
-                  type='email'
-                  name='email'
-                  placeholder='Email'
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  autoComplete='email'
-               />
-               <input
-                  type='password'
-                  name='password'
-                  placeholder='Password'
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  autoComplete='current-password'
-               />
-               <div className={styles.rememberMe}>
-                  <input type='checkbox' name='rememberMe' id='rememberMe' checked={formData.rememberMe} onChange={handleChange} />
-                  <label htmlFor='rememberMe'>Remember Me</label>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faEnvelope} className={styles.inputIcon} />
+                  <input
+                     type="email"
+                     name="email"
+                     placeholder="Email"
+                     value={formData.email}
+                     onChange={handleChange}
+                     required
+                     autoComplete="email"
+                  />
                </div>
-               <button type='submit'>Login</button>
+               <div className={styles.inputGroup}>
+                  <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
+                  <input
+                     type={showPassword ? "text" : "password"}
+                     name="password"
+                     placeholder="Password"
+                     value={formData.password}
+                     onChange={handleChange}
+                     required
+                     autoComplete="current-password"
+                  />
+                  <button
+                     type="button"
+                     className={styles.showPasswordButton}
+                     onClick={() => setShowPassword(!showPassword)}
+                  >
+                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                  </button>
+               </div>
+               <div className={styles.rememberMe}>
+                  <input
+                     type="checkbox"
+                     name="rememberMe"
+                     id="rememberMe"
+                     checked={formData.rememberMe}
+                     onChange={handleChange}
+                  />
+                  <label htmlFor="rememberMe">Remember Me</label>
+               </div>
+               <button type="submit">Login</button>
             </form>
             <p>
                {"Don't have an account? "} <Link to='/register'>Register here</Link>
