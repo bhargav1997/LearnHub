@@ -1,0 +1,56 @@
+.mobileRestriction {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   min-height: 100vh;
+   padding: 20px;
+   text-align: center;
+   background-color: #f8f9fa;
+   font-family: "Roboto", sans-serif;
+   color: #333;
+}
+
+.mobileRestriction h2 {
+   font-size: 28px;
+   margin-bottom: 20px;
+   color: #007bff;
+}
+
+.mobileRestriction p {
+   font-size: 16px;
+   max-width: 320px;
+   margin-bottom: 20px;
+   line-height: 1.5;
+}
+
+.benefitsList {
+   list-style-type: none;
+   padding: 0;
+   margin-bottom: 25px;
+}
+
+.benefitsList li {
+   font-size: 16px;
+   margin-bottom: 10px;
+   padding-left: 25px;
+   position: relative;
+}
+
+.benefitsList li::before {
+   content: "✓";
+   color: #28a745;
+   position: absolute;
+   left: 0;
+}
+
+.callToAction {
+   font-weight: bold;
+   color: #007bff;
+}
+
+.mobileUpdate {
+   font-size: 14px;
+   color: #6c757d;
+   margin-top: 30px;
+}

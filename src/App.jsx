@@ -30,6 +30,7 @@ const Login = React.lazy(() => import("./components/Login"));
 const UserProfile = React.lazy(() => import("./components/UserProfile"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
 import { CONFIG } from "./config";
+import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
 
 function ErrorFallback({ error }) {
    return (
@@ -44,7 +45,7 @@ ErrorFallback.propTypes = {
    error: PropTypes.object.isRequired,
 };
 
-function App() {
+function AppM() {
    const [showOnboarding, setShowOnboarding] = useState(false);
    const dispatch = useDispatch();
    const { user, isLoading } = useSelector((state) => state.user);
@@ -155,4 +156,5 @@ function AuthenticatedLayout() {
    );
 }
 
+const App = withMobileRestriction(AppM);
 export default App;
