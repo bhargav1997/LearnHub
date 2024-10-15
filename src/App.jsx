@@ -2,7 +2,6 @@ import React, { useEffect, useState, Suspense } from "react";
 import { HashRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { useSelector, useDispatch } from "react-redux";
-// import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { setUser, setLoading } from "./redux/user/userSlice";
 import styles from "./styles/App.module.css";
@@ -135,8 +134,6 @@ function App() {
                   </div>
                </div>
                {showOnboarding && isAuthenticated && <Onboarding onComplete={handleOnboardingComplete} />}
-
-               {/* <SpeedInsights /> */}
             </div>
          </ErrorBoundary>
       </Router>

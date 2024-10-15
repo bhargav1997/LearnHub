@@ -1,7 +1,7 @@
 import { faChevronDown, faClock, faCode, faLink, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../styles/Dashboard.css";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -13,21 +13,28 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
    const [resourceLinks, setResourceLinks] = useState([""]);
    const [timeSpent, setTimeSpent] = useState(0);
    const [taskSpecificProgress, setTaskSpecificProgress] = useState(0);
+   const [taskSpecificUnit, setTaskSpecificUnit] = useState('');
    const [isSubmitting, setIsSubmitting] = useState(false);
    const API_URL = CONFIG.API_URL;
-   const getTaskSpecificLabel = () => {
-      let taskType = task.type || "";
-      switch (taskType.toLowerCase()) {
+
+   useEffect(() => {
+      switch (task.type.toLowerCase()) {
          case "book":
-            return "Pages read";
+            setTaskSpecificUnit('Pages read');
+            break;
          case "video":
-            return "Minutes watched";
+            setTaskSpecificUnit('Minutes watched');
+            break;
          case "course":
-            return "Lessons completed";
+            setTaskSpecificUnit('Lessons completed');
+            break;
+         case "article":
+            setTaskSpecificUnit('Paragraphs read');
+            break;
          default:
-            return "Units completed";
+            setTaskSpecificUnit('Units completed');
       }
-   };
+   }, [task.type]);
 
    const handleError = (error, customMessage) => {
       console.error(customMessage, error);
@@ -53,13 +60,30 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
       e.preventDefault();
       setIsSubmitting(true);
 
-      const progressData = {
-         taskSpecificProgress,
+      let progressData = {
          notes,
          codeSnippet,
          resourceLinks: resourceLinks.filter((link) => link.trim() !== ""),
-         timeSpent,
+         timeSpent: parseInt(timeSpent),
       };
+
+      // Add task-specific progress
+      switch (task.type.toLowerCase()) {
+         case "book":
+            progressData.pagesRead = parseInt(taskSpecificProgress);
+            break;
+         case "video":
+            progressData.minutesWatched = parseInt(taskSpecificProgress);
+            break;
+         case "course":
+            progressData.lessonsCompleted = parseInt(taskSpecificProgress);
+            break;
+         case "article":
+            progressData.paragraphsRead = parseInt(taskSpecificProgress);
+            break;
+         default:
+            progressData.unitsCompleted = parseInt(taskSpecificProgress);
+      }
 
       try {
          const token = localStorage.getItem("token");
@@ -74,7 +98,7 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
             throw new Error(`HTTP error! status: ${response.status}`);
          }
 
-         const updatedTask = await response.data;
+         const updatedTask = response.data;
          onUpdateProgress(updatedTask);
          toast.success("Progress updated successfully!");
          onClose();
@@ -95,7 +119,7 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
             </button>
             <form onSubmit={handleSubmit}>
                <div className='form-group'>
-                  <label htmlFor='taskSpecificProgress'>{getTaskSpecificLabel()}</label>
+                  <label htmlFor='taskSpecificProgress'>{taskSpecificUnit}</label>
                   <input
                      type='number'
                      id='taskSpecificProgress'
@@ -144,8 +168,9 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
                   {resourceLinks.map((link, index) => (
                      <div key={index} className='resource-link-input'>
                         <input
-                           type='url'
+                           type='text'
                            value={link}
+                           id='resourceLinks'
                            onChange={(e) => updateResourceLink(index, e.target.value)}
                            placeholder='Share a helpful resource'
                         />

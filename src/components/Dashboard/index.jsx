@@ -218,7 +218,8 @@ function Dashboard() {
             throw new Error(`HTTP error! status: ${response.status}`);
          }
 
-         const tasks = await response.data;
+         const tasks = response.data;
+         console.log("tasks", tasks);
          setApiLearningTasks(tasks);
       } catch (error) {
          toast.error("Failed to retrieve learning tasks, please try again later.");
@@ -243,25 +244,25 @@ function Dashboard() {
    const handleSubmit = async (newTaskData) => {
       const newTask = {
          id: Date.now(),
-         taskType: newTaskData.taskType,
-         taskTitle: newTaskData.taskTitle,
+         taskType: newTaskData?.taskType,
+         taskTitle: newTaskData?.taskTitle,
          level: "Beginner", // You might want to add a field for this in CreateLearningTask
-         progress: newTaskData.initialProgress || 0,
-         status: newTaskData.initialProgress > 0 ? "In Progress" : "Not Started",
-         timeRemain: `${newTaskData.completionDays} days`,
+         progress: newTaskData?.initialProgress || 0,
+         status: newTaskData?.initialProgress > 0 ? "In Progress" : "Not Started",
+         timeRemain: `${newTaskData?.completionDays} days`,
          lastUpdated: new Date().toISOString(),
          progressHistory: [],
          milestones: [],
          timeSpent: 0,
          codeSnippets: [],
-         resourceLinks: [newTaskData.sourceLink],
+         resourceLinks: [newTaskData?.sourceLink],
          peerReviews: [],
-         type: newTaskData.taskType,
-         estimatedTime: newTaskData.estimatedTime,
-         pages: newTaskData.pages,
-         chapters: newTaskData.chapters,
-         reminders: newTaskData.reminders,
-         personalGoals: newTaskData.personalGoals,
+         type: newTaskData?.taskType,
+         estimatedTime: newTaskData.estimatedTime ? newTaskData.estimatedTime : newTaskData.timeRemain,
+         pages: newTaskData?.pages,
+         chapters: newTaskData?.chapters,
+         reminders: newTaskData?.reminders,
+         personalGoals: newTaskData?.personalGoals,
       };
       try {
          await dispatch(addLearningTask(newTask)).unwrap();
@@ -272,6 +273,7 @@ function Dashboard() {
          showNotification(`New task "${newTask.taskTitle}" created successfully!`, "success");
       } catch (error) {
          console.error("Failed to create task:", error);
+         toast.error("Failed to create task: Please try again later.");
       }
    };
 

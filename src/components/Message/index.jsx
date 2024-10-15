@@ -1,79 +1,161 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile } from "@fortawesome/free-solid-svg-icons";
-import io from "socket.io-client";
+import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile, faUserFriends } from "@fortawesome/free-solid-svg-icons";
+import { io } from "socket.io-client";
+import axios from "axios";
 import styles from "./Message.module.css";
 import { useNavigate } from "react-router-dom";
-// import { fetchConnections } from "../../redux/user/userHandle";
 import { CONFIG } from "../../config";
+import { useSelector } from "react-redux";
+import { fetchUserConnections } from "../../api/userApi";
 
 function Message() {
    const API_URL = CONFIG.API_URL;
+   const { user } = useSelector((state) => state.user);
    const [selectedChat, setSelectedChat] = useState(null);
    const [messageInput, setMessageInput] = useState("");
    const [socket, setSocket] = useState(null);
    const [messages, setMessages] = useState([]);
    const [connections, setConnections] = useState([]);
+   const [isTyping, setIsTyping] = useState(false);
    const navigate = useNavigate();
+   const messagesEndRef = useRef(null);
 
-   useEffect(() => {
+   const initializeSocket = useCallback(() => {
       const token = localStorage.getItem("token");
       if (!token) {
+         console.log("No token found, navigating to login");
          navigate("/login");
-         return;
+         return null;
       }
 
-      // dispatch(fetchConnections());
-
-      const newSocket = io(`${API_URL}`, {
+      const newSocket = io(CONFIG.SOCKET_URL, {
          auth: { token },
+         transports: ["websocket"],
       });
 
       newSocket.on("connect", () => {
          console.log("Connected to server");
+         newSocket.emit("user_online");
       });
 
       newSocket.on("connect_error", (err) => {
          console.error("Connection error:", err.message);
-         if (err.message === "Invalid token") {
-            localStorage.removeItem("token");
-            navigate("/login");
+         if (err.message === "Authentication error") {
+            // localStorage.removeItem("token");
+            // navigate("/login");
          }
       });
 
-      newSocket.on("receive_message", (message) => {
-         setMessages((prevMessages) => [...prevMessages, message]);
-      });
+      return newSocket;
+   }, [API_URL, navigate]);
 
-      setSocket(newSocket);
+   const fetchChatHistory = useCallback(
+      async (recipientId) => {
+         try {
+            const response = await axios.get(`${API_URL}/chat/history/${recipientId}`, {
+               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            console.log("Fetched messages:", response.data);
+            setMessages(response.data);
+         } catch (error) {
+            console.error("Error fetching chat history:", error);
+         }
+      },
+      [API_URL],
+   );
 
-      return () => {
-         newSocket.disconnect();
-      };
-   }, [navigate]);
+   useEffect(() => {
+      fetchUserConnections()
+         .then((data) => setConnections(data))
+         .catch((error) => console.error("Error fetching user connections:", error));
 
-   const handleChatSelect = (chatId) => {
-      setSelectedChat(chatId);
-      if (socket) {
-         socket.emit("join_room", chatId);
-      }
-   };
+      const newSocket = initializeSocket();
+      if (newSocket) {
+         setSocket(newSocket);
 
-   const handleSendMessage = (e) => {
-      e.preventDefault();
-      if (messageInput.trim() && socket && selectedChat) {
-         const newMessage = {
-            id: Date.now(),
-            sender: "You",
-            content: messageInput,
-            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            isSent: true,
+         newSocket.on("private_message", (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+         });
+
+         newSocket.on("user_status", ({ userId, status }) => {
+            setConnections((prevConnections) => prevConnections.map((conn) => (conn._id === userId ? { ...conn, status } : conn)));
+         });
+
+         newSocket.on("typing_status", ({ userId, status }) => {
+            if (selectedChat === userId) {
+               setIsTyping(status === "typing");
+            }
+         });
+
+         return () => {
+            newSocket.emit("user_offline");
+            newSocket.off("private_message");
+            newSocket.disconnect();
          };
-         socket.emit("send_message", { roomId: selectedChat, message: newMessage });
-         setMessages((prevMessages) => [...prevMessages, newMessage]);
-         setMessageInput("");
       }
-   };
+   }, [initializeSocket, selectedChat]);
+
+   useEffect(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+   }, [messages]);
+
+   const handleChatSelect = useCallback(
+      async (chatId) => {
+         setSelectedChat(chatId);
+         if (socket) {
+            socket.emit("join_room", chatId);
+         }
+         await fetchChatHistory(chatId);
+      },
+      [socket, fetchChatHistory],
+   );
+
+   const sendPrivateMessage = useCallback(
+      async (recipientId, message) => {
+         if (message.trim() && socket && recipientId) {
+            try {
+               const response = await axios.post(
+                  `${API_URL}/chat/private`,
+                  {
+                     recipientId,
+                     message,
+                  },
+                  {
+                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                  },
+               );
+
+               // Add the sent message to the state
+               // setMessages((prevMessages) => [...prevMessages, response.data]);
+
+               socket.emit("private_message", response.data);
+
+               setMessageInput("");
+               socket.emit("typing_end", recipientId);
+            } catch (error) {
+               console.error("Error sending private message:", error);
+            }
+         }
+      },
+      [socket, API_URL],
+   );
+
+   const handleInputChange = useCallback(
+      (e) => {
+         setMessageInput(e.target.value);
+         if (socket && selectedChat) {
+            socket.emit("typing_start", selectedChat);
+            setTimeout(() => {
+               socket.emit("typing_end", selectedChat);
+            }, 2000);
+         }
+      },
+      [socket, selectedChat],
+   );
+
+   console.log("user", user);
+   console.log("messages", messages);
 
    return (
       <div className={styles.messageContainer}>
@@ -97,8 +179,19 @@ function Message() {
                      </div>
                      <div className={styles.chatMeta}>
                         <span>{new Date(connection.lastActive).toLocaleDateString()}</span>
-                        {connection.isFollower && <div className={styles.followerBadge}>Follower</div>}
-                        {connection.isFollowing && <div className={styles.followingBadge}>Following</div>}
+                        <div className={styles.connectionStatus}>
+                           {connection.isFollower && connection.isFollowing ? (
+                              <FontAwesomeIcon icon={faUserFriends} className={styles.mutualIcon} title='Mutual Connection' />
+                           ) : connection.isFollower ? (
+                              <span className={styles.followerBadge} title='Follower'>
+                                 F
+                              </span>
+                           ) : connection.isFollowing ? (
+                              <span className={styles.followingBadge} title='Following'>
+                                 F
+                              </span>
+                           ) : null}
+                        </div>
                      </div>
                   </div>
                ))}
@@ -117,24 +210,32 @@ function Message() {
                      </button>
                   </div>
                   <div className={styles.messageList}>
-                     {messages.map((message) => (
-                        <div key={message.id} className={`${styles.message} ${message.isSent ? styles.sent : styles.received}`}>
-                           <p>{message.content}</p>
-                           <span className={styles.messageTime}>{message.time}</span>
+                     {messages.map((message, index) => (
+                        <div
+                           key={index}
+                           className={`${styles.message} ${
+                              message?.sender?._id === user._id || message?.senderId === user._id ? styles.sent : styles.received
+                           }`}>
+                           <p>{message.message}</p>
+                           <span className={styles.messageTime}>
+                              {new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                           </span>
                         </div>
                      ))}
+                     {isTyping && <div className={styles.typingIndicator}>Typing...</div>}
+                     <div ref={messagesEndRef} />
                   </div>
                   <div className={styles.messageInputWrapper}>
                      <button className={styles.attachButton}>
                         <FontAwesomeIcon icon={faPaperclip} />
                      </button>
-                     <form className={styles.messageInput} onSubmit={handleSendMessage}>
-                        <input
-                           type='text'
-                           placeholder='Type a message...'
-                           value={messageInput}
-                           onChange={(e) => setMessageInput(e.target.value)}
-                        />
+                     <form
+                        className={styles.messageInput}
+                        onSubmit={(e) => {
+                           e.preventDefault();
+                           sendPrivateMessage(selectedChat, messageInput);
+                        }}>
+                        <input type='text' placeholder='Type a message...' value={messageInput} onChange={handleInputChange} />
                         <button type='button' className={styles.emojiButton}>
                            <FontAwesomeIcon icon={faSmile} />
                         </button>

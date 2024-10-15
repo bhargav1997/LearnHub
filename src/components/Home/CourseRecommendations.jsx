@@ -45,11 +45,11 @@ import { CONFIG } from "../../config";
 //    },
 // ];
 
-const MAX_RETRIES = 1;
-const RETRY_DELAY = 10000; // 10 seconds
+// const MAX_RETRIES = 1;
+// const RETRY_DELAY = 10000; // 10 seconds
 
 function CourseRecommendations() {
-   const HF_API_TOKEN = CONFIG.API_TOKEN;
+   // const HF_API_TOKEN = CONFIG.API_TOKEN;
 
    const [recommendedContent, setRecommendedContent] = useState([]);
    const [userPreferences, setUserPreferences] = useState(null);
@@ -93,70 +93,70 @@ function CourseRecommendations() {
    const fetchAIRecommendations = async (retryCount = 0) => {
       setApiLoading(true);
       setError(null);
-      try {
-         const userSkills = userPreferences.join(", ");
-         const prompt = `Given a user with skills in ${userSkills}, suggest 3 advanced IT courses or topics to study next. For each suggestion, provide a brief explanation of why it's recommended. Format the response as a numbered list.`;
+      // try {
+         // const userSkills = userPreferences.join(", ");
+         // const prompt = `Given a user with skills in ${userSkills}, suggest 3 advanced IT courses or topics to study next. For each suggestion, provide a brief explanation of why it's recommended. Format the response as a numbered list.`;
 
-         const response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-xxl", {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${HF_API_TOKEN}`,
-               "x-use-cache": "false",
-               "x-wait-for-model": "true",
-            },
-            body: JSON.stringify({ inputs: prompt }),
-         });
+         // const response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-xxl", {
+         //    method: "POST",
+         //    headers: {
+         //       "Content-Type": "application/json",
+         //       Authorization: `Bearer ${HF_API_TOKEN}`,
+         //       "x-use-cache": "false",
+         //       "x-wait-for-model": "true",
+         //    },
+         //    body: JSON.stringify({ inputs: prompt }),
+         // });
 
-         if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.error && errorData.error.includes("is currently loading")) {
-               if (retryCount < MAX_RETRIES) {
-                  console.log(`Model is loading. Retrying in ${RETRY_DELAY / 1000} seconds...`);
-                  setTimeout(() => fetchAIRecommendations(retryCount + 1), RETRY_DELAY);
-                  return;
-               } else {
-                  throw new Error("Model took too long to load. Using fallback data.");
-               }
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
-         }
+         // if (!response.ok) {
+         //    const errorData = await response.json();
+         //    if (errorData.error && errorData.error.includes("is currently loading")) {
+         //       if (retryCount < MAX_RETRIES) {
+         //          console.log(`Model is loading. Retrying in ${RETRY_DELAY / 1000} seconds...`);
+         //          setTimeout(() => fetchAIRecommendations(retryCount + 1), RETRY_DELAY);
+         //          return;
+         //       } else {
+         //          throw new Error("Model took too long to load. Using fallback data.");
+         //       }
+         //    }
+         //    throw new Error(`HTTP error! status: ${response.status}`);
+         // }
 
-         const data = await response.json();
-         const recommendations = parseAIRecommendations(data[0].generated_text);
-         setRecommendedContent(recommendations);
+         // const data = await response.json();
+         // const recommendations = parseAIRecommendations(data[0].generated_text);
+         // setRecommendedContent(recommendations);
          setApiLoading(false);
-      } catch (error) {
-         console.error("Error fetching AI recommendations:", error);
-         setError("We couldn't load AI recommendations at the moment. Here are some great courses for you!");
+      // } catch (error) {
+         // console.error("Error fetching AI recommendations:", error);
+         // setError("We couldn't load AI recommendations at the moment. Here are some great courses for you!");
          setRecommendedContent(getFallbackRecommendations(userPreferences));
          setApiLoading(false);
-      } finally {
-         setIsLoading(false);
-      }
+      // } finally {
+      //    setIsLoading(false);
+      // }
    };
 
-   const parseAIRecommendations = (text) => {
-      const recommendations = text
-         .split(/\d+\./)
-         .filter((item) => item.trim() !== "")
-         .map((item) => item.trim());
-      return recommendations.map((recommendation, index) => {
-         const [title, ...reasonParts] = recommendation.split(":");
-         const reason = reasonParts.join(":").trim();
-         return {
-            id: index + 1,
-            title: title.trim(),
-            type: "Course",
-            level: "Advanced",
-            rating: (4 + Math.random()).toFixed(1),
-            duration: `${Math.floor(Math.random() * 40 + 20)} hours`,
-            link: `https://example.com/course-${index + 1}`,
-            addedBy: "AI Recommendation",
-            aiReason: reason,
-         };
-      });
-   };
+   // const parseAIRecommendations = (text) => {
+   //    const recommendations = text
+   //       .split(/\d+\./)
+   //       .filter((item) => item.trim() !== "")
+   //       .map((item) => item.trim());
+   //    return recommendations.map((recommendation, index) => {
+   //       const [title, ...reasonParts] = recommendation.split(":");
+   //       const reason = reasonParts.join(":").trim();
+   //       return {
+   //          id: index + 1,
+   //          title: title.trim(),
+   //          type: "Course",
+   //          level: "Advanced",
+   //          rating: (4 + Math.random()).toFixed(1),
+   //          duration: `${Math.floor(Math.random() * 40 + 20)} hours`,
+   //          link: `https://example.com/course-${index + 1}`,
+   //          addedBy: "AI Recommendation",
+   //          aiReason: reason,
+   //       };
+   //    });
+   // };
 
    const renderContentDetails = (content) => (
       <>

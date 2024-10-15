@@ -30,25 +30,50 @@ function CreateLearningTask({ onClose, handleSubmit }) {
 
    const handleSubmitData = async (e) => {
       e.preventDefault();
-      // Handle form submission logic here
+      setIsSubmitting(true);
+
+      // Base task object with common fields
       let newTask = {
          taskType,
          taskTitle,
          sourceLink,
-         estimatedTime,
          completionDays,
-         pages,
-         chapters,
          reminders,
          personalGoals,
-         progress: initialProgress,
+         initialProgress,
       };
+
+      // Add type-specific fields
+      switch (taskType) {
+         case "Book":
+            newTask = {
+               ...newTask,
+               pages: parseInt(pages),
+               chapters: parseInt(chapters),
+            };
+            break;
+         case "Video":
+         case "Article":
+            newTask = {
+               ...newTask,
+               estimatedTime,
+            };
+            break;
+         case "Course":
+            newTask = {
+               ...newTask,
+               estimatedTime,
+               chapters: parseInt(chapters), // Add this if courses have chapters
+            };
+            break;
+      }
+
       try {
          await handleSubmit(newTask);
          onClose();
       } catch (error) {
-         toast.error("Failed to create task: Please try again later. ");
-         // Handle error (e.g., show error message to user)
+         console.log("error", error);
+         toast.error("Failed to create task: Please try again later.");
       } finally {
          setIsSubmitting(false);
       }
@@ -67,6 +92,7 @@ function CreateLearningTask({ onClose, handleSubmit }) {
                         placeholder='Enter total pages'
                         value={pages}
                         onChange={(e) => setPages(e.target.value)}
+                        required
                      />
                   </div>
                   <div className={styles.formGroup}>
@@ -77,49 +103,37 @@ function CreateLearningTask({ onClose, handleSubmit }) {
                         placeholder='Enter total chapters'
                         value={chapters}
                         onChange={(e) => setChapters(e.target.value)}
+                        required
                      />
                   </div>
                </>
             );
          case "Video":
-            return (
-               <div className={styles.formGroup}>
-                  <label htmlFor='estimatedTime'>Video Duration</label>
-                  <input
-                     type='text'
-                     id='estimatedTime'
-                     placeholder='e.g. 2 hours 30 minutes'
-                     value={estimatedTime}
-                     onChange={(e) => setEstimatedTime(e.target.value)}
-                  />
-               </div>
-            );
          case "Article":
+         case "Course":
             return (
                <div className={styles.formGroup}>
-                  <label htmlFor='estimatedTime'>Estimated Reading Time</label>
+                  <label htmlFor='estimatedTime'>{`${
+                     taskType === "Video"
+                        ? "Video Duration"
+                        : taskType === "Article"
+                        ? "Estimated Reading Time"
+                        : "Estimated Course Duration"
+                  }`}</label>
                   <input
                      type='text'
                      id='estimatedTime'
-                     placeholder='e.g. 15 minutes'
+                     placeholder={`e.g. ${
+                        taskType === "Video" ? "2 hours 30 minutes" : taskType === "Article" ? "15 minutes" : "10 hours"
+                     }`}
                      value={estimatedTime}
                      onChange={(e) => setEstimatedTime(e.target.value)}
+                     required
                   />
                </div>
             );
-         default: // Course
-            return (
-               <div className={styles.formGroup}>
-                  <label htmlFor='estimatedTime'>Estimated Course Duration</label>
-                  <input
-                     type='text'
-                     id='estimatedTime'
-                     placeholder='e.g. 10 hours'
-                     value={estimatedTime}
-                     onChange={(e) => setEstimatedTime(e.target.value)}
-                  />
-               </div>
-            );
+         default:
+            return null;
       }
    };
 

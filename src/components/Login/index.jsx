@@ -61,6 +61,7 @@ function Login() {
    };
 
    const handleSuccessfulLogin = (data) => {
+      console.log("data", data);
       try {
          // Store token in localStorage
          localStorage.setItem("token", data.token);

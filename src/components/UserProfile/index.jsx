@@ -243,6 +243,10 @@ function UserProfile() {
       if (user && user?.followers && user?.following) {
          connections = activeTab === "followers" ? user.followers : user.following;
       }
+      const isFollowing = (id) => {
+         return connections.some((connection) => connection._id === id);
+      };
+      
       return (
          <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -278,9 +282,15 @@ function UserProfile() {
                               <p>{connection.title}</p>
                            </div>
                            {activeTab === "followers" ? (
-                              <button className={styles.followBtn} onClick={() => handleFollow(connection.id)}>
-                                 <FontAwesomeIcon icon={faUserPlus} /> Follow
-                              </button>
+                              isFollowing(connection.id) ? (
+                                 <button className={styles.unfollowBtn} onClick={() => handleUnfollow(connection.id)}>
+                                    <FontAwesomeIcon icon={faUserMinus} /> Unfollow
+                                 </button>
+                              ) : (
+                                 <button className={styles.followBtn} onClick={() => handleFollow(connection.id)}>
+                                    <FontAwesomeIcon icon={faUserPlus} /> Follow
+                                 </button>
+                              )
                            ) : (
                               <button className={styles.unfollowBtn} onClick={() => handleUnfollow(connection.id)}>
                                  <FontAwesomeIcon icon={faUserMinus} /> Unfollow
