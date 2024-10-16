@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { CONFIG } from "../../config";
 import { useSelector } from "react-redux";
 import { fetchUserConnections } from "../../api/userApi";
+import EmojiPicker from "emoji-picker-react";
 
 function Message() {
    const API_URL = CONFIG.API_URL;
@@ -20,6 +21,7 @@ function Message() {
    const [isTyping, setIsTyping] = useState(false);
    const navigate = useNavigate();
    const messagesEndRef = useRef(null);
+   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
    const initializeSocket = useCallback(() => {
       const token = localStorage.getItem("token");
@@ -154,6 +156,11 @@ function Message() {
       [socket, selectedChat],
    );
 
+   const onEmojiClick = (emojiObject) => {
+      setMessageInput((prevInput) => prevInput + emojiObject.emoji);
+      setShowEmojiPicker(false);
+   };
+
    console.log("user", user);
    console.log("messages", messages);
 
@@ -236,9 +243,16 @@ function Message() {
                            sendPrivateMessage(selectedChat, messageInput);
                         }}>
                         <input type='text' placeholder='Type a message...' value={messageInput} onChange={handleInputChange} />
-                        <button type='button' className={styles.emojiButton}>
-                           <FontAwesomeIcon icon={faSmile} />
-                        </button>
+                        <div className={styles.emojiPickerContainer}>
+                           <button type='button' className={styles.emojiButton} onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                              <FontAwesomeIcon icon={faSmile} />
+                           </button>
+                           {showEmojiPicker && (
+                              <div className={styles.emojiPickerWrapper}>
+                                 <EmojiPicker onEmojiClick={onEmojiClick} />
+                              </div>
+                           )}
+                        </div>
                         <button type='submit' className={styles.sendButton}>
                            <FontAwesomeIcon icon={faPaperPlane} />
                         </button>

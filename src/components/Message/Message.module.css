@@ -31,6 +31,7 @@
    color: #54656f;
    font-size: 16px;
    margin-right: 10px;
+   flex-shrink: 0; /* Prevent the icon from shrinking */
 }
 
 .searchBar input {
@@ -40,6 +41,7 @@
    font-size: 15px;
    outline: none;
    color: #333;
+   padding-left: 5px; /* Add some padding to the left of the input */
 }
 
 .searchBar input::placeholder {
@@ -300,4 +302,36 @@
    height: 100%;
    font-size: 18px;
    color: #54656f;
+}
+
+/* Add this to your Message.module.css file */
+.unreadIndicator {
+   width: 10px;
+   height: 10px;
+   background-color: #0095f6; /* Instagram blue */
+   border-radius: 50%;
+   margin-left: 5px;
+}
+
+.chatMeta {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-end;
+   min-width: 70px;
+}
+
+.metaRow {
+   display: flex;
+   align-items: center;
+   justify-content: flex-end;
+}
+.emojiPickerContainer {
+   position: relative;
+}
+
+.emojiPickerWrapper {
+   position: absolute;
+   bottom: 100%;
+   right: 20px;
+   z-index: 1000;
 }
