@@ -8,6 +8,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import { CONFIG } from "../../config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEnvelope, faLock, faEye, faEyeSlash, faGraduationCap } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 function Register() {
    const API_URL = CONFIG.API_URL;
@@ -30,7 +31,7 @@ function Register() {
    const handleSubmit = async (e) => {
       e.preventDefault();
       if (formData.password !== formData.confirmPassword) {
-         alert("Passwords don't match!");
+         toast.error("Passwords don't match!");
          return;
       }
 
@@ -61,16 +62,16 @@ function Register() {
                   },
                });
             } else {
-               alert("Registration successful! Please log in.");
+               toast.error("Registration successful! Please log in.");
                navigate("/login");
             }
          } else {
             console.error("Registration failed:", data);
-            alert(data.message || "Registration failed");
+            toast.error(data.message || "Registration failed");
          }
       } catch (error) {
          console.error("Registration error:", error);
-         alert("An error occurred during registration");
+         toast.error("An error occurred during registration");
       } finally {
          setIsLoading(false);
          dispatch(setLoading(false));

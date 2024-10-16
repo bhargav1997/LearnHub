@@ -49,9 +49,12 @@ function TwoFactorAuth() {
                navigate("/login");
             } else {
                localStorage.setItem("token", data.token);
-               dispatch(setUser(JSON.parse(data.user)));
+               // Check if data.user is already an object or a string
+               const userObject = typeof data.user === "string" ? JSON.parse(data.user) : data.user;
+               dispatch(setUser(userObject));
+
                toast.success("Login successful!");
-               navigate("/");
+               window.location.href = "/";
             }
          } else {
             toast.error(data.message || "Verification failed");
