@@ -7,6 +7,7 @@ import {
    faNewspaper,
    faQuestion,
    faVideo,
+   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
@@ -23,6 +24,7 @@ import { addLearningTask } from "../../redux/task/learningTaskSlice";
 // import { useSelector } from "react-redux";
 import axios from "axios";
 import { CONFIG } from "../../config";
+import { faBookOpen, faRocket, faStar } from "@fortawesome/free-solid-svg-icons";
 
 function Dashboard() {
    const [showCreateTask, setShowCreateTask] = useState(false);
@@ -33,201 +35,207 @@ function Dashboard() {
    // const { user } = useSelector((state) => state.user);
    const API_URL = CONFIG.API_URL;
 
-   const [mockLearningTasks, setMockLearningTasks] = useState([
-      {
-         id: 1,
-         name: "Advance Node JS",
-         level: "Advance",
-         progress: 0,
-         status: "Not Started",
-         timeRemain: "30 Hrs",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [
-            { name: "Basics", percentage: 25 },
-            { name: "Advanced Concepts", percentage: 50 },
-            { name: "Project Implementation", percentage: 75 },
-            { name: "Testing and Deployment", percentage: 100 },
-         ],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Course",
-         estimatedTime: "20 hours",
-         pages: 200,
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 2,
-         name: "AI Integration",
-         level: "Intermediate",
-         progress: 70,
-         status: "In Progress",
-         timeRemain: "6 Hrs",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Video",
-         estimatedTime: "2 hours",
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 3,
-         name: "MERN Stack development",
-         level: "Advance",
-         progress: 10,
-         status: "Paused",
-         timeRemain: "2 Days",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Course",
-         estimatedTime: "20 hours",
-         pages: 200,
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 4,
-         name: "AI Integration",
-         level: "Intermediate",
-         progress: 100,
-         status: "Completed",
-         timeRemain: "2 days",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Video",
-         estimatedTime: "2 hours",
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 5,
-         name: "MERN Stack development",
-         level: "Advance",
-         progress: 90,
-         status: "In Progress",
-         timeRemain: "12 Hrs",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Course",
-         estimatedTime: "20 hours",
-         pages: 200,
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 6,
-         name: "MERN Stack development",
-         level: "Advance",
-         progress: 30,
-         status: "In Progress",
-         timeRemain: "21 Hrs",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Course",
-         estimatedTime: "20 hours",
-         pages: 200,
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-      {
-         id: 7,
-         name: "Clean Code By Robert C. Martin",
-         level: "Beginner",
-         progress: 0,
-         status: "Not Started",
-         timeRemain: "30 Hrs",
-         lastUpdated: new Date().toISOString(),
-         progressHistory: [],
-         milestones: [],
-         timeSpent: 0,
-         codeSnippets: [],
-         resourceLinks: [],
-         peerReviews: [],
-         type: "Book",
-         estimatedTime: "20 hours",
-         pages: 200,
-         chapters: 10,
-         reminders: [],
-         personalGoals: [],
-         quizResults: [],
-      },
-   ]);
+   // Add these state variables to track the stats
+   const [enrolledCourses, setEnrolledCourses] = useState(0);
+   const [totalLessons, setTotalLessons] = useState(0);
+   const [earnedCertificates, setEarnedCertificates] = useState(0);
+
+   // const [mockLearningTasks, setMockLearningTasks] = useState([
+   //    {
+   //       id: 1,
+   //       name: "Advance Node JS",
+   //       level: "Advance",
+   //       progress: 0,
+   //       status: "Not Started",
+   //       timeRemain: "30 Hrs",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [
+   //          { name: "Basics", percentage: 25 },
+   //          { name: "Advanced Concepts", percentage: 50 },
+   //          { name: "Project Implementation", percentage: 75 },
+   //          { name: "Testing and Deployment", percentage: 100 },
+   //       ],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Course",
+   //       estimatedTime: "20 hours",
+   //       pages: 200,
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 2,
+   //       name: "AI Integration",
+   //       level: "Intermediate",
+   //       progress: 70,
+   //       status: "In Progress",
+   //       timeRemain: "6 Hrs",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Video",
+   //       estimatedTime: "2 hours",
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 3,
+   //       name: "MERN Stack development",
+   //       level: "Advance",
+   //       progress: 10,
+   //       status: "Paused",
+   //       timeRemain: "2 Days",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Course",
+   //       estimatedTime: "20 hours",
+   //       pages: 200,
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 4,
+   //       name: "AI Integration",
+   //       level: "Intermediate",
+   //       progress: 100,
+   //       status: "Completed",
+   //       timeRemain: "2 days",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Video",
+   //       estimatedTime: "2 hours",
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 5,
+   //       name: "MERN Stack development",
+   //       level: "Advance",
+   //       progress: 90,
+   //       status: "In Progress",
+   //       timeRemain: "12 Hrs",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Course",
+   //       estimatedTime: "20 hours",
+   //       pages: 200,
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 6,
+   //       name: "MERN Stack development",
+   //       level: "Advance",
+   //       progress: 30,
+   //       status: "In Progress",
+   //       timeRemain: "21 Hrs",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Course",
+   //       estimatedTime: "20 hours",
+   //       pages: 200,
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   //    {
+   //       id: 7,
+   //       name: "Clean Code By Robert C. Martin",
+   //       level: "Beginner",
+   //       progress: 0,
+   //       status: "Not Started",
+   //       timeRemain: "30 Hrs",
+   //       lastUpdated: new Date().toISOString(),
+   //       progressHistory: [],
+   //       milestones: [],
+   //       timeSpent: 0,
+   //       codeSnippets: [],
+   //       resourceLinks: [],
+   //       peerReviews: [],
+   //       type: "Book",
+   //       estimatedTime: "20 hours",
+   //       pages: 200,
+   //       chapters: 10,
+   //       reminders: [],
+   //       personalGoals: [],
+   //       quizResults: [],
+   //    },
+   // ]);
 
    const [showQuizModal, setShowQuizModal] = useState(false);
    const [currentQuiz, setCurrentQuiz] = useState(null);
+   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+   const [taskToDelete, setTaskToDelete] = useState(null);
 
    const dispatch = useDispatch();
 
    useEffect(() => {
-      fetchLearningTasks();
-   }, []);
+      const fetchData = async () => {
+         try {
+            setIsLoading(true);
+            const response = await axios.get(`${API_URL}/tasks/learning-tasks`, {
+               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
 
-   const fetchLearningTasks = async () => {
-      setIsLoading(true);
-      try {
-         const token = localStorage.getItem("token");
-         const config = {
-            headers: {
-               "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
-            },
-         };
-         const response = await axios.get(`${API_URL}/tasks/learning-tasks`, config);
+            if (response.status !== 200) {
+               toast.error("Failed to retrieve learning tasks, please try again later.");
+               return;
+            }
 
-         if (response.statusText !== "OK") {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            setApiLearningTasks(response.data);
+
+            // Calculate stats based on the fetched data
+            setEnrolledCourses(response.data.length);
+            setTotalLessons(response.data.reduce((total, task) => total + (task.chapters || 0), 0));
+            setEarnedCertificates(response.data.filter((task) => task.status === "Completed").length);
+         } catch (error) {
+            console.error("Error fetching learning tasks:", error);
+            toast.error("Failed to fetch learning tasks. Please try again.");
+         } finally {
+            setIsLoading(false);
          }
+      };
 
-         const tasks = response.data;
-         console.log("tasks", tasks);
-         setApiLearningTasks(tasks);
-      } catch (error) {
-         toast.error("Failed to retrieve learning tasks, please try again later.");
-         throw error;
-      } finally {
-         setIsLoading(false);
-      }
-   };
+      fetchData();
+   }, [API_URL]);
 
    const showNotification = (message, type = "info") => {
       toast[type](message, {
@@ -266,7 +274,7 @@ function Dashboard() {
       };
       try {
          await dispatch(addLearningTask(newTask)).unwrap();
-         setMockLearningTasks((prevTasks) => [...prevTasks, newTask]);
+         // setMockLearningTasks((prevTasks) => [...prevTasks, newTask]);
          setApiLearningTasks((prevTasks) => [...prevTasks, newTask]);
 
          setShowCreateTask(false);
@@ -330,7 +338,7 @@ function Dashboard() {
          return task;
       });
       setApiLearningTasks(updatedTasks);
-      setMockLearningTasks(updatedTasks);
+      // setMockLearningTasks(updatedTasks);
       setShowEditPopup(false);
    };
 
@@ -396,7 +404,47 @@ function Dashboard() {
       }
    };
 
-   const learningTasks = apiLearningTasks.length > 0 ? apiLearningTasks : mockLearningTasks;
+   const learningTasks = apiLearningTasks.length > 0 ? apiLearningTasks : [];
+
+   const handleDeleteTask = async (taskId) => {
+      try {
+         const token = localStorage.getItem("token");
+         const config = {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         };
+
+         // Check if it's a real task (not dummy data)
+         const isRealTask = apiLearningTasks.some((task) => task.id === taskId);
+
+         if (isRealTask) {
+            await axios.delete(`${API_URL}/tasks/learning-tasks/${taskId}`, config);
+         }
+
+         // Remove the task from both apiLearningTasks and mockLearningTasks
+         setApiLearningTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+         // setMockLearningTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+
+         showNotification("Task deleted successfully", "success");
+      } catch (error) {
+         console.error("Failed to delete task:", error);
+         showNotification("Failed to delete task. Please try again.", "error");
+      }
+   };
+
+   const handleDeleteClick = (task) => {
+      setTaskToDelete(task);
+      setShowDeleteConfirmation(true);
+   };
+
+   const confirmDelete = async () => {
+      if (taskToDelete) {
+         await handleDeleteTask(taskToDelete.id);
+         setShowDeleteConfirmation(false);
+         setTaskToDelete(null);
+      }
+   };
 
    return (
       <div className='dashboard'>
@@ -414,22 +462,22 @@ function Dashboard() {
             </div>
             <div className='stats-container'>
                <div className='stat-card'>
-                  <h3>24</h3>
-                  <p>Enrolled Course</p>
+                  <h3>{enrolledCourses}</h3>
+                  <p>Enrolled Course{enrolledCourses !== 1 ? "s" : ""}</p>
                   <a href='#'>
                      View Details <FontAwesomeIcon icon={faChevronRight} />
                   </a>
                </div>
                <div className='stat-card'>
-                  <h3>56</h3>
-                  <p>Lessons</p>
+                  <h3>{totalLessons}</h3>
+                  <p>Lesson{totalLessons !== 1 ? "s" : ""}</p>
                   <a href='#'>
                      View Details <FontAwesomeIcon icon={faChevronRight} />
                   </a>
                </div>
                <div className='stat-card'>
-                  <h3>12</h3>
-                  <p>Certificates</p>
+                  <h3>{earnedCertificates}</h3>
+                  <p>Certificate{earnedCertificates !== 1 ? "s" : ""}</p>
                   <a href='#'>
                      View Details <FontAwesomeIcon icon={faChevronRight} />
                   </a>
@@ -438,55 +486,71 @@ function Dashboard() {
             <div className='learning-journey'>
                <div className='section-header'>
                   <h3>My Learning Journey</h3>
-                  <a href='#'>View All</a>
+                  {learningTasks.length > 0 && <a href='#'>View All</a>}
                </div>
                <>
                   {isLoading ? (
                      <div>Loading...</div>
-                  ) : (
+                  ) : learningTasks.length > 0 ? (
                      <div className='learning-journey-content'>
-                        {learningTasks.map((course) => (
-                           <div key={course.id} className='course-card'>
+                        {learningTasks.map((task) => (
+                           <div key={task.id} className='course-card'>
                               <div className='course-card-header'>
-                                 <div className={`course-icon ${course.type ? course.type.toLowerCase() : "unknown"}`}>
-                                    <FontAwesomeIcon icon={getCourseIcon(course.type)} />
+                                 <div className={`course-icon ${task.type ? task.type.toLowerCase() : "unknown"}`}>
+                                    <FontAwesomeIcon icon={getCourseIcon(task.type)} />
                                  </div>
                                  <div className='course-details'>
-                                    <h4>{course.name}</h4>
-                                    <span className='course-level'>{course.level}</span>
+                                    <h4>{task.name}</h4>
+                                    <span className='course-level'>{task.level}</span>
                                  </div>
-                                 <button className='edit-progress-btn' onClick={() => handleEditClick(course)}>
+                                 <button className='edit-progress-btn' onClick={() => handleEditClick(task)}>
                                     <FontAwesomeIcon icon={faEdit} />
+                                 </button>
+                                 <button className='delete-task-btn' onClick={() => handleDeleteClick(task)}>
+                                    <FontAwesomeIcon icon={faTrash} />
                                  </button>
                               </div>
                               <div className='course-card-body'>
                                  <div className='progress-container'>
                                     <div className='progress-bar'>
-                                       <div className='progress' style={{ width: `${Math.round(course.progress)}%` }}></div>
+                                       <div className='progress' style={{ width: `${Math.round(task.progress)}%` }}></div>
                                     </div>
-                                    <span className='progress-text'>{Math.round(course.progress)}%</span>
+                                    <span className='progress-text'>{Math.round(task.progress)}%</span>
                                  </div>
                                  <div className='course-meta'>
-                                    {course.type === "Book" && (
+                                    {task.type === "Book" && (
                                        <span className='course-pages'>
-                                          <FontAwesomeIcon icon={faBook} /> {course.pages} pages
+                                          <FontAwesomeIcon icon={faBook} /> {task.pages} pages
                                        </span>
                                     )}
-                                    {course.type === "Video" && (
+                                    {task.type === "Video" && (
                                        <span className='course-duration'>
-                                          <FontAwesomeIcon icon={faVideo} /> {course.estimatedTime}
+                                          <FontAwesomeIcon icon={faVideo} /> {task.estimatedTime}
                                        </span>
                                     )}
                                     <span className='time-remain'>
-                                       <FontAwesomeIcon icon={faClock} /> {course.timeRemain}
+                                       <FontAwesomeIcon icon={faClock} /> {task.timeRemain}
                                     </span>
                                  </div>
                               </div>
                               <div className='course-card-footer'>
-                                 <span className={`status ${course.status.toLowerCase().replace(" ", "-")}`}>{course.status}</span>
+                                 <span className={`status ${task.status.toLowerCase().replace(" ", "-")}`}>{task.status}</span>
                               </div>
                            </div>
                         ))}
+                     </div>
+                  ) : (
+                     <div className='empty-state'>
+                        <div className='empty-state-icons'>
+                           <FontAwesomeIcon icon={faBookOpen} className='icon-book' />
+                           <FontAwesomeIcon icon={faRocket} className='icon-rocket' />
+                           <FontAwesomeIcon icon={faStar} className='icon-star' />
+                        </div>
+                        <h3>Your Learning Adventure Begins Here!</h3>
+                        <p>Ready to start your learning journey? Create your first learning task and let&apos;s get started!</p>
+                        <button className='create-task-btn' onClick={() => setShowCreateTask(true)}>
+                           Create Your First Task
+                        </button>
                      </div>
                   )}
                </>
@@ -505,6 +569,15 @@ function Dashboard() {
                onQuizComplete={handleQuizComplete}
                showNotification={showNotification}
             />
+         )}
+         {showDeleteConfirmation && (
+            <div className='delete-confirmation-overlay'>
+               <div className='delete-confirmation-modal'>
+                  <p>Are you sure you want to delete this task?</p>
+                  <button onClick={confirmDelete}>Yes, delete</button>
+                  <button onClick={() => setShowDeleteConfirmation(false)}>Cancel</button>
+               </div>
+            </div>
          )}
       </div>
    );

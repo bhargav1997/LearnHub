@@ -5,9 +5,27 @@ import {
    setSelectedJourneyToUser,
    updateJourneyToUser,
    deleteJourneyFromUser,
+   getJourneysToUser,
 } from "../../redux/learningJourney/learningJourneyHandle";
 import styles from "./LearningJourney.module.css";
-import { FaBook, FaYoutube, FaGraduationCap, FaLink, FaPlus, FaTimes, FaCheck, FaTrash } from "react-icons/fa";
+import {
+   FaBook,
+   FaYoutube,
+   FaGraduationCap,
+   FaLink,
+   FaPlus,
+   FaTimes,
+   FaCheck,
+   FaTrash,
+   FaRocket,
+   FaStar,
+   FaSpaceShuttle,
+   FaArrowLeft,
+   FaTasks,
+   FaMap,
+   FaStickyNote,
+} from "react-icons/fa";
+import JourneyMap from "./JourneyMap";
 
 const LearningJourney = () => {
    const dispatch = useDispatch();
@@ -30,10 +48,13 @@ const LearningJourney = () => {
       }
    }, [selectedJourney]);
 
+   useEffect(() => {
+      dispatch(getJourneysToUser());
+   }, [dispatch]);
+
    const createNewJourney = (e) => {
       e.preventDefault();
       const newJourney = {
-         id: Date.now(),
          name: newJourneyName,
          resources: [],
          steps: [],
@@ -43,7 +64,6 @@ const LearningJourney = () => {
       dispatch(addJourneyToUser(newJourney));
       setNewJourneyName("");
       setIsCreatingJourney(false);
-      dispatch(setSelectedJourneyToUser(newJourney));
    };
 
    const addResource = (e) => {
@@ -113,6 +133,7 @@ const LearningJourney = () => {
       e.stopPropagation(); // Prevent the journey from being selected when deleting
       if (window.confirm("Are you sure you want to delete this journey?")) {
          dispatch(deleteJourneyFromUser(journeyId));
+         dispatch(getJourneysToUser());
       }
    };
 
@@ -135,6 +156,17 @@ const LearningJourney = () => {
       ));
    };
 
+   console.log("journeys", journeys);
+
+   // const completedSteps = selectedJourney
+   //    ? selectedJourney.steps.reduce((acc, _, index) => {
+   //         if (index < selectedJourney.resources.filter((r) => r.completed).length) {
+   //            acc.push(index);
+   //         }
+   //         return acc;
+   //      }, [])
+   //    : [];
+
    return (
       <div className={styles.learningJourneyContainer}>
          <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
@@ -146,12 +178,12 @@ const LearningJourney = () => {
                      <p>Create New Journey</p>
                   </div>
                   {journeys.map((journey) => (
-                     <div key={journey.id} className={styles.journeyItem} onClick={() => dispatch(setSelectedJourneyToUser(journey))}>
+                     <div key={journey._id} className={styles.journeyItem} onClick={() => dispatch(setSelectedJourneyToUser(journey._id))}>
                         <h3 className={styles.sectionTitle}>{journey.name}</h3>
                         <p>
                            {journey.resources.length} resources • {journey.tasks.length} tasks
                         </p>
-                        <button className={styles.deleteButton} onClick={(e) => handleDeleteJourney(e, journey.id)}>
+                        <button className={styles.deleteButton} onClick={(e) => handleDeleteJourney(e, journey._id)}>
                            <FaTrash />
                         </button>
                      </div>
@@ -160,57 +192,77 @@ const LearningJourney = () => {
                {isCreatingJourney && (
                   <div className={styles.modalOverlay}>
                      <div className={styles.modal}>
-                        <h3 className={styles.sectionTitle}>Create New Journey</h3>
-                        <FaTimes className={styles.closeIcon} onClick={() => setIsCreatingJourney(false)} />
-                        <form onSubmit={createNewJourney} className={styles.formContainer}>
-                           <input
-                              type='text'
-                              value={newJourneyName}
-                              onChange={(e) => setNewJourneyName(e.target.value)}
-                              placeholder='Enter journey name'
-                              required
-                              className={styles.inputField}
-                           />
-                           <button type='submit' className={styles.addButton}>
-                              Create Journey
-                           </button>
-                        </form>
+                        <div className={styles.modalContent}>
+                           <div className={styles.modalHeader}>
+                              <h3 className={styles.modalTitle}>Embark on a New Learning Adventure</h3>
+                              <button className={styles.closeButton} onClick={() => setIsCreatingJourney(false)}>
+                                 <FaTimes />
+                              </button>
+                           </div>
+                           <div className={styles.modalBody}>
+                              <div className={styles.modalIllustration}>
+                                 <FaRocket className={styles.rocketIcon} />
+                                 <div className={styles.stars}>
+                                    {[...Array(5)].map((_, i) => (
+                                       <FaStar key={i} className={styles.starIcon} />
+                                    ))}
+                                 </div>
+                              </div>
+                              <p className={styles.modalDescription}>Give your new learning journey a name and prepare for takeoff!</p>
+                              <form onSubmit={createNewJourney} className={styles.journeyForm}>
+                                 <input
+                                    type='text'
+                                    value={newJourneyName}
+                                    onChange={(e) => setNewJourneyName(e.target.value)}
+                                    placeholder='Enter your journey name'
+                                    required
+                                    className={styles.journeyInput}
+                                 />
+                                 <button type='submit' className={styles.createButton}>
+                                    <FaSpaceShuttle className={styles.shuttleIcon} />
+                                    Launch Journey
+                                 </button>
+                              </form>
+                           </div>
+                        </div>
                      </div>
                   </div>
                )}
             </div>
          ) : (
             <div className={styles.journeyDetails}>
-               <h2>{selectedJourney.name}</h2>
-               <div className={styles.progressBarContainer}>
-                  <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+               <header className={styles.journeyHeader}>
+                  <h2>{selectedJourney.name}</h2>
+                  <button onClick={() => dispatch(setSelectedJourneyToUser(null))} className={styles.backButton}>
+                     <FaArrowLeft /> Back to Journeys
+                  </button>
+               </header>
+
+               <div className={styles.progressSection}>
+                  <div className={styles.progressBarContainer}>
+                     <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+                  </div>
+                  <div className={styles.progressText}>{`${Math.round(progress)}% Complete`}</div>
                </div>
-               <div className={styles.progressText}>{`${Math.round(progress)}% Complete`}</div>
+
                <div className={styles.journeyContent}>
-                  <div className={styles.leftPanel}>
-                     <div className={styles.resourcesPanel}>
-                        <h3 className={styles.sectionTitle}>Resources</h3>
-                        <form onSubmit={addResource} className={styles.formContainer}>
-                           <input type='url' name='resource' placeholder='Add a resource link' className={styles.inputField} required />
-                           <button type='submit' className={styles.addButton}>
-                              Add
+                  <div className={styles.mainPanel}>
+                     <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>
+                           <FaBook /> Resources
+                        </h3>
+                        <form onSubmit={addResource} className={styles.addForm}>
+                           <input type='url' name='resource' placeholder='Add a resource link' required />
+                           <button type='submit'>
+                              <FaPlus />
                            </button>
                         </form>
                         <ul className={styles.resourceList}>
                            {selectedJourney.resources.map((resource, index) => (
-                              <li key={index} className={styles.resourceItem}>
-                                 <input
-                                    type='checkbox'
-                                    checked={resource.completed}
-                                    onChange={() => toggleResourceCompletion(index)}
-                                    className={styles.resourceCheckbox}
-                                 />
+                              <li key={index} className={`${styles.resourceItem} ${resource.completed ? styles.completed : ""}`}>
+                                 <input type='checkbox' checked={resource.completed} onChange={() => toggleResourceCompletion(index)} />
                                  <span className={styles.resourceIcon}>{getResourceIcon(resource.type)}</span>
-                                 <a
-                                    href={resource.url}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className={`${styles.resourceLink} ${resource.completed ? styles.resourceCompleted : ""}`}>
+                                 <a href={resource.url} target='_blank' rel='noopener noreferrer'>
                                     {resource.url}
                                  </a>
                                  {resource.completed && <FaCheck className={styles.completedIcon} />}
@@ -218,17 +270,20 @@ const LearningJourney = () => {
                            ))}
                         </ul>
                      </div>
-                     <div className={styles.tasksPanel}>
-                        <h3 className={styles.sectionTitle}>Tasks</h3>
-                        <form onSubmit={addTask} className={styles.formContainer}>
-                           <input type='text' name='task' placeholder='Add a new task' className={styles.inputField} required />
-                           <button type='submit' className={styles.addButton}>
-                              Add
+
+                     <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>
+                           <FaTasks /> Tasks
+                        </h3>
+                        <form onSubmit={addTask} className={styles.addForm}>
+                           <input type='text' name='task' placeholder='Add a new task' required />
+                           <button type='submit'>
+                              <FaPlus />
                            </button>
                         </form>
                         <ul className={styles.taskList}>
                            {selectedJourney.tasks.map((task, index) => (
-                              <li key={index} className={styles.taskItem}>
+                              <li key={index} className={`${styles.taskItem} ${task.completed ? styles.completed : ""}`}>
                                  <input
                                     type='checkbox'
                                     checked={task.completed}
@@ -240,15 +295,18 @@ const LearningJourney = () => {
                                        dispatch(updateJourneyToUser(updatedJourney));
                                     }}
                                  />
-                                 <span className={task.completed ? styles.completedTask : ""}>{task.text}</span>
+                                 <span>{task.text}</span>
                               </li>
                            ))}
                         </ul>
                      </div>
                   </div>
-                  <div className={styles.rightPanel}>
-                     <div className={styles.journeyMapPanel}>
-                        <h3 className={styles.sectionTitle}>Journey Map</h3>
+
+                  <div className={styles.sidePanel}>
+                     <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>
+                           <FaMap /> Journey Map
+                        </h3>
                         <div className={styles.journeyMap}>
                            {selectedJourney.steps.map((step, index) => (
                               <div key={index} className={styles.journeyStep}>
@@ -261,8 +319,12 @@ const LearningJourney = () => {
                            ))}
                         </div>
                      </div>
-                     <div className={styles.notesPanel}>
-                        <h3 className={styles.sectionTitle}>Notes</h3>
+                     {/* <JourneyMap steps={selectedJourney.steps} completedSteps={completedSteps} /> */}
+
+                     <div className={styles.card}>
+                        <h3 className={styles.cardTitle}>
+                           <FaStickyNote /> Notes
+                        </h3>
                         <textarea
                            value={selectedJourney.notes}
                            onChange={updateNotes}
@@ -272,9 +334,6 @@ const LearningJourney = () => {
                      </div>
                   </div>
                </div>
-               <button onClick={() => dispatch(setSelectedJourneyToUser(null))} className={styles.backButton}>
-                  Back to Journeys
-               </button>
             </div>
          )}
       </div>

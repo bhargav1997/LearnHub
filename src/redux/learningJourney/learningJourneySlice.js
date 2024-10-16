@@ -34,8 +34,23 @@ const learningJourneySlice = createSlice({
             state.selectedJourney = null;
          }
       },
+      loadJourneysFromStorage: (state) => {
+         const storedJourneys = localStorage.getItem('learningJourneys');
+         if (storedJourneys) {
+            state.journeys = JSON.parse(storedJourneys);
+         }
+      },
    },
 });
 
-export const { setJourneys, addJourney, updateJourney, setSelectedJourney, clearJourneys, deleteJourney } = learningJourneySlice.actions;
+export const { 
+   setJourneys, 
+   addJourney, 
+   updateJourney, 
+   setSelectedJourney, 
+   clearJourneys, 
+   deleteJourney,
+   loadJourneysFromStorage 
+} = learningJourneySlice.actions;
+
 export default learningJourneySlice.reducer;

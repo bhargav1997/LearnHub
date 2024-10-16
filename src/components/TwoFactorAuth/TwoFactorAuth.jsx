@@ -38,7 +38,7 @@ function TwoFactorAuth() {
             headers: {
                "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, code }),
+            body: JSON.stringify({ email, code: code.join("") }),
          });
 
          const data = await response.json();
@@ -82,7 +82,7 @@ function TwoFactorAuth() {
       if (cooldown > 0) return;
 
       try {
-         await axios.post(`${API_URL}/users/request-new-2fa-code`, { email });
+         await axios.post(`${API_URL}/users/resend-2fa-code`, { email });
          toast.success("New code sent. Please check your email.");
          setCooldown(60);
       } catch (error) {

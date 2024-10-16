@@ -14,6 +14,8 @@ import {
    faPen,
    faTimes,
    faLightbulb,
+   faSpinner,
+   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
 // import { setUser, fetchConnections } from "../../redux/user/userSlice";
@@ -31,6 +33,7 @@ function UserProfile() {
    const [suggestedConnections, setSuggestedConnections] = useState([]);
    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
    const [suggestionsError, setSuggestionsError] = useState(null);
+   const [followSuccess, setFollowSuccess] = useState(null);
 
    const dispatch = useDispatch();
    const { user } = useSelector((state) => state.user);
@@ -179,6 +182,13 @@ function UserProfile() {
    const handleFollow = async (friendId) => {
       try {
          const token = localStorage.getItem("token");
+         // Optimistically update UI
+         setSuggestedConnections((prevConnections) =>
+            prevConnections.map((connection) =>
+               connection._id === friendId ? { ...connection, isFollowing: true, isProcessing: true } : connection
+            )
+         );
+
          const response = await fetch(`${API_URL}/users/follow/${friendId}`, {
             method: "POST",
             headers: {
@@ -192,15 +202,29 @@ function UserProfile() {
             if (updatedUser && updatedUser.user) {
                dispatch(setUser(updatedUser.user));
             }
-            // Update local state
+            // Remove the followed user from suggested connections
             setSuggestedConnections((prevConnections) =>
-               prevConnections.map((connection) => (connection._id === friendId ? { ...connection, isFollowing: true } : connection)),
+               prevConnections.filter((connection) => connection._id !== friendId)
             );
+            setFollowSuccess(`You are now following ${connection.username}!`);
+            setTimeout(() => setFollowSuccess(null), 3000); // Clear the message after 3 seconds
          } else {
+            // Revert the optimistic update if the request fails
+            setSuggestedConnections((prevConnections) =>
+               prevConnections.map((connection) =>
+                  connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection
+               )
+            );
             console.error("Failed to follow user");
          }
       } catch (error) {
          console.error("Error following user:", error);
+         // Revert the optimistic update if there's an error
+         setSuggestedConnections((prevConnections) =>
+            prevConnections.map((connection) =>
+               connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection
+            )
+         );
       }
    };
 
@@ -400,37 +424,54 @@ function UserProfile() {
             ) : filteredConnections.length === 0 ? (
                <p className={styles.noResults}>No connections found matching your search.</p>
             ) : (
-               <ul className={styles.friendList}>
-                  {filteredConnections.map((connection) => (
-                     <li key={connection._id} className={styles.friendItem}>
-                        <img
-                           src={connection.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${connection.username}`}
-                           alt={connection.username}
-                           className={styles.friendAvatar}
-                        />
-                        <div className={styles.friendInfo}>
-                           <h4>{connection.username}</h4>
-                           <p className={styles.title}>{connection.title}</p>
-                           <p className={styles.commonInterests}>
-                              <FontAwesomeIcon icon={faLightbulb} className={styles.interestIcon} />
-                              {connection.commonInterests} common interests
-                           </p>
-                           <ul className={styles.reasons}>
-                              {connection.reasons.map((reason, index) => (
-                                 <li key={index}>
-                                    <FontAwesomeIcon icon={faCode} className={styles.reasonIcon} />
-                                    {reason}
-                                 </li>
-                              ))}
-                           </ul>
-                        </div>
-                        <button className={styles.followBtn} onClick={() => handleFollow(connection._id)}>
-                           <FontAwesomeIcon icon={faUserPlus} />
-                           Follow
-                        </button>
-                     </li>
-                  ))}
-               </ul>
+               <>
+                  {followSuccess && (
+                    <div className={styles.successMessage}>
+                      <FontAwesomeIcon icon={faCheckCircle} /> {followSuccess}
+                    </div>
+                  )}
+                  <ul className={styles.friendList}>
+                     {filteredConnections.map((connection) => (
+                        <li key={connection._id} className={`${styles.friendItem} ${connection.isProcessing ? styles.removing : ''}`}>
+                           <img
+                              src={connection.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${connection.username}`}
+                              alt={connection.username}
+                              className={styles.friendAvatar}
+                           />
+                           <div className={styles.friendInfo}>
+                              <h4>{connection.username}</h4>
+                              <p className={styles.title}>{connection.title}</p>
+                              <p className={styles.commonInterests}>
+                                 <FontAwesomeIcon icon={faLightbulb} className={styles.interestIcon} />
+                                 {connection.commonInterests} common interests
+                              </p>
+                              <ul className={styles.reasons}>
+                                 {connection.reasons.map((reason, index) => (
+                                    <li key={index}>
+                                       <FontAwesomeIcon icon={faCode} className={styles.reasonIcon} />
+                                       {reason}
+                                    </li>
+                                 ))}
+                              </ul>
+                           </div>
+                           <button 
+                             className={`${styles.followBtn} ${connection.isProcessing ? styles.processing : ''}`} 
+                             onClick={() => handleFollow(connection._id)}
+                             disabled={connection.isProcessing}
+                           >
+                             {connection.isProcessing ? (
+                               <FontAwesomeIcon icon={faSpinner} spin />
+                             ) : (
+                               <>
+                                 <FontAwesomeIcon icon={faUserPlus} />
+                                 Follow
+                               </>
+                             )}
+                           </button>
+                        </li>
+                     ))}
+                  </ul>
+               </>
             )}
          </div>
 
