@@ -254,6 +254,7 @@ function Dashboard() {
          id: Date.now(),
          taskType: newTaskData?.taskType,
          taskTitle: newTaskData?.taskTitle,
+         name: newTaskData?.taskTitle,
          level: "Beginner", // You might want to add a field for this in CreateLearningTask
          progress: newTaskData?.initialProgress || 0,
          status: newTaskData?.initialProgress > 0 ? "In Progress" : "Not Started",
@@ -446,6 +447,8 @@ function Dashboard() {
       }
    };
 
+   console.log("apiLearningTasks", apiLearningTasks);
+
    return (
       <div className='dashboard'>
          <ToastContainer />
@@ -520,7 +523,7 @@ function Dashboard() {
                                  <div className='course-meta'>
                                     {task.type === "Book" && (
                                        <span className='course-pages'>
-                                          <FontAwesomeIcon icon={faBook} /> {task.pages} pages
+                                          <FontAwesomeIcon icon={faBook} /> {task.taskSpecificProgress} pages
                                        </span>
                                     )}
                                     {task.type === "Video" && (
@@ -528,9 +531,14 @@ function Dashboard() {
                                           <FontAwesomeIcon icon={faVideo} /> {task.estimatedTime}
                                        </span>
                                     )}
-                                    <span className='time-remain'>
+                                    {task.type === "Course" && (
+                                       <span className='course-duration'>
+                                          <FontAwesomeIcon icon={faVideo} /> {task.timeSpent} Minutes
+                                       </span>
+                                    )}
+                                    {/* <span className='time-remain'>
                                        <FontAwesomeIcon icon={faClock} /> {task.timeRemain}
-                                    </span>
+                                    </span> */}
                                  </div>
                               </div>
                               <div className='course-card-footer'>

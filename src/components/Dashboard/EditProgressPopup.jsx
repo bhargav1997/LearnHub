@@ -1,4 +1,4 @@
-import { faChevronDown, faClock, faCode, faLink, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCode, faLink, faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
@@ -13,26 +13,26 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
    const [resourceLinks, setResourceLinks] = useState([""]);
    const [timeSpent, setTimeSpent] = useState(0);
    const [taskSpecificProgress, setTaskSpecificProgress] = useState(0);
-   const [taskSpecificUnit, setTaskSpecificUnit] = useState('');
+   const [taskSpecificUnit, setTaskSpecificUnit] = useState("");
    const [isSubmitting, setIsSubmitting] = useState(false);
    const API_URL = CONFIG.API_URL;
 
    useEffect(() => {
       switch (task.type.toLowerCase()) {
          case "book":
-            setTaskSpecificUnit('Pages read');
+            setTaskSpecificUnit("Pages read");
             break;
          case "video":
-            setTaskSpecificUnit('Minutes watched');
+            setTaskSpecificUnit("Minutes watched");
             break;
          case "course":
-            setTaskSpecificUnit('Lessons completed');
+            setTaskSpecificUnit("Lessons completed");
             break;
          case "article":
-            setTaskSpecificUnit('Paragraphs read');
+            setTaskSpecificUnit("Paragraphs read");
             break;
          default:
-            setTaskSpecificUnit('Units completed');
+            setTaskSpecificUnit("Units completed");
       }
    }, [task.type]);
 
@@ -115,7 +115,7 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
          <div className='edit-progress-popup'>
             <h2>Update Progress for {task.name}</h2>
             <button className='close-button' onClick={onClose}>
-               <FontAwesomeIcon icon={faChevronDown} />
+               <FontAwesomeIcon icon={faTimes} />
             </button>
             <form onSubmit={handleSubmit}>
                <div className='form-group'>
