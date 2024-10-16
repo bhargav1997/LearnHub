@@ -206,7 +206,7 @@ function UserProfile() {
             setSuggestedConnections((prevConnections) =>
                prevConnections.filter((connection) => connection._id !== friendId)
             );
-            setFollowSuccess(`You are now following ${connection.username}!`);
+            setFollowSuccess(`You are now following ${updatedUser.user.username}!`);
             setTimeout(() => setFollowSuccess(null), 3000); // Clear the message after 3 seconds
          } else {
             // Revert the optimistic update if the request fails
