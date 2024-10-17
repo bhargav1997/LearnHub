@@ -31,6 +31,8 @@ const UserProfile = React.lazy(() => import("./components/UserProfile"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
 import { CONFIG } from "./config";
 import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function ErrorFallback({ error }) {
    return (
@@ -101,6 +103,7 @@ function AppM() {
    return (
       <Router>
          <ErrorBoundary FallbackComponent={ErrorFallback}>
+            <ToastContainer />
             <div className={styles.appContainer}>
                <div className={`${styles.appContent} ${showOnboarding ? styles.blurred : ""}`}>
                   {isAuthenticated && (

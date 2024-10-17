@@ -19,8 +19,6 @@ function Login() {
    const [showPassword, setShowPassword] = useState(false);
    const user = useSelector((state) => state.user);
 
-   // const [showTwoFactor, setShowTwoFactor] = useState(false);
-
    const dispatch = useDispatch();
    const navigate = useNavigate();
 
@@ -95,45 +93,35 @@ function Login() {
                <div className={styles.inputGroup}>
                   <FontAwesomeIcon icon={faEnvelope} className={styles.inputIcon} />
                   <input
-                     type="email"
-                     name="email"
-                     placeholder="Email"
+                     type='email'
+                     name='email'
+                     placeholder='Email'
                      value={formData.email}
                      onChange={handleChange}
                      required
-                     autoComplete="email"
+                     autoComplete='email'
                   />
                </div>
                <div className={styles.inputGroup}>
                   <FontAwesomeIcon icon={faLock} className={styles.inputIcon} />
                   <input
                      type={showPassword ? "text" : "password"}
-                     name="password"
-                     placeholder="Password"
+                     name='password'
+                     placeholder='Password'
                      value={formData.password}
                      onChange={handleChange}
                      required
-                     autoComplete="current-password"
+                     autoComplete='current-password'
                   />
-                  <button
-                     type="button"
-                     className={styles.showPasswordButton}
-                     onClick={() => setShowPassword(!showPassword)}
-                  >
+                  <button type='button' className={styles.showPasswordButton} onClick={() => setShowPassword(!showPassword)}>
                      <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                   </button>
                </div>
                <div className={styles.rememberMe}>
-                  <input
-                     type="checkbox"
-                     name="rememberMe"
-                     id="rememberMe"
-                     checked={formData.rememberMe}
-                     onChange={handleChange}
-                  />
-                  <label htmlFor="rememberMe">Remember Me</label>
+                  <input type='checkbox' name='rememberMe' id='rememberMe' checked={formData.rememberMe} onChange={handleChange} />
+                  <label htmlFor='rememberMe'>Remember Me</label>
                </div>
-               <button type="submit">Login</button>
+               <button type='submit'>Login</button>
             </form>
             <p>
                {"Don't have an account? "} <Link to='/register'>Register here</Link>

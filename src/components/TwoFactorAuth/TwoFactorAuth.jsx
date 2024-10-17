@@ -1,19 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser, setLoading } from "../../redux/user/userSlice";
+import { setUser } from "../../redux/user/userSlice";
 import styles from "./TwoFactorAuth.module.css";
 import { toast } from "react-toastify";
 import { CONFIG } from "../../config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faEnvelope, faSpinner, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import LoadingSpinner from "../LoadingSpinner";
 
 function TwoFactorAuth() {
    const API_URL = CONFIG.API_URL;
    const [code, setCode] = useState(["", "", "", "", "", ""]);
    const [error, setError] = useState("");
    const [cooldown, setCooldown] = useState(0);
+   const [loading, setLoading] = useState(false);
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const location = useLocation();
@@ -29,10 +31,10 @@ function TwoFactorAuth() {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      dispatch(setLoading(true));
+      setLoading(true);
 
       try {
-         const endpoint = isRegistration ? "/users/verify-2fa-registration" : "/users/verify-2fa";
+         const endpoint = isRegistration ? "/users/complete-registration" : "/users/verify-2fa";
          const response = await fetch(`${API_URL}${endpoint}`, {
             method: "POST",
             headers: {
@@ -43,16 +45,14 @@ function TwoFactorAuth() {
 
          const data = await response.json();
 
-         if (response.ok) {
+         if (!data.error) {
             if (isRegistration) {
                toast.success("Registration successful! Please log in.");
                navigate("/login");
             } else {
                localStorage.setItem("token", data.token);
-               // Check if data.user is already an object or a string
                const userObject = typeof data.user === "string" ? JSON.parse(data.user) : data.user;
                dispatch(setUser(userObject));
-
                toast.success("Login successful!");
                window.location.href = "/";
             }
@@ -63,7 +63,7 @@ function TwoFactorAuth() {
          console.error("Verification error:", error);
          toast.error("An error occurred during verification");
       } finally {
-         dispatch(setLoading(false));
+         setLoading(false);
       }
    };
 
@@ -85,19 +85,23 @@ function TwoFactorAuth() {
       if (cooldown > 0) return;
 
       try {
-         await axios.post(`${API_URL}/users/resend-2fa-code`, { email });
+         await axios.post(`${API_URL}/users/resend-2fa-code`, { email, isRegistration });
          toast.success("New code sent. Please check your email.");
          setCooldown(60);
       } catch (error) {
          console.error("Error requesting new code:", error);
          toast.error(error.response?.data?.message || "Failed to send new code. Please try again.");
       }
-   }, [API_URL, cooldown, email]);
+   }, [API_URL, cooldown, email, isRegistration]);
 
    const maskedEmail = email ? email.replace(/(.{2})(.*)(?=@)/, (_, start, rest) => start + "*".repeat(rest.length)) : "your email";
 
    if (!email) {
       return <div className={styles.errorMessage}>Error: Email not provided. Please go back and try again.</div>;
+   }
+
+   if (loading) {
+      return <LoadingSpinner />;
    }
 
    return (

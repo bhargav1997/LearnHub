@@ -131,7 +131,7 @@ function Calendar() {
             if (error.response.status === 401) {
                handleUnauthorized();
             } else {
-               toast.error(`Error: ${error.response.data.message || "Failed to save event"}`);
+               toast.error(`Error: "Failed to save event"`);
             }
          } else if (error.request) {
             toast.error("No response received from server. Please try again.");
