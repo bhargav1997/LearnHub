@@ -30,9 +30,9 @@ const Login = React.lazy(() => import("./components/Login"));
 const UserProfile = React.lazy(() => import("./components/UserProfile"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
 import { CONFIG } from "./config";
-import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
+// import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 function ErrorFallback({ error }) {
    return (
@@ -47,7 +47,7 @@ ErrorFallback.propTypes = {
    error: PropTypes.object.isRequired,
 };
 
-function AppM() {
+function App() {
    const [showOnboarding, setShowOnboarding] = useState(false);
    const dispatch = useDispatch();
    const { user, isLoading } = useSelector((state) => state.user);
@@ -159,5 +159,5 @@ function AuthenticatedLayout() {
    );
 }
 
-const App = withMobileRestriction(AppM);
+// const App = withMobileRestriction(AppM);
 export default App;

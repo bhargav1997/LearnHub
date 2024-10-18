@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faBookOpen, faClock, faLink, faBolt, faRobot } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faBookOpen, faClock, faLink, faBolt, faRobot, faHandHoldingHeart } from "@fortawesome/free-solid-svg-icons";
 import styles from "./CourseRecommendations.module.css";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
@@ -94,43 +94,43 @@ function CourseRecommendations() {
       setApiLoading(true);
       setError(null);
       // try {
-         // const userSkills = userPreferences.join(", ");
-         // const prompt = `Given a user with skills in ${userSkills}, suggest 3 advanced IT courses or topics to study next. For each suggestion, provide a brief explanation of why it's recommended. Format the response as a numbered list.`;
+      // const userSkills = userPreferences.join(", ");
+      // const prompt = `Given a user with skills in ${userSkills}, suggest 3 advanced IT courses or topics to study next. For each suggestion, provide a brief explanation of why it's recommended. Format the response as a numbered list.`;
 
-         // const response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-xxl", {
-         //    method: "POST",
-         //    headers: {
-         //       "Content-Type": "application/json",
-         //       Authorization: `Bearer ${HF_API_TOKEN}`,
-         //       "x-use-cache": "false",
-         //       "x-wait-for-model": "true",
-         //    },
-         //    body: JSON.stringify({ inputs: prompt }),
-         // });
+      // const response = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-xxl", {
+      //    method: "POST",
+      //    headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${HF_API_TOKEN}`,
+      //       "x-use-cache": "false",
+      //       "x-wait-for-model": "true",
+      //    },
+      //    body: JSON.stringify({ inputs: prompt }),
+      // });
 
-         // if (!response.ok) {
-         //    const errorData = await response.json();
-         //    if (errorData.error && errorData.error.includes("is currently loading")) {
-         //       if (retryCount < MAX_RETRIES) {
-         //          console.log(`Model is loading. Retrying in ${RETRY_DELAY / 1000} seconds...`);
-         //          setTimeout(() => fetchAIRecommendations(retryCount + 1), RETRY_DELAY);
-         //          return;
-         //       } else {
-         //          throw new Error("Model took too long to load. Using fallback data.");
-         //       }
-         //    }
-         //    throw new Error(`HTTP error! status: ${response.status}`);
-         // }
+      // if (!response.ok) {
+      //    const errorData = await response.json();
+      //    if (errorData.error && errorData.error.includes("is currently loading")) {
+      //       if (retryCount < MAX_RETRIES) {
+      //          console.log(`Model is loading. Retrying in ${RETRY_DELAY / 1000} seconds...`);
+      //          setTimeout(() => fetchAIRecommendations(retryCount + 1), RETRY_DELAY);
+      //          return;
+      //       } else {
+      //          throw new Error("Model took too long to load. Using fallback data.");
+      //       }
+      //    }
+      //    throw new Error(`HTTP error! status: ${response.status}`);
+      // }
 
-         // const data = await response.json();
-         // const recommendations = parseAIRecommendations(data[0].generated_text);
-         // setRecommendedContent(recommendations);
-         setApiLoading(false);
+      // const data = await response.json();
+      // const recommendations = parseAIRecommendations(data[0].generated_text);
+      // setRecommendedContent(recommendations);
+      setApiLoading(false);
       // } catch (error) {
-         // console.error("Error fetching AI recommendations:", error);
-         // setError("We couldn't load AI recommendations at the moment. Here are some great courses for you!");
-         setRecommendedContent(getFallbackRecommendations(userPreferences));
-         setApiLoading(false);
+      // console.error("Error fetching AI recommendations:", error);
+      // setError("We couldn't load AI recommendations at the moment. Here are some great courses for you!");
+      setRecommendedContent(getFallbackRecommendations(userPreferences));
+      setApiLoading(false);
       // } finally {
       //    setIsLoading(false);
       // }
@@ -250,8 +250,8 @@ function CourseRecommendations() {
    return (
       <div className={styles.recommendationsContainer}>
          <h2 className={styles.recommendationsTitle}>
-            <FontAwesomeIcon icon={faRobot} className={styles.aiIcon} />
-            AI-Powered Recommendations
+            <FontAwesomeIcon icon={faHandHoldingHeart} className={styles.aiIcon} />
+            Recommendations
          </h2>
          {showError && <p className={styles.errorText}>{error}</p>}
          {isLoading ? (

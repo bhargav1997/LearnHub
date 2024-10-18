@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile, faUserFriends } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faPaperPlane, faEllipsisV, faPaperclip, faSmile, faUserFriends, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { io } from "socket.io-client";
 import axios from "axios";
 import styles from "./Message.module.css";
@@ -9,6 +9,7 @@ import { CONFIG } from "../../config";
 import { useSelector } from "react-redux";
 import { fetchUserConnections } from "../../api/userApi";
 import EmojiPicker from "emoji-picker-react";
+import { toast } from "react-toastify";
 
 function Message() {
    const API_URL = CONFIG.API_URL;
@@ -22,6 +23,11 @@ function Message() {
    const navigate = useNavigate();
    const messagesEndRef = useRef(null);
    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+   const [showDropdown, setShowDropdown] = useState(false);
+   const dropdownRef = useRef(null);
+   const [searchTerm, setSearchTerm] = useState("");
+   const [searchResults, setSearchResults] = useState([]);
+   const searchTimeoutRef = useRef(null);
 
    const initializeSocket = useCallback(() => {
       const token = localStorage.getItem("token");
@@ -66,6 +72,37 @@ function Message() {
       },
       [API_URL],
    );
+
+   const handleSearch = useCallback(async (term) => {
+      if (term.trim() === "") {
+         setSearchResults([]);
+         return;
+      }
+
+      try {
+         const response = await axios.get(`${API_URL}/users/search-connections?term=${term}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+         });
+         setSearchResults(response.data);
+      } catch (error) {
+         console.error("Error searching connections:", error);
+      }
+   }, [API_URL]);
+
+   const handleSearchInputChange = (e) => {
+      const term = e.target.value;
+      setSearchTerm(term);
+
+      // Clear any existing timeout
+      if (searchTimeoutRef.current) {
+         clearTimeout(searchTimeoutRef.current);
+      }
+
+      // Set a new timeout
+      searchTimeoutRef.current = setTimeout(() => {
+         handleSearch(term);
+      }, 500); // 500ms delay
+   };
 
    useEffect(() => {
       fetchUserConnections()
@@ -161,6 +198,59 @@ function Message() {
       setShowEmojiPicker(false);
    };
 
+   const clearPrivateChat = useCallback(
+      async (recipientId) => {
+         try {
+            const response = await fetch(`${API_URL}/chat/clear-private-chat/${recipientId}`, {
+               method: "DELETE",
+               headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  "Content-Type": "application/json",
+               },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+               if (!data.error) {
+                  setMessages([]); // Clear messages in the UI
+                  setShowDropdown(false); // Close the dropdown
+                  toast.success("Chat history cleared");
+               } else {
+                  console.error(data.message);
+                  toast.error(data.message);
+               }
+            } else {
+               console.error(data.message);
+               toast.error("Something went wrong, please try again.");
+            }
+         } catch (error) {
+            console.error("Error clearing private chat:", error);
+            toast.error("Something went wrong, please try again.");
+         }
+      },
+      [API_URL],
+   );
+
+   const clearChat = useCallback(() => {
+      if (selectedChat) {
+         clearPrivateChat(selectedChat);
+      }
+   }, [selectedChat, clearPrivateChat]);
+
+   useEffect(() => {
+      function handleClickOutside(event) {
+         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setShowDropdown(false);
+         }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+         document.removeEventListener("mousedown", handleClickOutside);
+      };
+   }, []);
+
    console.log("user", user);
    console.log("messages", messages);
 
@@ -170,22 +260,32 @@ function Message() {
             <div className={styles.searchBarWrapper}>
                <div className={styles.searchBar}>
                   <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
-                  <input type='text' placeholder='Search messages' />
+                  <input 
+                     type='text' 
+                     placeholder='Search Connections...' 
+                     value={searchTerm}
+                     onChange={handleSearchInputChange}
+                  />
                </div>
             </div>
             <div className={styles.chatList}>
-               {connections.map((connection) => (
+               {(searchTerm ? searchResults : connections).map((connection) => (
                   <div
                      key={connection._id}
                      className={`${styles.chatItem} ${selectedChat === connection._id ? styles.active : ""}`}
                      onClick={() => handleChatSelect(connection._id)}>
-                     <div className={styles.avatar}>{connection.username[0].toUpperCase()}</div>
+                     <div className={styles.avatar}>
+                        {connection.profilePicture ? (
+                           <img src={connection.profilePicture} alt={connection.username} />
+                        ) : (
+                           connection.username[0].toUpperCase()
+                        )}
+                     </div>
                      <div className={styles.chatInfo}>
                         <h4>{connection.username}</h4>
-                        <p>{connection.email}</p>
+                        <p>{connection.title || connection.email}</p>
                      </div>
                      <div className={styles.chatMeta}>
-                        <span>{new Date(connection.lastActive).toLocaleDateString()}</span>
                         <div className={styles.connectionStatus}>
                            {connection.isFollower && connection.isFollowing ? (
                               <FontAwesomeIcon icon={faUserFriends} className={styles.mutualIcon} title='Mutual Connection' />
@@ -208,13 +308,27 @@ function Message() {
             {selectedChat ? (
                <>
                   <div className={styles.chatHeader}>
-                     <div className={styles.avatar}>
-                        {connections.find((connection) => connection._id === selectedChat)?.username[0].toUpperCase()}
+                     <div className={styles.chatHeaderLeft}>
+                        <div className={styles.avatar}>
+                           {connections.find((connection) => connection._id === selectedChat)?.username[0].toUpperCase()}
+                        </div>
+                        <h3>{connections.find((connection) => connection._id === selectedChat)?.username}</h3>
                      </div>
-                     <h3>{connections.find((connection) => connection._id === selectedChat)?.username}</h3>
-                     <button className={styles.moreOptions}>
-                        <FontAwesomeIcon icon={faEllipsisV} />
-                     </button>
+                     <div className={styles.chatHeaderRight}>
+                        <div className={styles.dropdownContainer} ref={dropdownRef}>
+                           <button className={styles.moreOptions} onClick={() => setShowDropdown(!showDropdown)}>
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                           </button>
+                           {showDropdown && (
+                              <div className={styles.dropdownMenu}>
+                                 <button onClick={clearChat}>
+                                    <FontAwesomeIcon icon={faTrash} /> Clear Chat
+                                 </button>
+                                 {/* Add more options here as needed */}
+                              </div>
+                           )}
+                        </div>
+                     </div>
                   </div>
                   <div className={styles.messageList}>
                      {messages.map((message, index) => (

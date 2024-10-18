@@ -128,3 +128,49 @@
    color: #999 !important;
    border-color: #999 !important;
 }
+
+@media (max-width: 768px) {
+  .twoFactorForm {
+    max-width: 90%;
+    padding: 30px;
+  }
+
+  .codeInputs input {
+    width: 35px;
+    height: 45px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .twoFactorForm {
+    padding: 20px;
+  }
+
+  .iconContainer {
+    width: 60px;
+    height: 60px;
+  }
+
+  .lockIcon {
+    font-size: 30px;
+  }
+
+  .twoFactorForm h2 {
+    font-size: 20px;
+  }
+
+  .twoFactorForm p {
+    font-size: 14px;
+  }
+
+  .codeInputs input {
+    width: 30px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .twoFactorForm button {
+    font-size: 14px;
+  }
+}

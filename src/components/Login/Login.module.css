@@ -131,3 +131,50 @@
 .loginForm a:hover {
    text-decoration: underline;
 }
+
+/* Add these media queries at the end of the file */
+@media (max-width: 768px) {
+   .loginForm {
+      max-width: 90%;
+      padding: 30px;
+   }
+
+   .loginForm h2 {
+      font-size: 22px;
+   }
+
+   .inputGroup input {
+      font-size: 14px;
+   }
+
+   .loginForm button {
+      font-size: 14px;
+   }
+}
+
+@media (max-width: 480px) {
+   .loginForm {
+      padding: 20px;
+   }
+
+   .iconContainer {
+      width: 60px;
+      height: 60px;
+   }
+
+   .userIcon {
+      font-size: 30px;
+   }
+
+   .loginForm h2 {
+      font-size: 20px;
+   }
+
+   .inputGroup {
+      margin-bottom: 15px;
+   }
+
+   .loginForm p {
+      font-size: 14px;
+   }
+}
