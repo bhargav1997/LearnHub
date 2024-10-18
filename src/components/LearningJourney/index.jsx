@@ -25,7 +25,6 @@ import {
    FaMap,
    FaStickyNote,
 } from "react-icons/fa";
-import JourneyMap from "./JourneyMap";
 
 const LearningJourney = () => {
    const dispatch = useDispatch();
@@ -139,7 +138,7 @@ const LearningJourney = () => {
 
    const renderStepContent = (step) => {
       const content = step.split(":").slice(1).join(":");
-      const urlRegex = /https?:\/\/\S+/g;
+      const urlRegex = /\b(?!\d+\.)\S+\.\S+\b/g;
       const urls = content.match(urlRegex) || [];
 
       if (urls.length === 0) {
@@ -157,15 +156,6 @@ const LearningJourney = () => {
    };
 
    console.log("journeys", journeys);
-
-   // const completedSteps = selectedJourney
-   //    ? selectedJourney.steps.reduce((acc, _, index) => {
-   //         if (index < selectedJourney.resources.filter((r) => r.completed).length) {
-   //            acc.push(index);
-   //         }
-   //         return acc;
-   //      }, [])
-   //    : [];
 
    return (
       <div className={styles.learningJourneyContainer}>
@@ -319,7 +309,6 @@ const LearningJourney = () => {
                            ))}
                         </div>
                      </div>
-                     {/* <JourneyMap steps={selectedJourney.steps} completedSteps={completedSteps} /> */}
 
                      <div className={styles.card}>
                         <h3 className={styles.cardTitle}>

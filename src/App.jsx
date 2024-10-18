@@ -30,7 +30,7 @@ const Login = React.lazy(() => import("./components/Login"));
 const UserProfile = React.lazy(() => import("./components/UserProfile"));
 const LearningJourney = React.lazy(() => import("./components/LearningJourney"));
 import { CONFIG } from "./config";
-// import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
+import withMobileRestriction from "./components/MobileRestriction/withMobileRestriction";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -47,7 +47,7 @@ ErrorFallback.propTypes = {
    error: PropTypes.object.isRequired,
 };
 
-function App() {
+function AppDesktop() {
    const [showOnboarding, setShowOnboarding] = useState(false);
    const dispatch = useDispatch();
    const { user, isLoading } = useSelector((state) => state.user);
@@ -159,5 +159,5 @@ function AuthenticatedLayout() {
    );
 }
 
-// const App = withMobileRestriction(AppM);
+const App = withMobileRestriction(AppDesktop);
 export default App;
