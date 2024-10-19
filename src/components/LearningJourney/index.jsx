@@ -26,11 +26,13 @@ import {
    FaStickyNote,
    FaChevronDown,
    FaChevronUp,
+   FaShare,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CONFIG } from "../../config";
+import ShareJourney from "./ShareJourney";
 
 const ResourceItem = ({ resource, index, toggleResourceCompletion, deleteResource }) => {
    const [isExpanded, setIsExpanded] = useState(false);
@@ -151,6 +153,7 @@ const LearningJourney = () => {
    const [isCreatingJourney, setIsCreatingJourney] = useState(false);
    const [newJourneyName, setNewJourneyName] = useState("");
    const [progress, setProgress] = useState(0);
+   const [sharingJourneyId, setSharingJourneyId] = useState(null);
 
    const calculateProgress = () => {
       const totalItems = selectedJourney.resources.length + selectedJourney.tasks.length;
@@ -282,6 +285,11 @@ const LearningJourney = () => {
       }
    };
 
+   const handleShareJourney = (e, journeyId) => {
+      e.stopPropagation();
+      setSharingJourneyId(journeyId);
+   };
+
    return (
       <div className={styles.learningJourneyContainer}>
          <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
@@ -293,14 +301,30 @@ const LearningJourney = () => {
                      <p>Create New Journey</p>
                   </div>
                   {journeys.map((journey) => (
-                     <div key={journey._id} className={styles.journeyItem} onClick={() => dispatch(setSelectedJourneyToUser(journey._id))}>
-                        <h3 className={styles.sectionTitle}>{journey.name}</h3>
-                        <p>
-                           {journey.resources.length} resources • {journey.tasks.length} tasks
-                        </p>
-                        <button className={styles.deleteButton} onClick={(e) => handleDeleteJourney(e, journey._id)}>
-                           <FaTrash />
-                        </button>
+                     <div key={journey._id} className={styles.journeyItem}>
+                        <div className={styles.journeyActions}>
+                           <button 
+                             className={styles.shareButton} 
+                             onClick={(e) => handleShareJourney(e, journey._id)}
+                           >
+                             <FaShare />
+                           </button>
+                           <button 
+                             className={styles.deleteButton} 
+                             onClick={(e) => handleDeleteJourney(e, journey._id)}
+                           >
+                             <FaTrash />
+                           </button>
+                        </div>
+                        <div 
+                          className={styles.journeyItemContent}
+                          onClick={() => dispatch(setSelectedJourneyToUser(journey._id))}
+                        >
+                           <h3 className={styles.sectionTitle}>{journey.name}</h3>
+                           <p>
+                              {journey.resources.length} resources • {journey.tasks.length} tasks
+                           </p>
+                        </div>
                      </div>
                   ))}
                </div>
@@ -447,6 +471,12 @@ const LearningJourney = () => {
                   </div>
                </div>
             </div>
+         )}
+         {sharingJourneyId && (
+            <ShareJourney
+               journeyId={sharingJourneyId}
+               onClose={() => setSharingJourneyId(null)}
+            />
          )}
       </div>
    );

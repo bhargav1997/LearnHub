@@ -276,7 +276,7 @@ function Message() {
                      onClick={() => handleChatSelect(connection._id)}>
                      <div className={styles.avatar}>
                         {connection.profilePicture ? (
-                           <img src={connection.profilePicture} alt={connection.username} />
+                           <img src={connection.profilePicture} alt={connection.username} className={styles.avatarImage} />
                         ) : (
                            connection.username[0].toUpperCase()
                         )}

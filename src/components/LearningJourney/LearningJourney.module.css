@@ -23,42 +23,15 @@
 
 .journeyItem {
    position: relative;
-   /* ... existing styles ... */
-}
-
-.deleteButton {
-   position: absolute;
-   top: 10px;
-   right: 10px;
-   background: none;
-   border: none;
-   color: #ff4d4d;
-   cursor: pointer;
-   font-size: 16px;
-   opacity: 0;
-   transition: opacity 0.3s ease;
-}
-
-.journeyItem:hover .deleteButton {
-   opacity: 1;
-}
-
-.deleteButton:hover {
-   color: #ff0000;
-}
-
-.journeyItem,
-.newJourneyItem {
    background-color: white;
    border-radius: 12px;
-   padding: 1.5rem;
+   padding: 20px; /* Increased top padding for buttons */
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
    cursor: pointer;
    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.journeyItem:hover,
-.newJourneyItem:hover {
+.journeyItem:hover {
    transform: translateY(-5px);
    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
@@ -75,6 +48,50 @@
    font-size: 0.9rem;
 }
 
+.journeyActions {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   display: flex;
+   gap: 0.5rem;
+}
+
+.shareButton,
+.deleteButton {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   opacity: 0;
+   transition: opacity 0.3s ease, color 0.3s ease;
+   padding: 5px;
+}
+
+.journeyItem:hover .shareButton,
+.journeyItem:hover .deleteButton {
+   opacity: 1;
+}
+
+.shareButton {
+   color: #7f61d7;
+}
+
+.shareButton:hover {
+   color: #6c52c8;
+}
+
+.deleteButton {
+   color: #ff4d4d;
+}
+
+.deleteButton:hover {
+   color: #ff0000;
+}
+
+.journeyItemContent {
+   margin-top: 0.5rem; /* Reduced margin to account for increased padding */
+}
+
 .newJourneyItem {
    display: flex;
    flex-direction: column;
@@ -82,6 +99,8 @@
    justify-content: center;
    background-color: #7f61d7;
    color: #ffffff;
+   border-radius: 12px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .newJourneyItem svg {
@@ -635,36 +654,81 @@
 
 .resourceItem,
 .taskItem {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    background-color: white;
-    padding: 0.75rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    flex-wrap: wrap;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   margin-bottom: 0.5rem;
+   background-color: white;
+   padding: 0.75rem;
+   border-radius: 6px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+   flex-wrap: wrap;
 }
 
 .resourceActions,
 .taskActions {
-    margin-left: auto;
-    display: flex;
-    gap: 0.5rem;
+   margin-left: auto;
+   display: flex;
+   gap: 0.5rem;
 }
 
 .trashButton {
-    background: none;
-    border: none;
-    color: #ff4d4d;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 0;
-    transition: color 0.3s ease;
-    display: flex;
-    align-items: center;
+   background: none;
+   border: none;
+   color: #ff4d4d;
+   cursor: pointer;
+   font-size: 1rem;
+   padding: 0;
+   transition: color 0.3s ease;
+   display: flex;
+   align-items: center;
 }
 
 .trashButton:hover {
-    color: #ff0000;
+   color: #ff0000;
+}
+
+.journeyActions {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   display: flex;
+   gap: 0.5rem;
+}
+
+.shareButton,
+.deleteButton {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   opacity: 0;
+   transition: opacity 0.3s ease, color 0.3s ease;
+   padding: 5px; /* Add padding for better touch targets */
+}
+
+.journeyItem:hover .shareButton,
+.journeyItem:hover .deleteButton {
+   opacity: 1;
+}
+
+.shareButton {
+   color: #7f61d7;
+}
+
+.shareButton:hover {
+   color: #6c52c8;
+}
+
+.deleteButton {
+   color: #ff4d4d;
+}
+
+.deleteButton:hover {
+   color: #ff0000;
+}
+
+/* Add these new styles */
+.journeyItemContent {
+   margin-top: 1rem; /* Add space between buttons and content */
 }
