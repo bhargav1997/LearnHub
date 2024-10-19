@@ -447,8 +447,6 @@ function Dashboard() {
       }
    };
 
-   console.log("apiLearningTasks", apiLearningTasks);
-
    return (
       <div className='dashboard'>
          <ToastContainer />

@@ -94,6 +94,8 @@ const EditProgressPopup = ({ task, onUpdateProgress, onClose }) => {
             },
          });
 
+         console.log("response", response);
+
          if (response.statusText !== "OK") {
             throw new Error(`HTTP error! status: ${response.status}`);
          }

@@ -15,6 +15,7 @@ import {
 import "../../styles/Sidebar.css";
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../../redux/user/userHandle";
+import logoImage from '../../assets/images/logo.png'; // Adjust the path as needed
 
 function Sidebar() {
    const location = useLocation();
@@ -43,7 +44,7 @@ function Sidebar() {
    return (
       <div className='sidebar-container'>
          <div className='sidebar-header'>
-            <h1 className='logo'>LearnHub</h1>
+            <img src={logoImage} alt="LearnHub" className='logo-sidebar' />
          </div>
          <nav className='sidebar-nav'>
             <ul>
