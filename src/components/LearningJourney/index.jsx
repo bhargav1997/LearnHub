@@ -28,8 +28,11 @@ import {
    FaChevronUp,
 } from "react-icons/fa";
 import PropTypes from "prop-types";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { CONFIG } from "../../config";
 
-const ResourceItem = ({ resource, index, toggleResourceCompletion }) => {
+const ResourceItem = ({ resource, index, toggleResourceCompletion, deleteResource }) => {
    const [isExpanded, setIsExpanded] = useState(false);
    const maxLength = 50; // Adjust this value to change when "Read More" appears
 
@@ -68,7 +71,12 @@ const ResourceItem = ({ resource, index, toggleResourceCompletion }) => {
                {isExpanded ? "Read Less" : "Read More"}
             </button>
          )}
-         {resource.completed && <FaCheck className={styles.completedIcon} />}
+         <div className={styles.resourceActions}>
+            {resource.completed && <FaCheck className={styles.completedIcon} />}
+            <button onClick={() => deleteResource(resource._id)} className={styles.trashButton}>
+               <FaTrash />
+            </button>
+         </div>
       </li>
    );
 };
@@ -232,6 +240,48 @@ const LearningJourney = () => {
       }
    };
 
+   const deleteResource = async (resourceId) => {
+      if (!window.confirm("Are you sure you want to delete this resource?")) {
+         return;
+      }
+
+      try {
+         const response = await axios.delete(`${CONFIG.API_URL}/learning-journeys/${selectedJourney._id}/resources/${resourceId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+         });
+
+         if (response.status === 200 && response.data) {
+            dispatch(updateJourneyToUser(response.data));
+            toast.success("Resource deleted successfully");
+         } else {
+            toast.error("Unexpected response from server");
+         }
+      } catch (error) {
+         toast.error("Failed to delete resource: " + (error.response?.data?.message || error.message));
+      }
+   };
+
+   const deleteTask = async (taskId) => {
+      if (!window.confirm("Are you sure you want to delete this task?")) {
+         return;
+      }
+
+      try {
+         const response = await axios.delete(`${CONFIG.API_URL}/learning-journeys/${selectedJourney._id}/tasks/${taskId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+         });
+
+         if (response.status === 200 && response.data) {
+            dispatch(updateJourneyToUser(response.data));
+            toast.success("Task deleted successfully");
+         } else {
+            toast.error("Unexpected response from server");
+         }
+      } catch (error) {
+         toast.error("Failed to delete task: " + (error.response?.data?.message || error.message));
+      }
+   };
+
    return (
       <div className={styles.learningJourneyContainer}>
          <h2 className={styles.journeyTitle}>Your Learning Journeys</h2>
@@ -329,6 +379,7 @@ const LearningJourney = () => {
                                  resource={resource}
                                  index={index}
                                  toggleResourceCompletion={toggleResourceCompletion}
+                                 deleteResource={deleteResource}
                               />
                            ))}
                         </ul>
@@ -359,6 +410,11 @@ const LearningJourney = () => {
                                     }}
                                  />
                                  <span>{task.text}</span>
+                                 <div className={styles.taskActions}>
+                                    <button onClick={() => deleteTask(task._id)} className={styles.trashButton}>
+                                       <FaTrash />
+                                    </button>
+                                 </div>
                               </li>
                            ))}
                         </ul>
@@ -400,8 +456,8 @@ ResourceItem.propTypes = {
    resource: PropTypes.object.isRequired,
    index: PropTypes.number.isRequired,
    toggleResourceCompletion: PropTypes.func.isRequired,
+   deleteResource: PropTypes.func.isRequired,
 };
-
 
 JourneyStep.propTypes = {
    step: PropTypes.string.isRequired,

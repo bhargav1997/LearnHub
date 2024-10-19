@@ -371,6 +371,7 @@
    padding: 0.5rem;
    border-radius: 4px;
    transition: background-color 0.3s ease;
+   justify-content: space-between;
 }
 
 .resourceItem:hover,
@@ -630,4 +631,40 @@
 .completedIcon {
    color: #7f61d7;
    font-size: 1.2rem;
+}
+
+.resourceItem,
+.taskItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+}
+
+.resourceActions,
+.taskActions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.trashButton {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.trashButton:hover {
+    color: #ff0000;
 }
