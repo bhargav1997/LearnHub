@@ -24,7 +24,118 @@ import {
    FaTasks,
    FaMap,
    FaStickyNote,
+   FaChevronDown,
+   FaChevronUp,
 } from "react-icons/fa";
+import PropTypes from "prop-types";
+
+const ResourceItem = ({ resource, index, toggleResourceCompletion }) => {
+   const [isExpanded, setIsExpanded] = useState(false);
+   const maxLength = 50; // Adjust this value to change when "Read More" appears
+
+   const toggleExpand = (e) => {
+      e.preventDefault();
+      setIsExpanded(!isExpanded);
+   };
+
+   const getResourceIcon = (type) => {
+      switch (type.toLowerCase()) {
+         case "udemy":
+            return <FaGraduationCap />;
+         case "khan academy":
+            return <FaBook />;
+         case "youtube":
+            return <FaYoutube />;
+         case "coursera":
+            return <FaGraduationCap />;
+         default:
+            return <FaLink />;
+      }
+   };
+
+   const displayUrl = isExpanded ? resource.url : resource.url.slice(0, maxLength);
+
+   return (
+      <li className={`${styles.resourceItem} ${resource.completed ? styles.completed : ""}`}>
+         <input type='checkbox' checked={resource.completed} onChange={() => toggleResourceCompletion(index)} />
+         <span className={styles.resourceIcon}>{getResourceIcon(resource.type)}</span>
+         <a href={resource.url} target='_blank' rel='noopener noreferrer' className={styles.resourceLink}>
+            {displayUrl}
+            {!isExpanded && resource.url.length > maxLength && "..."}
+         </a>
+         {resource.url.length > maxLength && (
+            <button onClick={toggleExpand} className={styles.readMoreButton}>
+               {isExpanded ? "Read Less" : "Read More"}
+            </button>
+         )}
+         {resource.completed && <FaCheck className={styles.completedIcon} />}
+      </li>
+   );
+};
+
+const JourneyStep = ({ step, index }) => {
+   const [isExpanded, setIsExpanded] = useState(false);
+   const maxLength = 100; // Adjust this value to change when "Read More" appears
+
+   const toggleExpand = () => {
+      setIsExpanded(!isExpanded);
+   };
+
+   const renderStepContent = (content) => {
+      const urlRegex = /\b(?!\d+\.)\S+\.\S+\b/g;
+      const urls = content.match(urlRegex) || [];
+
+      if (urls.length === 0) {
+         return content;
+      }
+
+      return content.split(urlRegex).map((text, i) => (
+         <React.Fragment key={i}>
+            {text}
+            {urls[i] && (
+               <a
+                  href={urls[i].startsWith("http") ? urls[i] : `http://${urls[i]}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className={styles.stepLink}>
+                  {urls[i]}
+               </a>
+            )}
+         </React.Fragment>
+      ));
+   };
+
+   const [stepType, ...stepContentArray] = step.split(":");
+   const stepContent = stepContentArray.join(":");
+   const displayContent = isExpanded ? stepContent : stepContent.slice(0, maxLength);
+   const isLongContent = stepContent.length > maxLength;
+
+   return (
+      <div className={styles.journeyStep}>
+         <div className={styles.stepNumber}>{index + 1}</div>
+         <div className={styles.stepContent}>
+            <h4>{stepType}</h4>
+            <p>
+               {renderStepContent(displayContent)}
+               {!isExpanded && isLongContent && "..."}
+            </p>
+            {isLongContent && (
+               <button onClick={toggleExpand} className={styles.readMoreButton}>
+                  {isExpanded ? (
+                     <>
+                        Read Less <FaChevronUp />
+                     </>
+                  ) : (
+                     <>
+                        Read More <FaChevronDown />
+                     </>
+                  )}
+               </button>
+            )}
+         </div>
+      </div>
+   );
+};
 
 const LearningJourney = () => {
    const dispatch = useDispatch();
@@ -105,21 +216,6 @@ const LearningJourney = () => {
       dispatch(updateJourneyToUser(updatedJourney));
    };
 
-   const getResourceIcon = (type) => {
-      switch (type.toLowerCase()) {
-         case "udemy":
-            return <FaGraduationCap />;
-         case "khan academy":
-            return <FaBook />;
-         case "youtube":
-            return <FaYoutube />;
-         case "coursera":
-            return <FaGraduationCap />;
-         default:
-            return <FaLink />;
-      }
-   };
-
    const toggleResourceCompletion = (index) => {
       const updatedResources = selectedJourney.resources.map((resource, i) =>
          i === index ? { ...resource, completed: !resource.completed } : resource,
@@ -135,27 +231,6 @@ const LearningJourney = () => {
          dispatch(getJourneysToUser());
       }
    };
-
-   const renderStepContent = (step) => {
-      const content = step.split(":").slice(1).join(":");
-      const urlRegex = /\b(?!\d+\.)\S+\.\S+\b/g;
-      const urls = content.match(urlRegex) || [];
-
-      if (urls.length === 0) {
-         return content;
-      }
-
-      return urls.map((url, i) => (
-         <React.Fragment key={i}>
-            {i > 0 && " "}
-            <a href={url} target='_blank' rel='noopener noreferrer'>
-               {url}
-            </a>
-         </React.Fragment>
-      ));
-   };
-
-   console.log("journeys", journeys);
 
    return (
       <div className={styles.learningJourneyContainer}>
@@ -249,14 +324,12 @@ const LearningJourney = () => {
                         </form>
                         <ul className={styles.resourceList}>
                            {selectedJourney.resources.map((resource, index) => (
-                              <li key={index} className={`${styles.resourceItem} ${resource.completed ? styles.completed : ""}`}>
-                                 <input type='checkbox' checked={resource.completed} onChange={() => toggleResourceCompletion(index)} />
-                                 <span className={styles.resourceIcon}>{getResourceIcon(resource.type)}</span>
-                                 <a href={resource.url} target='_blank' rel='noopener noreferrer'>
-                                    {resource.url}
-                                 </a>
-                                 {resource.completed && <FaCheck className={styles.completedIcon} />}
-                              </li>
+                              <ResourceItem
+                                 key={index}
+                                 resource={resource}
+                                 index={index}
+                                 toggleResourceCompletion={toggleResourceCompletion}
+                              />
                            ))}
                         </ul>
                      </div>
@@ -299,13 +372,7 @@ const LearningJourney = () => {
                         </h3>
                         <div className={styles.journeyMap}>
                            {selectedJourney.steps.map((step, index) => (
-                              <div key={index} className={styles.journeyStep}>
-                                 <div className={styles.stepNumber}>{index + 1}</div>
-                                 <div className={styles.stepContent}>
-                                    <h4>{step.split(":")[0]}</h4>
-                                    <p>{renderStepContent(step)}</p>
-                                 </div>
-                              </div>
+                              <JourneyStep key={index} step={step} index={index} />
                            ))}
                         </div>
                      </div>
@@ -327,6 +394,18 @@ const LearningJourney = () => {
          )}
       </div>
    );
+};
+
+ResourceItem.propTypes = {
+   resource: PropTypes.object.isRequired,
+   index: PropTypes.number.isRequired,
+   toggleResourceCompletion: PropTypes.func.isRequired,
+};
+
+
+JourneyStep.propTypes = {
+   step: PropTypes.string.isRequired,
+   index: PropTypes.number.isRequired,
 };
 
 export default LearningJourney;

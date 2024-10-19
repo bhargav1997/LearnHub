@@ -90,364 +90,374 @@
 }
 
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
 }
 
 .modal {
-  background-color: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 500px;
-  overflow: hidden;
+   background-color: #ffffff;
+   border-radius: 20px;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+   width: 90%;
+   max-width: 500px;
+   overflow: hidden;
 }
 
 .modalContent {
-  padding: 30px;
+   padding: 30px;
 }
 
 .modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
 }
 
 .modalTitle {
-  font-size: 24px;
-  color: #333;
-  margin: 0;
+   font-size: 24px;
+   color: #333;
+   margin: 0;
 }
 
 .closeButton {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.3s;
+   background: none;
+   border: none;
+   font-size: 24px;
+   color: #999;
+   cursor: pointer;
+   transition: color 0.3s;
 }
 
 .closeButton:hover {
-  color: #333;
+   color: #333;
 }
 
 .modalBody {
-  text-align: center;
+   text-align: center;
 }
 
 .modalIllustration {
-  position: relative;
-  margin-bottom: 20px;
+   position: relative;
+   margin-bottom: 20px;
 }
 
 .rocketIcon {
-  font-size: 80px;
-  color: #7f61d7;
+   font-size: 80px;
+   color: #7f61d7;
 }
 
 .stars {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   display: flex;
+   justify-content: space-around;
 }
 
 .starIcon {
-  font-size: 20px;
-  color: #ffd700;
-  animation: twinkle 1.5s infinite alternate;
+   font-size: 20px;
+   color: #ffd700;
+   animation: twinkle 1.5s infinite alternate;
 }
 
 @keyframes twinkle {
-  0% { opacity: 0.3; }
-  100% { opacity: 1; }
+   0% {
+      opacity: 0.3;
+   }
+   100% {
+      opacity: 1;
+   }
 }
 
 .modalDescription {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 30px;
+   font-size: 18px;
+   color: #666;
+   margin-bottom: 30px;
 }
 
 .journeyForm {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
 }
 
 .journeyInput {
-  width: 100%;
-  padding: 12px 15px;
-  font-size: 16px;
-  border: 2px solid #7f61d7;
-  border-radius: 25px;
-  margin-bottom: 20px;
-  transition: border-color 0.3s;
+   width: 100%;
+   padding: 12px 15px;
+   font-size: 16px;
+   border: 2px solid #7f61d7;
+   border-radius: 25px;
+   margin-bottom: 20px;
+   transition: border-color 0.3s;
 }
 
 .journeyInput:focus {
-  outline: none;
-  border-color: #4a3a7a;
+   outline: none;
+   border-color: #4a3a7a;
 }
 
 .createButton {
-  background-color: #7f61d7;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 12px 25px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  display: flex;
-  align-items: center;
+   background-color: #7f61d7;
+   color: white;
+   border: none;
+   border-radius: 25px;
+   padding: 12px 25px;
+   font-size: 18px;
+   cursor: pointer;
+   transition: background-color 0.3s, transform 0.2s;
+   display: flex;
+   align-items: center;
 }
 
 .createButton:hover {
-  background-color: #6a4fc1;
-  transform: translateY(-2px);
+   background-color: #6a4fc1;
+   transform: translateY(-2px);
 }
 
 .shuttleIcon {
-  margin-right: 10px;
+   margin-right: 10px;
 }
 
 .journeyDetails {
-  background-color: #f8f9fa;
-  border-radius: 15px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+   background-color: #f8f9fa;
+   border-radius: 15px;
+   padding: 2rem;
+   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .journeyHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 2rem;
 }
 
 .journeyHeader h2 {
-  font-size: 24px;
-  color: #333;
+   font-size: 24px;
+   color: #333;
 }
 
 .backButton {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: transparent;
-  border: 2px solid #7f61d7;
-  color: #7f61d7;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   background-color: transparent;
+   border: 2px solid #7f61d7;
+   color: #7f61d7;
+   padding: 0.5rem 1rem;
+   border-radius: 25px;
+   cursor: pointer;
+   transition: all 0.3s ease;
 }
 
 .backButton:hover {
-  background-color: #7f61d7;
-  color: white;
+   background-color: #7f61d7;
+   color: white;
 }
 
 .progressSection {
-  margin-bottom: 2rem;
+   margin-bottom: 2rem;
 }
 
 .progressBarContainer {
-  height: 10px;
-  background-color: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
+   height: 10px;
+   background-color: #e0e0e0;
+   border-radius: 5px;
+   overflow: hidden;
 }
 
 .progressBar {
-  height: 100%;
-  background-color: #7f61d7;
-  transition: width 0.5s ease-in-out;
+   height: 100%;
+   background-color: #7f61d7;
+   transition: width 0.5s ease-in-out;
 }
 
 .progressText {
-  text-align: center;
-  margin-top: 0.5rem;
-  font-weight: bold;
-  color: #7f61d7;
+   text-align: center;
+   margin-top: 0.5rem;
+   font-weight: bold;
+   color: #7f61d7;
 }
 
 .journeyContent {
-  display: flex;
-  gap: 2rem;
+   display: flex;
+   gap: 2rem;
 }
 
 .mainPanel {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+   flex: 2;
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
 }
 
 .sidePanel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
 }
 
 .card {
-  background-color: white;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+   background-color: white;
+   border-radius: 10px;
+   padding: 1.5rem;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+   transform: translateY(-5px);
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .cardTitle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 18px;
-  color: #333;
-  margin-bottom: 1rem;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   font-size: 18px;
+   color: #333;
+   margin-bottom: 1rem;
 }
 
 .addForm {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+   display: flex;
+   gap: 0.5rem;
+   margin-bottom: 1rem;
 }
 
 .addForm input {
-  flex-grow: 1;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+   flex-grow: 1;
+   padding: 0.5rem;
+   border: 1px solid #ddd;
+   border-radius: 4px;
 }
 
 .addForm button {
-  background-color: #7f61d7;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+   background-color: #7f61d7;
+   color: white;
+   border: none;
+   padding: 0.5rem 1rem;
+   border-radius: 4px;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
 }
 
 .addForm button:hover {
-  background-color: #6a4fc1;
+   background-color: #6a4fc1;
 }
 
-.resourceList, .taskList {
-  list-style-type: none;
-  padding: 0;
+.resourceList,
+.taskList {
+   list-style-type: none;
+   padding: 0;
 }
 
-.resourceItem, .taskItem {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+.resourceItem,
+.taskItem {
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   padding: 0.5rem;
+   border-radius: 4px;
+   transition: background-color 0.3s ease;
 }
 
-.resourceItem:hover, .taskItem:hover {
-  background-color: #f0f0f0;
+.resourceItem:hover,
+.taskItem:hover {
+   background-color: #f0f0f0;
 }
 
-.resourceItem.completed, .taskItem.completed {
-  text-decoration: line-through;
-  color: #888;
+.resourceItem.completed,
+.taskItem.completed {
+   text-decoration: line-through;
+   color: #888;
 }
 
 .journeyMap {
-  position: relative;
+   position: relative;
 }
 
 .journeyMap::before {
-  content: '';
-  position: absolute;
-  top: 15px; /* Align with the first step number */
-  bottom: 15px; /* Align with the last step number */
-  left: 14px; /* Center the line with step numbers */
-  width: 2px;
-  background-color: #7f61d7;
+   content: "";
+   position: absolute;
+   top: 15px; /* Align with the first step number */
+   bottom: 15px; /* Align with the last step number */
+   left: 14px; /* Center the line with step numbers */
+   width: 2px;
+   background-color: #7f61d7;
 }
 
 .journeyStep {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  position: relative;
+   display: flex;
+   gap: 1rem;
+   margin-bottom: 1.5rem;
+   position: relative;
 }
 
 .stepNumber {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  background-color: #7f61d7;
-  color: white;
-  border-radius: 50%;
-  font-weight: bold;
-  flex-shrink: 0; /* Prevent the number from shrinking */
-  z-index: 1; /* Ensure the number is above the line */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 30px;
+   height: 30px;
+   background-color: #7f61d7;
+   color: white;
+   border-radius: 50%;
+   font-weight: bold;
+   flex-shrink: 0; /* Prevent the number from shrinking */
+   z-index: 1; /* Ensure the number is above the line */
 }
 
 .stepContent {
-  flex: 1;
-  word-break: break-word;
-  overflow-wrap: break-word;
+   flex: 1;
+   word-break: break-word;
+   overflow-wrap: break-word;
 }
 
 .stepLink {
-  word-break: break-all;
-  color: #0066cc;
-  text-decoration: none;
+   color: #0066cc;
+   text-decoration: none;
 }
 
 .stepLink:hover {
-  text-decoration: underline;
+   text-decoration: underline;
 }
 
 .readMoreButton {
-  background: none;
-  border: none;
-  color: #0066cc;
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.9em;
-  margin-top: 5px;
+   background: none;
+   border: none;
+   color: #7f61d7;
+   cursor: pointer;
+   font-size: 0.9rem;
+   padding: 0;
+   margin-top: 0.5rem;
+   display: flex;
+   align-items: center;
+   gap: 0.25rem;
 }
 
 .readMoreButton:hover {
-  text-decoration: underline;
+   text-decoration: underline;
 }
 
 .notesTextarea {
-  width: 100%;
-  height: 200px;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: vertical;
+   width: 100%;
+   height: 200px;
+   padding: 0.5rem;
+   border: 1px solid #ddd;
+   border-radius: 4px;
+   resize: vertical;
 }
 
 .journeyTitle {
@@ -520,6 +530,8 @@
    color: #7f61d7;
    text-decoration: none;
    word-break: break-all;
+   flex-grow: 1;
+   margin-right: 0.5rem;
 }
 
 .resourceLink:hover {
@@ -601,6 +613,9 @@
    padding: 0.75rem;
    border-radius: 6px;
    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
 }
 
 .resourceCheckbox {
