@@ -485,7 +485,7 @@ function UserProfile() {
                      </button>
                   </div>
                   <input type='text' name='username' value={editedUser.username} onChange={handleInputChange} placeholder='Username' />
-                  <input type='email' name='email' value={editedUser.email} onChange={handleInputChange} placeholder='Email' />
+                  <input type='email' name='email' value={editedUser.email} onChange={handleInputChange} placeholder='Email' disabled/>
                   <input
                      type='text'
                      name='profilePicture'

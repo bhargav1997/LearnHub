@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
    faBell,
@@ -13,6 +13,7 @@ import {
    faTrophy,
    faCheck,
    faTimes,
+   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Header.module.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +31,11 @@ function Header() {
    const navigate = useNavigate();
    const user = useSelector((state) => state.user.user);
    const notificationRef = useRef(null);
+   const [deletingNotifications, setDeletingNotifications] = useState({});
+   const [successMessage, setSuccessMessage] = useState({
+      message: null,
+      error: false,
+   });
 
    useEffect(() => {
       fetchNotifications();
@@ -53,9 +59,14 @@ function Header() {
          const response = await axios.get(`${CONFIG.API_URL}/notifications`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
          });
-         setNotifications(response.data);
+         if (response?.status === 200) {
+            setNotifications(response?.data?.notifications);
+         } else {
+            setNotifications([]);
+         }
       } catch (error) {
          console.error("Failed to fetch notifications:", error);
+         setNotifications([]);
       }
    };
 
@@ -70,18 +81,9 @@ function Header() {
          fetchNotifications(); // Refresh notifications
       } catch (error) {
          toast.error(`Failed to ${status} journey`);
+         console.error("Failed to respond to shared journey:", error);
       }
    };
-
-   const markAsRead = (id) => {
-      setNotifications(notifications.map((notif) => (notif._id === id ? { ...notif, read: true } : notif)));
-   };
-
-   const removeNotification = (id) => {
-      setNotifications(notifications.filter((notif) => notif._id !== id));
-   };
-
-   const unreadCount = notifications.filter((notif) => !notif.read).length;
 
    const handleLogout = () => {
       dispatch(deleteUser());
@@ -90,15 +92,58 @@ function Header() {
       navigate("/login");
    };
 
-   console.log('notifications',notifications);
+   const handleDeleteNotification = async (notificationId) => {
+      setDeletingNotifications((prev) => ({ ...prev, [notificationId]: true }));
+
+      try {
+         const response = await axios.delete(`${CONFIG.API_URL}/notifications/${notificationId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+         });
+
+         if (response?.status === 200) {
+            // Wait for the swipe animation to complete
+            setTimeout(() => {
+               setNotifications((prevNotifications) => prevNotifications.filter((n) => n._id !== notificationId));
+               setDeletingNotifications((prev) => {
+                  const newState = { ...prev };
+                  delete newState[notificationId];
+                  return newState;
+               });
+
+               // Show success message
+               setSuccessMessage({
+                  message: "Notification deleted",
+                  error: false,
+               });
+
+               // Hide success message after 3 seconds
+               setTimeout(() => {
+                  setSuccessMessage({
+                     message: null,
+                     error: false,
+                  });
+               }, 3000);
+            }, 300);
+         } else {
+            setSuccessMessage({
+               message: "Failed to delete notification",
+               error: true,
+            });
+         }
+      } catch (error) {
+         console.error("Failed to delete notification:", error);
+         setDeletingNotifications((prev) => {
+            const newState = { ...prev };
+            delete newState[notificationId];
+            return newState;
+         });
+      }
+   };
 
    return (
       <header className={styles.header}>
          <div className={styles.leftSection}>
             <h2 className={styles.greeting}>Welcome, {user.username ? user.username : "Guest"} 👋 </h2>
-            {/* <button className={styles.addButton}>
-               <FontAwesomeIcon icon={faPlus} /> Add Content
-            </button> */}
          </div>
          <div className={styles.rightSection}>
             <div className={styles.searchBar}>
@@ -112,41 +157,68 @@ function Header() {
             <div className={styles.notificationContainer} ref={notificationRef}>
                <button className={styles.iconButton} onClick={() => setShowNotifications(!showNotifications)}>
                   <FontAwesomeIcon icon={faBell} />
-                  {notifications.filter((n) => !n.read).length > 0 && (
+                  {Array.isArray(notifications) && notifications.filter((n) => !n.read).length > 0 && (
                      <span className={styles.badge}>{notifications.filter((n) => !n.read).length}</span>
                   )}
                </button>
                {showNotifications && (
                   <div className={styles.notificationsOverlay}>
                      <h3>Notifications</h3>
-                     {notifications.length === 0 ? (
+                     {!Array.isArray(notifications) || notifications.length === 0 ? (
                         <p className={styles.noNotifications}>No new notifications</p>
                      ) : (
                         <ul className={styles.notificationsList}>
                            {notifications.map((notification) => (
-                              <li key={notification._id} className={`${styles.notificationItem} ${notification.read ? styles.read : ""}`}>
+                              <li
+                                 key={notification._id}
+                                 className={`
+                                  ${styles.notificationItem} 
+                                  ${notification.read ? styles.read : ""}
+                                  ${deletingNotifications[notification._id] ? styles.notificationItemDeleting : ""}
+                                `}>
                                  <FontAwesomeIcon icon={getNotificationIcon(notification.type)} className={styles.notificationIcon} />
                                  <div className={styles.notificationContent}>
                                     <p>{notification.message}</p>
                                     <span className={styles.notificationTime}>{formatNotificationTime(notification.createdAt)}</span>
                                  </div>
-                                 {notification.type === "journey_shared" && (
-                                    <div className={styles.notificationActions}>
-                                       <button
-                                          onClick={() => handleShareResponse(notification.sharedJourneyId, "accept")}
-                                          className={styles.acceptButton}>
-                                          <FontAwesomeIcon icon={faCheck} />
-                                       </button>
-                                       <button
-                                          onClick={() => handleShareResponse(notification.sharedJourneyId, "reject")}
-                                          className={styles.rejectButton}>
-                                          <FontAwesomeIcon icon={faTimes} />
-                                       </button>
-                                    </div>
-                                 )}
+                                 <div className={styles.notificationActions}>
+                                    {notification.type === "journey_shared" && (
+                                       <>
+                                          <button
+                                             onClick={() => handleShareResponse(notification.sharedJourneyId, "accept")}
+                                             className={styles.acceptButton}
+                                             title='Accept'>
+                                             <FontAwesomeIcon icon={faCheck} />
+                                          </button>
+                                          <button
+                                             onClick={() => handleShareResponse(notification.sharedJourneyId, "reject")}
+                                             className={styles.rejectButton}
+                                             title='Reject'>
+                                             <FontAwesomeIcon icon={faTimes} />
+                                          </button>
+                                       </>
+                                    )}
+                                    <button
+                                       onClick={() => handleDeleteNotification(notification._id)}
+                                       className={styles.deleteButton}
+                                       title='Delete'>
+                                       <FontAwesomeIcon icon={faTrash} />
+                                    </button>
+                                 </div>
                               </li>
                            ))}
                         </ul>
+                     )}
+                     {successMessage.message && (
+                        <div
+                           className={`
+                           ${styles.statusMessage} 
+                           ${styles.statusMessageVisible} 
+                           ${successMessage.error ? styles.errorMessage : styles.successMessage}
+                         `}>
+                           <FontAwesomeIcon icon={successMessage.error ? faTimes : faCheck} className={styles.icon} />
+                           {successMessage.message}
+                        </div>
                      )}
                   </div>
                )}
