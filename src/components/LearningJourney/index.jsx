@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
    addJourneyToUser,
@@ -33,11 +33,20 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { CONFIG } from "../../config";
 import ShareJourney from "./ShareJourney";
+import { debounce } from "lodash";
+
+// If you don't want to use lodash, you can implement a simple debounce function:
+// const debounce = (func, delay) => {
+//   let timeoutId;
+//   return (...args) => {
+//     clearTimeout(timeoutId);
+//     timeoutId = setTimeout(() => func(...args), delay);
+//   };
+// };
 
 const ResourceItem = ({ resource, index, toggleResourceCompletion, deleteResource }) => {
    const [isExpanded, setIsExpanded] = useState(false);
    const maxLength = 50; // Adjust this value to change when "Read More" appears
-
    const toggleExpand = (e) => {
       e.preventDefault();
       setIsExpanded(!isExpanded);
@@ -154,6 +163,7 @@ const LearningJourney = () => {
    const [newJourneyName, setNewJourneyName] = useState("");
    const [progress, setProgress] = useState(0);
    const [sharingJourneyId, setSharingJourneyId] = useState(null);
+   const [localNotes, setLocalNotes] = useState(selectedJourney?.notes || "");
 
    const calculateProgress = () => {
       const totalItems = selectedJourney.resources.length + selectedJourney.tasks.length;
@@ -166,6 +176,7 @@ const LearningJourney = () => {
    useEffect(() => {
       if (selectedJourney) {
          calculateProgress();
+         setLocalNotes(selectedJourney.notes || "");
       }
    }, [selectedJourney]);
 
@@ -219,12 +230,21 @@ const LearningJourney = () => {
       e.target.task.value = "";
    };
 
-   const updateNotes = (e) => {
-      const updatedJourney = {
+   const debouncedUpdateNotes = useCallback(
+     debounce((notes) => {
+       const updatedJourney = {
          ...selectedJourney,
-         notes: e.target.value,
-      };
-      dispatch(updateJourneyToUser(updatedJourney));
+         notes: notes,
+       };
+       dispatch(updateJourneyToUser(updatedJourney));
+     }, 500),
+     [selectedJourney]
+   );
+
+   const updateNotes = (e) => {
+     const newNotes = e.target.value;
+     setLocalNotes(newNotes);
+     debouncedUpdateNotes(newNotes);
    };
 
    const toggleResourceCompletion = (index) => {
@@ -303,23 +323,14 @@ const LearningJourney = () => {
                   {journeys.map((journey) => (
                      <div key={journey._id} className={styles.journeyItem}>
                         <div className={styles.journeyActions}>
-                           <button 
-                             className={styles.shareButton} 
-                             onClick={(e) => handleShareJourney(e, journey._id)}
-                           >
-                             <FaShare />
+                           <button className={styles.shareButton} onClick={(e) => handleShareJourney(e, journey._id)}>
+                              <FaShare />
                            </button>
-                           <button 
-                             className={styles.deleteButton} 
-                             onClick={(e) => handleDeleteJourney(e, journey._id)}
-                           >
-                             <FaTrash />
+                           <button className={styles.deleteButton} onClick={(e) => handleDeleteJourney(e, journey._id)}>
+                              <FaTrash />
                            </button>
                         </div>
-                        <div 
-                          className={styles.journeyItemContent}
-                          onClick={() => dispatch(setSelectedJourneyToUser(journey._id))}
-                        >
+                        <div className={styles.journeyItemContent} onClick={() => dispatch(setSelectedJourneyToUser(journey._id))}>
                            <h3 className={styles.sectionTitle}>{journey.name}</h3>
                            <p>
                               {journey.resources.length} resources • {journey.tasks.length} tasks
@@ -462,7 +473,7 @@ const LearningJourney = () => {
                            <FaStickyNote /> Notes
                         </h3>
                         <textarea
-                           value={selectedJourney.notes}
+                           value={localNotes}
                            onChange={updateNotes}
                            placeholder='Add your notes here...'
                            className={styles.notesTextarea}
@@ -472,12 +483,7 @@ const LearningJourney = () => {
                </div>
             </div>
          )}
-         {sharingJourneyId && (
-            <ShareJourney
-               journeyId={sharingJourneyId}
-               onClose={() => setSharingJourneyId(null)}
-            />
-         )}
+         {sharingJourneyId && <ShareJourney journeyId={sharingJourneyId} onClose={() => setSharingJourneyId(null)} />}
       </div>
    );
 };

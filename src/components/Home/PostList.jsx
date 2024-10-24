@@ -1,40 +1,50 @@
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchPosts } from "../../redux/posts/postsSlice";
 import Post from "./Post";
+import styles from "./PostList.module.css";
 
 function PostList() {
-   // Sample data - in a real application, this would likely come from props or a data fetching hook
-   const posts = [
-      {
-         id: 1,
-         title: "Blockchain developer best practices on innovationchain",
-         author: "Pavel Gvay",
-         time: "3 weeks ago",
-         tags: ["finance", "bitcoin", "crypto"],
-         views: 651324,
-         likes: 36545,
-         comments: 56,
-         btcPrice: 20788,
-         btcChange: "+0.25%",
-      },
-      {
-         id: 2,
-         title: "The future of decentralized finance",
-         author: "Sarah Johnson",
-         time: "2 days ago",
-         tags: ["defi", "ethereum", "finance"],
-         views: 123456,
-         likes: 7890,
-         comments: 234,
-         btcPrice: 21000,
-         btcChange: "-0.5%",
-      },
-      // Add more sample posts as needed
-   ];
+   const dispatch = useDispatch();
+   const { items: posts, status, error, page, hasMore } = useSelector((state) => state.posts);
+
+   console.log("posts", posts);
+
+   useEffect(() => {
+      if (status === "idle") {
+         dispatch(fetchPosts({ page: 1, limit: 10 }));
+      }
+   }, [status, dispatch]);
+
+   const handleLoadMore = () => {
+      if (hasMore) {
+         dispatch(fetchPosts({ page, limit: 10 }));
+      }
+   };
+
+   // const renderError = () => {
+   //    if (typeof error === "string") {
+   //       return <div className={styles.error}>{error}</div>;
+   //    } else if (error && typeof error === "object") {
+   //       return <div className={styles.error}>{error.message || "An error occurred"}</div>;
+   //    }
+   //    return null;
+   // };
 
    return (
-      <div className='post-list'>
-         {posts.map((post) => (
-            <Post key={post.id} post={post} />
-         ))}
+      <div className={styles.postList}>
+         {posts.length === 0 && status !== "loading" ? (
+            <div className={styles.noPosts}>No posts found</div>
+         ) : (
+            posts.map((post) => <Post key={post._id} post={post} />)
+         )}
+         {status === "loading" && <div className={styles.loading}>Loading...</div>}
+         {/* {renderError()} */}
+         {status !== "loading" && !error && hasMore && (
+            <button className={styles.loadMore} onClick={handleLoadMore}>
+               Load More
+            </button>
+         )}
       </div>
    );
 }

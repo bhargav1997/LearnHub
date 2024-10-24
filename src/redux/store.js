@@ -3,6 +3,7 @@ import exampleReducer from "./example/exampleSlice";
 import userReducer from "./user/userSlice";
 import learningJourneyReducer from "./learningJourney/learningJourneySlice";
 import calendarReducer from "./calendar/calendarSlice";
+import postsReducer from "./posts/postsSlice";
 
 const store = configureStore({
    reducer: {
@@ -10,8 +11,8 @@ const store = configureStore({
       user: userReducer,
       learningJourney: learningJourneyReducer,
       calendar: calendarReducer,
+      posts: postsReducer,
    },
-   // `thunk` is included by default, no need to add it manually.
 });
 
 export default store;

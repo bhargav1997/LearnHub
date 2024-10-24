@@ -1,17 +1,25 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faTimes, faImage, faTags, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faTimes, faImage, faTags, faPen, faPaperPlane, faCode, faGraduationCap, faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styles from "./CreatePost.module.css";
+import { createPost } from '../../redux/posts/postsSlice';
 
 function CreatePost() {
+   const dispatch = useDispatch();
+   const user = useSelector(state => state.user);
+
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [postTitle, setPostTitle] = useState("");
    const [postContent, setPostContent] = useState("");
    const [postTags, setPostTags] = useState([]);
    const [currentTag, setCurrentTag] = useState("");
    const [postImage, setPostImage] = useState(null);
+   const [postCategory, setPostCategory] = useState("tech");
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const [error, setError] = useState(null);
 
    const handleCreatePost = () => {
       setIsModalOpen(true);
@@ -28,6 +36,8 @@ function CreatePost() {
       setPostTags([]);
       setCurrentTag("");
       setPostImage(null);
+      setPostCategory("tech");
+      setError(null);
    };
 
    const handleAddTag = (e) => {
@@ -53,21 +63,40 @@ function CreatePost() {
       }
    };
 
-   const handleSubmitPost = () => {
-      // const postData = {
-      //    title: postTitle,
-      //    content: postContent,
-      //    tags: postTags,
-      //    image: postImage,
-      // };
-      handleCloseModal();
+   const handleSubmitPost = async () => {
+      if (!postTitle || !postContent) {
+         setError("Please fill in all required fields.");
+         return;
+      }
+
+      setIsSubmitting(true);
+      setError(null);
+
+      try {
+         const postData = {
+            title: postTitle,
+            content: postContent,
+            tags: postTags,
+            image: postImage,
+            category: postCategory,
+            author: user.id,
+         };
+
+         await dispatch(createPost(postData)).unwrap();
+         handleCloseModal();
+      } catch (error) {
+         setError('Failed to create post. Please try again.');
+         console.log(error);
+      } finally {
+         setIsSubmitting(false);
+      }
    };
 
    return (
       <>
          <div className={styles.createPost}>
             <FontAwesomeIcon icon={faUser} className={styles.userIcon} />
-            <input type='text' placeholder="What's on your mind?" readOnly onClick={handleCreatePost} className={styles.createPostInput} />
+            <input type='text' placeholder="Share your tech insights or learning experiences..." readOnly onClick={handleCreatePost} className={styles.createPostInput} />
             <button className={styles.createPostBtn} onClick={handleCreatePost}>
                <FontAwesomeIcon icon={faPen} /> Create Post
             </button>
@@ -83,19 +112,44 @@ function CreatePost() {
                      </button>
                   </div>
                   <div className={styles.modalBody}>
+                     <div className={styles.categorySelector}>
+                        <button
+                           className={`${styles.categoryBtn} ${postCategory === 'tech' ? styles.active : ''}`}
+                           onClick={() => setPostCategory('tech')}
+                        >
+                           <FontAwesomeIcon icon={faCode} /> Tech
+                        </button>
+                        <button
+                           className={`${styles.categoryBtn} ${postCategory === 'education' ? styles.active : ''}`}
+                           onClick={() => setPostCategory('education')}
+                        >
+                           <FontAwesomeIcon icon={faGraduationCap} /> Education
+                        </button>
+                        <button
+                           className={`${styles.categoryBtn} ${postCategory === 'innovation' ? styles.active : ''}`}
+                           onClick={() => setPostCategory('innovation')}
+                        >
+                           <FontAwesomeIcon icon={faLightbulb} /> Innovation
+                        </button>
+                     </div>
                      <input
                         type='text'
-                        placeholder='Enter post title'
+                        placeholder='Enter an engaging title for your post'
                         value={postTitle}
                         onChange={(e) => setPostTitle(e.target.value)}
                         className={styles.postTitleInput}
                      />
-                     <ReactQuill value={postContent} onChange={setPostContent} placeholder="What's on your mind?" />
+                     <ReactQuill
+                        value={postContent}
+                        onChange={setPostContent}
+                        placeholder="Share your knowledge, insights, or questions..."
+                        className={styles.contentEditor}
+                     />
                      <div className={styles.postTags}>
                         <FontAwesomeIcon icon={faTags} />
                         <input
                            type='text'
-                           placeholder='Add tags'
+                           placeholder='Add relevant tags (e.g., JavaScript, MachineLearning)'
                            value={currentTag}
                            onChange={(e) => setCurrentTag(e.target.value)}
                            onKeyPress={(e) => e.key === "Enter" && handleAddTag(e)}
@@ -121,13 +175,14 @@ function CreatePost() {
                            <img src={postImage} alt='Post preview' />
                         </div>
                      )}
+                     {error && <div className={styles.error}>{error}</div>}
                   </div>
                   <div className={styles.modalFooter}>
                      <button className={styles.cancelBtn} onClick={handleCloseModal}>
                         Cancel
                      </button>
-                     <button className={styles.submitBtn} onClick={handleSubmitPost}>
-                        Post
+                     <button className={styles.submitBtn} onClick={handleSubmitPost} disabled={isSubmitting}>
+                        <FontAwesomeIcon icon={faPaperPlane} /> {isSubmitting ? 'Posting...' : 'Post'}
                      </button>
                   </div>
                </div>

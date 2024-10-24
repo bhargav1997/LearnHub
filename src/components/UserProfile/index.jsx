@@ -172,6 +172,14 @@ function UserProfile() {
       const { value } = e.target;
       setEditedUser((prevUser) => ({
          ...prevUser,
+         [field]: value,
+      }));
+   };
+
+   const handleArrayInputBlur = (e, field) => {
+      const { value } = e.target;
+      setEditedUser((prevUser) => ({
+         ...prevUser,
          [field]: value
             .split(",")
             .map((item) => item.trim())
@@ -179,14 +187,16 @@ function UserProfile() {
       }));
    };
 
-   const handleFollow = async (friendId) => {
+   const handleFollow = async (connection) => {
+      const friendId = connection._id ? connection._id : connection.id;
+
       try {
          const token = localStorage.getItem("token");
          // Optimistically update UI
          setSuggestedConnections((prevConnections) =>
             prevConnections.map((connection) =>
-               connection._id === friendId ? { ...connection, isFollowing: true, isProcessing: true } : connection
-            )
+               connection._id === friendId ? { ...connection, isFollowing: true, isProcessing: true } : connection,
+            ),
          );
 
          const response = await fetch(`${API_URL}/users/follow/${friendId}`, {
@@ -203,17 +213,15 @@ function UserProfile() {
                dispatch(setUser(updatedUser.user));
             }
             // Remove the followed user from suggested connections
-            setSuggestedConnections((prevConnections) =>
-               prevConnections.filter((connection) => connection._id !== friendId)
-            );
-            setFollowSuccess(`You are now following ${updatedUser.user.username}!`);
+            setSuggestedConnections((prevConnections) => prevConnections.filter((connection) => connection._id !== friendId));
+            setFollowSuccess(`You are now following ${connection.username}!`);
             setTimeout(() => setFollowSuccess(null), 3000); // Clear the message after 3 seconds
          } else {
             // Revert the optimistic update if the request fails
             setSuggestedConnections((prevConnections) =>
                prevConnections.map((connection) =>
-                  connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection
-               )
+                  connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection,
+               ),
             );
             console.error("Failed to follow user");
          }
@@ -222,8 +230,8 @@ function UserProfile() {
          // Revert the optimistic update if there's an error
          setSuggestedConnections((prevConnections) =>
             prevConnections.map((connection) =>
-               connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection
-            )
+               connection._id === friendId ? { ...connection, isFollowing: false, isProcessing: false } : connection,
+            ),
          );
       }
    };
@@ -270,7 +278,7 @@ function UserProfile() {
       const isFollowing = (id) => {
          return connections.some((connection) => connection._id === id);
       };
-      
+
       return (
          <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
@@ -311,7 +319,7 @@ function UserProfile() {
                                     <FontAwesomeIcon icon={faUserMinus} /> Unfollow
                                  </button>
                               ) : (
-                                 <button className={styles.followBtn} onClick={() => handleFollow(connection.id)}>
+                                 <button className={styles.followBtn} onClick={() => handleFollow(connection)}>
                                     <FontAwesomeIcon icon={faUserPlus} /> Follow
                                  </button>
                               )
@@ -426,13 +434,13 @@ function UserProfile() {
             ) : (
                <>
                   {followSuccess && (
-                    <div className={styles.successMessage}>
-                      <FontAwesomeIcon icon={faCheckCircle} /> {followSuccess}
-                    </div>
+                     <div className={styles.successMessage}>
+                        <FontAwesomeIcon icon={faCheckCircle} /> {followSuccess}
+                     </div>
                   )}
                   <ul className={styles.friendList}>
                      {filteredConnections.map((connection) => (
-                        <li key={connection._id} className={`${styles.friendItem} ${connection.isProcessing ? styles.removing : ''}`}>
+                        <li key={connection._id} className={`${styles.friendItem} ${connection.isProcessing ? styles.removing : ""}`}>
                            <img
                               src={connection.profilePicture || `https://api.dicebear.com/6.x/initials/svg?seed=${connection.username}`}
                               alt={connection.username}
@@ -454,19 +462,18 @@ function UserProfile() {
                                  ))}
                               </ul>
                            </div>
-                           <button 
-                             className={`${styles.followBtn} ${connection.isProcessing ? styles.processing : ''}`} 
-                             onClick={() => handleFollow(connection._id)}
-                             disabled={connection.isProcessing}
-                           >
-                             {connection.isProcessing ? (
-                               <FontAwesomeIcon icon={faSpinner} spin />
-                             ) : (
-                               <>
-                                 <FontAwesomeIcon icon={faUserPlus} />
-                                 Follow
-                               </>
-                             )}
+                           <button
+                              className={`${styles.followBtn} ${connection.isProcessing ? styles.processing : ""}`}
+                              onClick={() => handleFollow(connection)}
+                              disabled={connection.isProcessing}>
+                              {connection.isProcessing ? (
+                                 <FontAwesomeIcon icon={faSpinner} spin />
+                              ) : (
+                                 <>
+                                    <FontAwesomeIcon icon={faUserPlus} />
+                                    Follow
+                                 </>
+                              )}
                            </button>
                         </li>
                      ))}
@@ -485,7 +492,7 @@ function UserProfile() {
                      </button>
                   </div>
                   <input type='text' name='username' value={editedUser.username} onChange={handleInputChange} placeholder='Username' />
-                  <input type='email' name='email' value={editedUser.email} onChange={handleInputChange} placeholder='Email' disabled/>
+                  <input type='email' name='email' value={editedUser.email} onChange={handleInputChange} placeholder='Email' disabled />
                   <input
                      type='text'
                      name='profilePicture'
@@ -505,15 +512,17 @@ function UserProfile() {
                   <input
                      type='text'
                      name='learningGoals'
-                     value={editedUser.learningGoals?.join(", ") || ""}
+                     value={Array.isArray(editedUser.learningGoals) ? editedUser.learningGoals.join(", ") : editedUser.learningGoals || ""}
                      onChange={(e) => handleArrayInputChange(e, "learningGoals")}
+                     onBlur={(e) => handleArrayInputBlur(e, "learningGoals")}
                      placeholder='Learning Goals (comma-separated)'
                   />
                   <input
                      type='text'
                      name='skills'
-                     value={editedUser.skills?.join(", ") || ""}
+                     value={Array.isArray(editedUser.skills) ? editedUser.skills.join(", ") : editedUser.skills || ""}
                      onChange={(e) => handleArrayInputChange(e, "skills")}
+                     onBlur={(e) => handleArrayInputBlur(e, "skills")}
                      placeholder='Skills (comma-separated)'
                   />
                   <h4>Work</h4>
